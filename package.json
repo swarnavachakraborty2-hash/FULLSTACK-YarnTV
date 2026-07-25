@@ -1,0 +1,19 @@
+{
+  "name": "project-online-video-sharing-platform",
+  "version": "1.0.0",
+  "description": "this is an online video streaming paltform project",
+  "main": "index.js",
+  "scripts": {
+    "test": "node "
+  },
+  "author": "Swarnava Chakraborty",
+  "license": "ISC",
+  "dev dependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mongoose": "^9.8.0"
+  }
+}
