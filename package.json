@@ -4,15 +4,17 @@
   "description": "this is an online video streaming paltform project",
   "main": "index.js",
   "scripts": {
-    "test": "node "
+    "dev": "nodemon index.js"
   },
   "author": "Swarnava Chakraborty",
   "license": "ISC",
-  "dev dependencies": {
+  "devDependencies": {
     "nodemon": "^3.1.14"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.8.0"
   }
