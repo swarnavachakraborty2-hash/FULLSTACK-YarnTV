@@ -11,22 +11,22 @@ const userSchema = new mongoose.Schema({
     ],
     username: {
         type: String,
-        required: [true,'user must have an username'],
+        required: [true, 'user must have an username'],
         lowercase: true,
         trim: true,
         unique: true,
         index: true
-    }, 
+    },
     email: {
         type: String,
-        required: [true,'user must have an email'],
-        lowercase: true, 
+        required: [true, 'user must have an email'],
+        lowercase: true,
         unique: true,
         trim: true
     },
     fullname: {
         type: String,
-        required: [true,'full name is required'],
+        required: [true, 'full name is required'],
         trim: true
     },
     avatar: {
@@ -39,9 +39,9 @@ const userSchema = new mongoose.Schema({
     },
     password: {//hash 
         type: String,
-        required: [true,'user must have a password'],
-        minLength: [8,'password must be of atleast 8 characters'],
-        maxLength: [20,'password must be less than 20 characters '],
+        required: [true, 'user must have a password'],
+        minLength: [8, 'password must be of atleast 8 characters'],
+        maxLength: [20, 'password must be less than 20 characters '],
         trim: true
     },
     refreshToken: {
@@ -55,11 +55,11 @@ const userSchema = new mongoose.Schema({
 //.pre() performs some function before any data in the schema is "saved" in database
 userSchema.pre("save", async function (next) {
 
-    if(this.isModified("password")){ //only generate hash of password when the password field is modified.
-     this.password = await bcrypt.hash(this.password, 10)
-     next()//executes the next code in controllers 
+    if (this.isModified("password")) { //only generate hash of password when the password field is modified.
+        this.password = await bcrypt.hash(this.password, 10)
+        next()//executes the next code in controllers 
     }
-    else{
+    else {
         return next()// return if something else is modified i.e. no need to generate hash of password again
     }
 })
@@ -70,9 +70,61 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
+userSchema.method.generateAccessToken = function () {
+    return jwt.sign({
+        _id: userSchema._id,
+        username: userSchema.username,
+        fullname: userSchema.fullname,
+        email: userSchema.email
+    },
+        process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+    })
+}
+
+userSchema.method.generateRefreshToken = function () {
+    return wt.sign({
+        _id: userSchema._id // one payload is enough for refresh token
+    },
+        process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+    })
+}
+
 
 const userModel = mongoose.model("user", userSchema)
 
 module.exports = userModel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
