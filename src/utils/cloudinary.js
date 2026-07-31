@@ -1,5 +1,5 @@
 const { v2: cloudinary } = require('cloudinary');
-const fs = require('fs')// fs is used to perform file handling operations like open(), read(), write(), unlink()
+const fs = require('fs')// fs is used to perform file handling operations like open(), read(), write(), unlink()/delete
 
 
 // Configuration

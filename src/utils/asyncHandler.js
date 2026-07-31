@@ -1,18 +1,24 @@
 //this is a general function that will be applied in every other controllers 
+//wraps every controller in a try/catch
 
-const asyncHandler = (fn) => async (req, res, next) => {
-    try {
 
-        await fn(req, res, next) //wraps the original controller in try/catch to handle failures
+                     /*pass a function as a param*/
+const asyncHandler = (fn) => {
+    async (req, res, next) => { // we can access the parameters of the function that is passed as a parameter
+        try {
 
-    } catch (error) {
+            await fn(req, res, next) // calls the function here
 
-        res.status(error.code || 500).json({
-            success: false,
-            message: `error: ${error.message}`
-        })
+        } catch (error) {
 
+            next(error)
+        }
     }
 }
 
-module.exports = {asyncHandler}
+
+module.exports = asyncHandler
+
+
+
+
