@@ -28,7 +28,7 @@ const register = asyncHandler(async function (req, res) {
     if (email != "") {
         const emailExists = await userModel.findOne({
             email: email
-        })
+        }) 
 
 
         if (emailExists) {
