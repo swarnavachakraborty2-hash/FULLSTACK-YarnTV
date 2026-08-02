@@ -29,11 +29,11 @@ const userSchema = new mongoose.Schema({
         required: [true, 'full name is required'],
         trim: true
     },
-    avatar: {
+    avatar: {//image file
         type: String,
         required: true,
     },
-    coverImage: {
+    coverImage: {//image file
         type: String,
         required: true,
     },
@@ -53,14 +53,14 @@ const userSchema = new mongoose.Schema({
 
 
 //.pre() performs some function before any data in the schema is "saved" in database
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
 
     if (this.isModified("password")) { //only generate hash of password when the password field is modified.
         this.password = await bcrypt.hash(this.password, 10)
-        next()//executes the next code in controllers 
+        //executes the next code in controllers 
     }
     else {
-        return next()// return if something else is modified i.e. no need to generate hash of password again
+        return // return if something else is modified i.e. no need to generate hash of password again
     }
 })
 
@@ -70,21 +70,21 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
-userSchema.method.generateAccessToken = function () {
+userSchema.methods.generateAccessToken = function () {
     return jwt.sign({
-        _id: userSchema._id,
-        username: userSchema.username,
-        fullname: userSchema.fullname,
-        email: userSchema.email
-    },
+        _id: this._id,
+        username: this.username,
+        fullname: this.fullname,
+        email: this.email
+    },// can have more than one value
         process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: process.env.ACCESS_TOKEN_EXPIRY
     })
 }
 
-userSchema.method.generateRefreshToken = function () {
-    return wt.sign({
-        _id: userSchema._id // one payload is enough for refresh token
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign({
+        _id: this._id // one payload is enough for refresh token
     },
         process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY
