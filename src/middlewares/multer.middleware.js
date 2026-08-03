@@ -5,7 +5,7 @@ const multer = require('multer')
 const storage = multer.diskStorage({
 
   destination: function (req, file, cb) {
-    cb(null, "./public/temp")//stores all the uploaded files in the public/temp file (files should be accessed from that path)
+    cb(null, './public/temp')//stores all the uploaded files in the public/temp file (files should be accessed from that path)
   },
   
   filename: function (req, file, cb) {
