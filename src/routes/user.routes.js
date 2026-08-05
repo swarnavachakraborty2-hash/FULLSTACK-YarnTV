@@ -2,6 +2,7 @@ const express = require("express")
 const userControllers = require("../controllers/user.contollers.js")
 const route = express.Router()
 const upload = require("../middlewares/multer.middleware.js")
+const authMiddleware = require("../middlewares/user.middleware.js")
 
 /* .fields() accept different types of files in an array*/
 route.post("/register", upload.fields([
@@ -11,7 +12,13 @@ route.post("/register", upload.fields([
     {name: "coverImage",
      maxCount: 1
     }
-]), userControllers.register)
+]), userControllers.Register)
+
+route.post("/login",  userControllers.Login)
+
+route.get("/logout", authMiddleware, userControllers.Logout)
+
+route.get("/deleteAccount", authMiddleware, userControllers.DeleteAccount)
 
 
 module.exports = route

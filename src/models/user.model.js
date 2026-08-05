@@ -34,8 +34,7 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     coverImage: {//image file
-        type: String,
-        required: true,
+        type: String
     },
     password: {//hash 
         type: String,
@@ -78,7 +77,7 @@ userSchema.methods.generateAccessToken = function () {
         email: this.email
     },// can have more than one value
         process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY // the time of expiration of token
     })
 }
 

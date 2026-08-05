@@ -5,9 +5,13 @@ const apiResponse = require("../utils/apiResponse.js")
 const uploadFile = require("../utils/cloudinary.js")
 
 
+const options = {
+    httpOnly: true,
+    secure: true
+}//for secure cookies
 
 /*stores the response */      /*this funtion is passed as a parameter*/
-const register = asyncHandler(async function (req, res) {
+const Register = asyncHandler(async function (req, res) {
 
     const { username, fullname, email, password } = req.body
 
@@ -28,7 +32,7 @@ const register = asyncHandler(async function (req, res) {
     if (email != "") {
         const emailExists = await userModel.findOne({
             email: email
-        }) 
+        })
 
 
         if (emailExists) {
@@ -39,17 +43,21 @@ const register = asyncHandler(async function (req, res) {
         throw new apiError(400, "email is required")
     }
 
-    let avatarURL = ""
+    let avatarURL
     if (req.files.avatar) {
+
         avatarURL = await uploadFile(req.files.avatar[0].path)//upload the path of the file that was uploaded to multer and stored in public/temp path
+
     }
     else {
         throw new apiError(400, "avatar is required")
     }
 
-
-    const coverImageLocalPath = req.files.coverImage[0].path
-    const coverURL = await uploadFile(coverImageLocalPath)//uploaded the localpath of the file as a parameter
+    let coverURL
+    const coverImage = req.files.coverImage
+    if (coverImage) {
+        coverURL = await uploadFile(req.files.coverImage[0].path)//uploaded the localpath of the file as a parameter
+    }
 
 
     const user = await userModel.create({
@@ -57,7 +65,7 @@ const register = asyncHandler(async function (req, res) {
         email: email,
         fullname: fullname,
         avatar: avatarURL.url,
-        coverImage: coverURL?.url || "",
+        coverImage: coverImage ? coverURL.url : "",
         password: password
     })
 
@@ -78,5 +86,83 @@ const register = asyncHandler(async function (req, res) {
 
 })
 
-module.exports = { register }
+
+
+const Login = asyncHandler(async function (req, res) {
+
+    const { username, email, password } = req.body
+
+    if (username || email) {
+
+        const user = await userModel.findOne({
+            $or: [
+                { username: username },
+                { email: email }
+            ]
+        })
+
+        const passwordMatched = user.isPasswordCorrect(password)
+        if (passwordMatched) {
+
+            const AccessToken = await user.generateAccessToken()
+            const RefreshToken = await user.generateRefreshToken()
+
+            user.refreshToken = RefreshToken
+            user.save({ validateBeforeSave: false })// dont check constraints while saving this time(ex: required fields)
+
+            return res.status(200)
+                .cookie("AccessToken", AccessToken)
+                .cookie("RefreshToken", RefreshToken)//set these two cookies in user browser
+                .json(
+                    new apiResponse(200, "user logged in successfully", user)
+                )
+        }
+        else {
+            throw new apiError(400, "incorrect password")
+        }
+    }
+    else {
+        throw new apiError(400, "username or email is required")
+    }
+})
+
+
+const Logout = asyncHandler(async function (req, res) {
+
+
+    const user = await userModel.findOneAndUpdate(
+        {
+            _id: req.user
+        },
+        {
+            refreshToken: undefined
+        },
+        {
+            returnDocument: "after"
+        })
+
+
+    res.status(200)
+        .clearCookie("AccessToken", options)
+        .clearCookie("RefreshToken", options)
+        .json(
+            new apiResponse(200, "logged out successfully", user)
+        )
+})
+
+const DeleteAccount = asyncHandler(async function (req, res) {
+
+
+    const user = await userModel.findByIdAndDelete({ _id: req.user })
+
+    res.status(200)
+        .clearCookie("AcessToken", options)
+        .clearCookie("RefreshToken", options)
+        .json(
+            new apiResponse(200, "Account deleted successfully", user)
+        )
+})
+
+
+module.exports = { Register, Login, Logout, DeleteAccount }
 
