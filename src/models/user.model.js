@@ -66,7 +66,7 @@ userSchema.pre("save", async function () {
 
 //method to check whether the user password is correct or not i.e matches with the hashed password in db or not 
 userSchema.methods.isPasswordCorrect = async function (password) {
-    return await bcrypt.compare(password, this.password)
+    return await bcrypt.compare(password, this.password)// returns true or false
 }
 
 userSchema.methods.generateAccessToken = function () {

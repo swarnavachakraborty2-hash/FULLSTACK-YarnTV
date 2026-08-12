@@ -3,6 +3,7 @@ const userModel = require("../models/user.model.js")
 const apiError = require("../utils/apiError.js")
 const apiResponse = require("../utils/apiResponse.js")
 const uploadFile = require("../utils/cloudinary.js")
+const jwt = require('jsonwebtoken')
 
 
 const options = {
@@ -111,8 +112,8 @@ const Login = asyncHandler(async function (req, res) {
             user.save({ validateBeforeSave: false })// dont check constraints while saving this time(ex: required fields)
 
             return res.status(200)
-                .cookie("AccessToken", AccessToken)
-                .cookie("RefreshToken", RefreshToken)//set these two cookies in user browser
+                .cookie("AccessToken", AccessToken, options)
+                .cookie("RefreshToken", RefreshToken, options)//set these two cookies in user browser
                 .json(
                     new apiResponse(200, "user logged in successfully", user)
                 )
@@ -150,6 +151,7 @@ const Logout = asyncHandler(async function (req, res) {
         )
 })
 
+
 const DeleteAccount = asyncHandler(async function (req, res) {
 
 
@@ -164,5 +166,36 @@ const DeleteAccount = asyncHandler(async function (req, res) {
 })
 
 
-module.exports = { Register, Login, Logout, DeleteAccount }
+
+//if user's access token reaches its time limit and error shows in request, check the refreshtoken from user request and compare it from db and regenerate access token
+const RefreshAccessToken = asyncHandler(async function (req, res) {
+
+    const IncomingRefreshToken = req.cookies.RefreshToken
+
+    if (!IncomingRefreshToken) {
+        throw new apiError(401, "unauthorised request")
+    }
+
+    const decoded = jwt.verify(IncomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+    const user_id = decoded._id
+
+    const user = await userModel.findById({ user_id })
+
+    if (IncomingRefreshToken != user.refreshToken) {
+        throw new apiError(401, "invalid Refresh token")
+    }
+
+    const AccessToken = await user.generateAccessToken()
+    const RefreshToken = await user.generateRefreshToken()
+
+    return res.status(200)
+        .cookie("AccessToken", AccessToken, options)
+        .cookie("RefreshToken", RefreshToken, options)
+        .json( 
+            new apiResponse(201, "refreshed access token", {AccessToken, RefreshToken})
+        )
+})
+
+
+module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken }
 
