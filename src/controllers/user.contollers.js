@@ -128,12 +128,13 @@ const Login = asyncHandler(async function (req, res) {
 })
 
 
+
 const Logout = asyncHandler(async function (req, res) {
 
 
     const user = await userModel.findOneAndUpdate(
         {
-            _id: req.user
+            _id: req.user._id
         },
         {
             refreshToken: undefined
@@ -152,10 +153,11 @@ const Logout = asyncHandler(async function (req, res) {
 })
 
 
+
 const DeleteAccount = asyncHandler(async function (req, res) {
 
 
-    const user = await userModel.findByIdAndDelete({ _id: req.user })
+    const user = await userModel.findByIdAndDelete({ _id: req.user._id })
 
     res.status(200)
         .clearCookie("AcessToken", options)
@@ -191,11 +193,139 @@ const RefreshAccessToken = asyncHandler(async function (req, res) {
     return res.status(200)
         .cookie("AccessToken", AccessToken, options)
         .cookie("RefreshToken", RefreshToken, options)
-        .json( 
-            new apiResponse(201, "refreshed access token", {AccessToken, RefreshToken})
+        .json(
+            new apiResponse(201, "refreshed access token", { AccessToken, RefreshToken })
         )
 })
 
 
-module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken }
+
+const changeUserPassword = asyncHandler(async function (req, res) {
+
+    const { oldPassword, newPassword } = req.body
+    const user_id = req.user._id
+
+    if (!oldPassword) {
+        throw new apiError(400, "password is required")
+    }
+
+    const user = await userModel.findById(user_id)
+
+    const passwordCorrect = await user.isPasswordCorrect(oldPassword)
+
+    if (!passwordCorrect) {
+        throw new apiError(400, "invalid password")
+    }
+
+    if (!newPassword) {
+        throw new apiError(400, "password is required")
+    }
+
+    user.password = newPassword
+    await user.save({ validateBeforeSave: false })// dont check other fields validations
+
+    return res.status(200).json(
+        new apiResponse(200, "password changed successfully", user)
+    )
+})
+
+
+
+const getCurrentUser = asyncHandler(async function (req, res) {
+
+    const userId = req.user._id
+
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+        throw new apiError(400, "something went wrong || account not found")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "user fetched successfully", user)
+    )
+
+})
+
+
+const changeAccountDetails = asyncHandler(async function (req, res) {
+
+    const userId = req.user._id
+    const { username, email } = req.body
+
+    if (!username && !email) {
+        throw new apiError(400, "all fields are required")
+    }
+
+    const user = await userModel.findOneAndUpdate({
+        _id: userId
+    }, {
+        username: username,
+        email: email
+    }, {
+        new: true //finds / returns the user after update
+    })
+
+
+    return res.status(200).json(
+        new apiResponse(200, "Account edited successfully", user)
+    )
+
+})
+
+
+
+const updateAvatar = asyncHandler(async function (req, res) {
+
+    const avatar = req.file
+    const userId = req.user._id
+
+    if (!avatar) {
+        throw new apiError(400, "new avatar is required")
+    }
+
+    const result = await uploadFile(avatar.path)
+
+
+    const user = await userModel.findOneAndUpdate({
+        _id: userId
+    }, {
+        avatar: result.url
+    }, {
+        new: true
+    })
+
+    return res.status(200).json(
+        new apiResponse(200, "avatar updated successfully", user)
+    )
+})
+
+
+const updateCoverImage = asyncHandler(async function (req, res) {
+
+    const coverImage = req.file
+    const userId = req.user._id
+
+    if (!coverImage) {
+        throw new apiError(400, "new cover image is required")
+    }
+
+    const result = await uploadFile(coverImage.path)
+
+
+    const user = await userModel.findOneAndUpdate({
+        _id: userId
+    }, {
+        coverImage: result.url
+    }, {
+        new: true
+    })
+
+    return res.status(200).json(
+        new apiResponse(200, "cover image updated successfully", user)
+    )
+})
+
+
+module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken, changeUserPassword, getCurrentUser, changeAccountDetails, updateAvatar, updateCoverImage }
 
