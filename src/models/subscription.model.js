@@ -5,14 +5,13 @@ const subscriptionSchema = new mongoose.Schema({
     channel: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"
-    },//whom the users subcribed to
+    },//to whom the users subcribed to
 
-    subscribers: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "user"
-        }
-    ]//those who subscribed
+    subscribers:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
+    }//those who subscribed
 
 }, {
     timestamps: true

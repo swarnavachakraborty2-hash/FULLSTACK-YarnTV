@@ -181,7 +181,7 @@ const RefreshAccessToken = asyncHandler(async function (req, res) {
     const decoded = jwt.verify(IncomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
     const user_id = decoded._id
 
-    const user = await userModel.findById({ user_id })
+    const user = await userModel.findById({ _id: user_id })
 
     if (IncomingRefreshToken != user.refreshToken) {
         throw new apiError(401, "invalid Refresh token")
@@ -209,7 +209,7 @@ const changeUserPassword = asyncHandler(async function (req, res) {
         throw new apiError(400, "password is required")
     }
 
-    const user = await userModel.findById(user_id)
+    const user = await userModel.findById({_id: user_id})
 
     const passwordCorrect = await user.isPasswordCorrect(oldPassword)
 
@@ -235,7 +235,7 @@ const getCurrentUser = asyncHandler(async function (req, res) {
 
     const userId = req.user._id
 
-    const user = await userModel.findById(userId)
+    const user = await userModel.findById({_id: userId})
 
     if (!user) {
         throw new apiError(400, "something went wrong || account not found")
@@ -327,5 +327,14 @@ const updateCoverImage = asyncHandler(async function (req, res) {
 })
 
 
-module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken, changeUserPassword, getCurrentUser, changeAccountDetails, updateAvatar, updateCoverImage }
+const getUserChannel = asyncHandler(async function (req, res) {
+
+    const {username} = req.params
+
+    const user = await usermodel
+
+})
+
+
+module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken, changeUserPassword, getCurrentUser, changeAccountDetails, updateAvatar, updateCoverImage, getUserChannel }
 

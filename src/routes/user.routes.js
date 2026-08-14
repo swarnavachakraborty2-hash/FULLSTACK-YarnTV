@@ -4,6 +4,8 @@ const route = express.Router()
 const upload = require("../middlewares/multer.middleware.js")
 const authMiddleware = require("../middlewares/user.middleware.js")
 
+
+//functions on current users only
 /* .fields([{},{},..]) accept different types of files in an array*/
 route.post("/register", upload.fields([
     {
@@ -33,5 +35,10 @@ route.patch("/edit-account", authMiddleware, userControllers.changeAccountDetail
 route.patch("/edit-avatar", upload.single("avatar"), authMiddleware, userControllers.updateAvatar)
 
 route.patch("/edit-coverImage", upload.single("coverImage"), authMiddleware, userControllers.updateCoverImage)
+
+
+
+//functions on different users
+route.get("/profile/:username", authMiddleware, userControllers.getUserChannel)
 
 module.exports = route 
