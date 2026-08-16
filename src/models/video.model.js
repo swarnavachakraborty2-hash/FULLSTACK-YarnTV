@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const videoSchema = new mongoose.Schema({
+    //_id
     videoFile: {
         type: String,
         required: [true,'upload a video first']
@@ -11,7 +12,7 @@ const videoSchema = new mongoose.Schema({
     },
     owner: {
         type: mongoose.Schema.ObjectId,
-        ref: "user"
+        ref: "user"//user_id
     },
     title: {
         type: String,

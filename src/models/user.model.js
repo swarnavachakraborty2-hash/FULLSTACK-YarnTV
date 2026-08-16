@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
+    //_id
     watchHistory: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: "video"
+            ref: "video"//video ids
         }
     ],
     username: {
