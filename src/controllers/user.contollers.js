@@ -81,7 +81,7 @@ const Register = asyncHandler(async function (req, res) {
 
     //finally return the response 
     return res.status(201).json(//use this format or return only the class 
-        new apiResponse(200, "user registered successfully", user) //response object already created from this class
+        new apiResponse(200, "user registered successfully", userCreated) //response object already created from this class
     )
 
     //do not "throw" normal response only use "return"
@@ -441,10 +441,10 @@ const getWatchHistory = asyncHandler(async function (req, res) {
                             ]
                         }
                     },
-                    {// replace the array in the owner field with the object inside the array for frontend array[0]
+                    {// replace the array in the owner field with only the first element of owner array
                         $addFields: {
                             owner: {
-                                $first: "$owner"
+                                $first: "$owner"//first element of owner array
                             }
                         }
                     }
@@ -458,7 +458,7 @@ const getWatchHistory = asyncHandler(async function (req, res) {
                 email: 1,
                 avatar: 1,
                 coverImage: 1,
-                watch: 1
+                watchHistory: 1
             }
         }
     ])

@@ -5,6 +5,7 @@ const upload = require("../middlewares/multer.middleware.js")
 const authMiddleware = require("../middlewares/user.middleware.js")
 
 
+
 //functions on current users only
 /* .fields([{},{},..]) accept different types of files in an array*/
 route.post("/register", upload.fields([
@@ -36,9 +37,12 @@ route.patch("/edit-avatar", upload.single("avatar"), authMiddleware, userControl
 
 route.patch("/edit-coverImage", upload.single("coverImage"), authMiddleware, userControllers.updateCoverImage)
 
-route.patch("/watch-history", authMiddleware, userControllers.getWatchHistory)
+route.get("/watch-history", authMiddleware, userControllers.getWatchHistory)
 
 //functions on different users
 route.get("/profile/:username", authMiddleware, userControllers.getUserChannel)
+
+
+
 
 module.exports = route 
