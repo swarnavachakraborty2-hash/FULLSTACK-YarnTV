@@ -364,14 +364,6 @@ const getUserChannel = asyncHandler(async function (req, res) {
             }
         },
         {
-            $lookup: { //returns all the user's videos in an array 
-                from: "videos",
-                localField: "_id",
-                foreignField: "owner",
-                as: "videos"
-            }
-        },
-        {
             $addFields: {//adds an additional field allong with all the other fields of usermodel
                 subscribersCount: {
                     $size: "$subscribers"//returns the size of subscribers array(all the documents returned with user_id == channel id)

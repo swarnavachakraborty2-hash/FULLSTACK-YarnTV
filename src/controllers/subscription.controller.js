@@ -27,9 +27,6 @@ const userSubscription = asyncHandler(async function (req, res) {
         },
         {
             $addFields: {
-                subscribersCount: {
-                    $size: "$subscribers"
-                },
                 isSubscribed: {
                     $cond: {
                         if: { $in: [curr_user_id, "$subscribers.subscriber"] },
@@ -42,8 +39,6 @@ const userSubscription = asyncHandler(async function (req, res) {
         {
             $project: {
                 _id: 1,
-                username: 1,
-                subscribersCount: 1,
                 isSubscribed: 1
             }
         }

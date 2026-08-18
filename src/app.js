@@ -20,10 +20,11 @@ app.use(cors({
 //routes
 const userRoutes = require("./routes/user.routes.js")
 const subscriptionRoutes = require("./routes/subscription.routes.js")
+const videoRoutes = require("./routes/video.routes.js")
 
 app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/subscription", subscriptionRoutes)
-
+app.use("/api/v1/video", videoRoutes)
 
 
 
