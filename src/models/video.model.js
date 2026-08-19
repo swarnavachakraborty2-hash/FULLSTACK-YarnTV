@@ -4,11 +4,11 @@ const videoSchema = new mongoose.Schema({
     //_id
     videoFile: {
         type: String,
-        required: [true,'upload a video first']
+        required: [true, 'upload a video first']
     },
     thumbnail: {
         type: String,
-        required: [true,'thumbnail is required']
+        required: [true, 'thumbnail is required']
     },
     owner: {
         type: mongoose.Schema.ObjectId,
@@ -16,7 +16,7 @@ const videoSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        required: [true, 'add a title'] 
+        required: [true, 'add a title']
     },
     description: {
         type: String
@@ -32,8 +32,14 @@ const videoSchema = new mongoose.Schema({
     isPublished: {
         type: Boolean,
         default: true
-    }
-},{
+    },
+    likes: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "user"
+        }
+    ]
+}, {
     timestamps: true
 })
 

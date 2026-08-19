@@ -50,9 +50,15 @@ const deleteVideo = asyncHandler(async function (req, res) {
     const user_id = req.user._id
     const { videoId } = req.params
 
-    const video = await videoModel.findOne(
+    const video = await videoModel.findOneAndUpdate(
         {
             _id: videoId
+        },
+        {
+            isPublished: false
+        },
+        {
+            new: true
         }
     )
     if (!video) {
@@ -70,6 +76,7 @@ const deleteVideo = asyncHandler(async function (req, res) {
         new apiResponse(200, "video deleted successfully")
     )
 })
+
 
 const updateVideoDetails = asyncHandler(async function (req, res) {
 
@@ -103,4 +110,146 @@ const updateVideoDetails = asyncHandler(async function (req, res) {
     )
 })
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails }
+
+
+const getUserChannelVideos = asyncHandler(async function (req, res) {
+
+    const { username } = req.params
+    const user = await userModel.aggregate([
+        {
+            $match: {
+                username: username
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "_id",
+                foreignField: "owner",
+                as: "createdVideos"
+            }
+        },
+        {
+            $project: {
+                avatar: 1,
+                username: 1,
+                createdVideos: 1
+            }
+        }
+    ])
+
+    if (!user?.length) {
+        throw new apiError(400, "could'nt find videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "videos fetched successfully", user[0])
+    )
+})
+
+
+const getFeedVideos = asyncHandler(async function (req, res) {
+
+    const videos = await videoModel.aggregate([
+        {
+            $match: {}//no condition i.e. get all documents
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                owner: {
+                    $first: "$owner"
+                }
+            }
+        }
+    ])
+
+    if (!videos?.length) {
+        throw new apiError(400, "could'nt find videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "videos fetched successfully", videos)
+    )
+
+})
+
+
+const watchVideo = asyncHandler(async function (req, res) {
+
+    const { video_id } = req.params
+
+    const video = await videoModel.findOneAndUpdate(
+        {
+            _id: video_id
+        }
+    )
+
+    if (!video) {
+        throw new apiError(400, "could'nt find the video")
+    }
+
+    video.views = video.views + 1
+    await video.save()
+
+
+    return res.status(200).json(
+        new apiResponse(200, "viewed successfully")
+    )
+})
+
+
+
+const likeVideo = asyncHandler(async function (req, res) {
+
+    const user_id = new mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = req.params
+
+    const video = await videoModel.findById({
+        _id: video_id
+    })
+
+    if (!video) {
+        throw new apiError(400, "could'nt find the video")
+    }
+
+    if (video.likes.includes(user_id)) {
+        video.likes.pull(user_id)
+        await video.save()
+
+        return res.status(200).json(
+            new apiResponse(200, "video unliked successfully", {
+                likes: video.likes.length,
+                isLiked: false
+            }))
+    }
+
+    video.likes.push(user_id)
+    await video.save()
+
+    return res.status(200).json(
+        new apiResponse(200, "video liked successfully", {
+        likes: video.likes.length,
+        isLiked: true
+    }))
+})
+
+
+
+
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, likeVideo }

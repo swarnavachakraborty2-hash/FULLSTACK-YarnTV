@@ -19,4 +19,12 @@ route.delete("/delete-video/:videoId", authMiddleware, videoControllers.deleteVi
 
 route.patch("/update-video/:videoId", authMiddleware, videoControllers.updateVideoDetails)
 
+route.get("/get-user-videos/:username", authMiddleware, videoControllers.getUserChannelVideos)
+
+route.get("/get-feed-videos", authMiddleware, videoControllers.getFeedVideos)
+
+route.get("/watch-video/:video_id", authMiddleware, videoControllers.watchVideo)
+
+route.get("/like-video/:video_id", authMiddleware, videoControllers.likeVideo)
+
 module.exports = route
