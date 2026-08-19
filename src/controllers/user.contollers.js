@@ -466,5 +466,7 @@ const getWatchHistory = asyncHandler(async function (req, res) {
 })
 
 
+
+
 module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken, changeUserPassword, getCurrentUser, changeAccountDetails, updateAvatar, updateCoverImage, getUserChannel, getWatchHistory }
 

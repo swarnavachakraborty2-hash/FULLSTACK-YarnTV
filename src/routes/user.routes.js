@@ -42,6 +42,8 @@ route.get("/watch-history", authMiddleware, userControllers.getWatchHistory)
 //functions on different users
 route.get("/profile/:username", authMiddleware, userControllers.getUserChannel)
 
+route.get("/search-user/:username", authMiddleware, userControllers.getUserChannel)
+
 
 
 
