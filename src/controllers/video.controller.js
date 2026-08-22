@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const asyncHandler = require('../utils/asyncHandler')
 const userModel = require("../models/user.model")
 const subscriptionModel = require("../models/subscription.model")
@@ -73,7 +74,7 @@ const deleteVideo = asyncHandler(async function (req, res) {
         { _id: videoId }
     )
     return res.status(200).json(
-        new apiResponse(200, "video deleted successfully")
+        new apiResponse(200, "video deleted successfully", Video)
     )
 })
 
@@ -88,22 +89,22 @@ const updateVideoDetails = asyncHandler(async function (req, res) {
         throw new apiError(400, "title or description is required")
     }
 
-    const video = await videoModel.findOneAndUpdate(
+    const video = await videoModel.findOne(
         {
             _id: videoId
-        },
-        {
-            title: title,
-            description: description
-        },
-        {
-            new: true
         }
     )
+    if (video.owner != user_id) {
+        throw new apiError(400, "unauthorised action")
+    }
 
     if (!video) {
         throw new apiError(400, "can't find video")
     }
+
+    video.title = title
+    video.description = description
+    await video.save()
 
     return res.status(200).json(
         new apiResponse(200, "video updated successfully")
@@ -244,9 +245,9 @@ const likeVideo = asyncHandler(async function (req, res) {
 
     return res.status(200).json(
         new apiResponse(200, "video liked successfully", {
-        likes: video.likes.length,
-        isLiked: true
-    }))
+            likes: video.likes.length,
+            isLiked: true
+        }))
 })
 
 

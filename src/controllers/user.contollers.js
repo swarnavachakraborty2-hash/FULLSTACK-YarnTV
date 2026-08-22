@@ -142,7 +142,7 @@ const Logout = asyncHandler(async function (req, res) {
             _id: req.user._id
         },
         {
-            refreshToken: undefined
+            refreshToken: null
         },
         {
             returnDocument: "after"

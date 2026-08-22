@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
 const videoSchema = new mongoose.Schema({
     //_id
@@ -32,16 +33,12 @@ const videoSchema = new mongoose.Schema({
     isPublished: {
         type: Boolean,
         default: true
-    },
-    likes: [
-        {
-            type: mongoose.Schema.ObjectId,
-            ref: "user"
-        }
-    ]
+    }
 }, {
     timestamps: true
 })
+
+videoSchema.plugin(mongooseAggregatePaginate)
 
 const videoModel = mongoose.model("video", videoSchema)
 
