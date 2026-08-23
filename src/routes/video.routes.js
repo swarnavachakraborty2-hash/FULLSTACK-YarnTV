@@ -3,6 +3,7 @@ const route = express.Router()
 const upload = require("../middlewares/multer.middleware.js")
 const authMiddleware = require("../middlewares/user.middleware.js")
 const videoControllers = require("../controllers/video.controller.js")
+const commentController = require("../controllers/comment.controller.js")
 
 route.post("/create-video", upload.fields([
     {
@@ -25,6 +26,16 @@ route.get("/get-feed-videos", authMiddleware, videoControllers.getFeedVideos)
 
 route.get("/watch-video/:video_id", authMiddleware, videoControllers.watchVideo)
 
-route.get("/like-video/:video_id", authMiddleware, videoControllers.likeVideo)
+//new
+
+route.post("/comment-video/:video_id", authMiddleware, commentController.commentOnVideo)
+
+route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, commentController.commentOnVideo)
+
+//due
+route.get("/get-video/:video_id", authMiddleware)
+route.get("/like-video/:video_id", authMiddleware)
+route.get("/get-liked-videos/:video_id", authMiddleware)
+
 
 module.exports = route

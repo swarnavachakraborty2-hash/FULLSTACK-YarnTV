@@ -216,41 +216,5 @@ const watchVideo = asyncHandler(async function (req, res) {
 
 
 
-const likeVideo = asyncHandler(async function (req, res) {
 
-    const user_id = new mongoose.Types.ObjectId(req.user._id)
-    const { video_id } = req.params
-
-    const video = await videoModel.findById({
-        _id: video_id
-    })
-
-    if (!video) {
-        throw new apiError(400, "could'nt find the video")
-    }
-
-    if (video.likes.includes(user_id)) {
-        video.likes.pull(user_id)
-        await video.save()
-
-        return res.status(200).json(
-            new apiResponse(200, "video unliked successfully", {
-                likes: video.likes.length,
-                isLiked: false
-            }))
-    }
-
-    video.likes.push(user_id)
-    await video.save()
-
-    return res.status(200).json(
-        new apiResponse(200, "video liked successfully", {
-            likes: video.likes.length,
-            isLiked: true
-        }))
-})
-
-
-
-
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, likeVideo }
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo }

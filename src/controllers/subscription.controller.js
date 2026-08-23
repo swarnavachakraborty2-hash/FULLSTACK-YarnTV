@@ -11,6 +11,29 @@ const userSubscription = asyncHandler(async function (req, res) {
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
     const { username } = req.params
 
+    const channel = await userModel.findOne({ username: username })
+
+    const subscribeModel = await subscriptionModel.findOne({
+        subscriber: curr_user_id
+    })
+
+    if (!subscribeModel) {
+        await subscriptionModel.create(
+            {
+                channel: channel._id,
+                subscriber: curr_user_id
+            }
+        )
+    }
+    else {
+        await subscriptionModel.findOneAndDelete(
+            {
+                channel: channel._id,
+                subscriber: curr_user_id
+            }
+        )
+    }
+
     const user = await userModel.aggregate([
         {
             $match: {
@@ -48,30 +71,15 @@ const userSubscription = asyncHandler(async function (req, res) {
         throw new apiError(400, "user did not found")
     }
 
-
     if (user[0].isSubscribed) {
-        const subscription = await subscriptionModel.findOneAndDelete(
-            {
-                subscriber: curr_user_id
-            }
-        )
-
-        return res.status(200).json(
-            new apiResponse(200, "unsubscribed successfully", user[0])
-        )
-    }
-    else {
-        const subscription = await subscriptionModel.create(
-            {
-                channel: user[0]._id,
-                subscriber: curr_user_id
-            }
-        )
-
         return res.status(200).json(
             new apiResponse(200, "subscribed successfully", user[0])
         )
     }
+
+    return res.status(200).json(
+        new apiResponse(200, "unsubscribed successfully", user[0])
+    )
 })
 
 module.exports = { userSubscription }
