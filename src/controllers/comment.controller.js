@@ -72,6 +72,7 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
     const comment = commentModel.findOneAndDelete(
         {
             _id: comment_id,
+            video: video_id,
             owner: curr_user_id
         }
     )
@@ -99,6 +100,7 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
     const comment = commentModel.findOneAndDelete(
         {
             _id: comment_id,
+            tweet: tweet_id,
             owner: curr_user_id
         }
     )
