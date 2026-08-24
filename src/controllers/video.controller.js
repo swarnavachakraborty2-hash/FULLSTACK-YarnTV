@@ -7,6 +7,8 @@ const videoModel = require("../models/video.model")
 const apiError = require("../utils/apiError")
 const apiResponse = require("../utils/apiResponse")
 const uploadFile = require("../utils/cloudinary")
+const likeModel = require('../models/like.model')
+const { likeVideo } = require('./like.controller')
 
 
 const createVideo = asyncHandler(async function (req, res) {
@@ -214,7 +216,123 @@ const watchVideo = asyncHandler(async function (req, res) {
     )
 })
 
+const getLikedVideos = asyncHandler(async function (req, res) {
+
+    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
+
+    const likedVideos = await likeModel.aggregate([
+        {
+            $match: {
+                likedBy: curr_user_id,
+                video: !null
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "video",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                { $project: { username: 1, avatar: 1 } }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                video: {
+                    $first: "$video"
+                }
+            }
+        }
+    ])
+
+    if (!likedVideos?.length) {
+        throw new apiError(400, "could'nt fetch videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "videos fetched successfully", likedVideos)
+    )
+})
 
 
+const getVideo = asyncHandler(async (req, res){
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo }
+    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = mongoose.Types.ObjectId(req.params)
+
+    const video = await videoModel.aggregate([
+        {
+            $match: {
+                _id: video_id
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "subscribers",
+                            localField: "_id",
+                            foreignField: "channel",
+                            as: "subscribers"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            subscribers: { $size: "$subscribers" },
+                            isSubscribed: {
+                                $cond: {
+                                    if: { $in: [curr_user_id, "$subscribers.subscriber"] },
+                                    then: true,
+                                    else: false
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $project: { username: 1, avatar: 1, subscribers: 1, isSubscribed: 1 }
+                    },
+
+                ]
+            }
+        },
+        {
+            $addFields: {
+                owner: {
+                    $first: "$owner"
+                }
+            }
+        },
+        {
+            //add comments lookup with nested owners lookup
+        }
+
+    ])
+
+    //due
+})
+
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos }

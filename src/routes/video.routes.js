@@ -33,12 +33,13 @@ route.post("/comment-video/:video_id", authMiddleware, commentController.comment
 
 route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, commentController.commentOnVideo)
 
-route.get("/like-video/:video_id", authMiddleware,  likeController.likeVideo)
+route.get("/get-liked-videos", authMiddleware, videoControllers.getLikedVideos)
+
 
 //due
+
 route.get("/get-video/:video_id", authMiddleware)
 
-route.get("/get-liked-videos/:video_id", authMiddleware)
 
 
 module.exports = route

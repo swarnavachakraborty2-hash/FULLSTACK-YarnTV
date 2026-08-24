@@ -373,7 +373,7 @@ const getUserChannel = asyncHandler(async function (req, res) {
                 },
                 isSubscribed: {
                     $cond: { //this returns true or false based on if user is subscribed to the found user or not 
-                        if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+                        if: { $in: [mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
                         then: true,
                         else: false
                     }
@@ -389,13 +389,12 @@ const getUserChannel = asyncHandler(async function (req, res) {
                 coverImage: 1,
                 subscribersCount: 1,
                 subcsribedToCount: 1,
-                isSubscribed: 1,
-                videos: 1
+                isSubscribed: 1
             }
         }
     ])
-    console.log(channel)
-
+    
+    
     if (!channel?.length) {
         throw new apiError(400, "channel does not exists")
     }
@@ -441,16 +440,6 @@ const getWatchHistory = asyncHandler(async function (req, res) {
                         }
                     }
                 ]
-            }
-        },
-        {
-            $project: {
-                fullname: 1,
-                username: 1,
-                email: 1,
-                avatar: 1,
-                coverImage: 1,
-                watchHistory: 1
             }
         }
     ])
