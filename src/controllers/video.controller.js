@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2')
 const asyncHandler = require('../utils/asyncHandler')
 const userModel = require("../models/user.model")
 const subscriptionModel = require("../models/subscription.model")
@@ -8,7 +7,7 @@ const apiError = require("../utils/apiError")
 const apiResponse = require("../utils/apiResponse")
 const uploadFile = require("../utils/cloudinary")
 const likeModel = require('../models/like.model')
-const { likeVideo } = require('./like.controller')
+const commentModel = require('../models/comment.model')
 
 
 const createVideo = asyncHandler(async function (req, res) {
@@ -218,13 +217,13 @@ const watchVideo = asyncHandler(async function (req, res) {
 
 const getLikedVideos = asyncHandler(async function (req, res) {
 
-    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
 
     const likedVideos = await likeModel.aggregate([
         {
             $match: {
                 likedBy: curr_user_id,
-                video: !null
+                video: {$exists: true} //video is not null
             }
         },
         {
@@ -273,16 +272,16 @@ const getLikedVideos = asyncHandler(async function (req, res) {
     )
 })
 
+//get video page
+const getVideo = asyncHandler(async function(req, res){
 
-const getVideo = asyncHandler(async (req, res){
-
-    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
-    const { video_id } = mongoose.Types.ObjectId(req.params)
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = req.params
 
     const video = await videoModel.aggregate([
         {
             $match: {
-                _id: video_id
+                _id: new mongoose.Types.ObjectId(video_id)
             }
         },
         {
@@ -294,7 +293,7 @@ const getVideo = asyncHandler(async (req, res){
                 pipeline: [
                     {
                         $lookup: {
-                            from: "subscribers",
+                            from: "subscriptions",
                             localField: "_id",
                             foreignField: "channel",
                             as: "subscribers"
@@ -302,14 +301,14 @@ const getVideo = asyncHandler(async (req, res){
                     },
                     {
                         $addFields: {
-                            subscribers: { $size: "$subscribers" },
                             isSubscribed: {
                                 $cond: {
                                     if: { $in: [curr_user_id, "$subscribers.subscriber"] },
                                     then: true,
                                     else: false
                                 }
-                            }
+                            },
+                            subscribers: { $size: "$subscribers" }
                         }
                     },
                     {
@@ -320,19 +319,142 @@ const getVideo = asyncHandler(async (req, res){
             }
         },
         {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "video",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: {
+                    $first: "$owner"
+                },
+                isLiked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                likes: { $size: "$likes" }
+            }
+        }
+    ])
+
+    if (!video?.length) {
+        throw new apiError("could'nt find videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "video fetched successfully", video[0])
+    )
+})
+
+
+const getCommentsVideo = asyncHandler(async function (req, res) {
+    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = mongoose.Types.ObjectId(req.params)
+
+    const comments = await commentModel.aggregate([
+        {
+            $match: { video: video_id }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "likedBy",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "video",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $first: "$owner" },
+                isLiked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "&likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                likes: { $size: "$likes" }
+            }
+        }
+    ])
+
+    if (!comments?.length) {
+        throw new apiError(400, "could'nt fetch comments")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "comments fetched successfully", comments)
+    )
+})
+
+
+const searchVideosOnFeed = asyncHandler(async function (req, res) {
+
+    const { letter } = req.body
+    const regex = new RegExp(letter, "i")// "i" == case insensitive
+
+
+    const videos = await videoModel.aggregate([
+        {
+            $match: {
+                title: { $regex: regex }
+            }// "regex" = get all documents with the particular string letter in title 
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
             $addFields: {
                 owner: {
                     $first: "$owner"
                 }
             }
-        },
-        {
-            //add comments lookup with nested owners lookup
         }
-
     ])
 
-    //due
+    if (!videos?.length) {
+        throw new apiError(400, "could'nt find videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "videos fetched successfully", videos)
+    )
+
 })
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos }
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed }

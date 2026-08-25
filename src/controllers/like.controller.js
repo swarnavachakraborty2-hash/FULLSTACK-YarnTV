@@ -11,8 +11,8 @@ const likeModel = require("../models/like.model")
 
 const likeVideo = asyncHandler(async function (req, res) {
 
-    const { video_id } = req.body
-    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = req.params
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
 
     const liked = await likeModel.findOne({
         likedBy: curr_user_id,
@@ -37,7 +37,7 @@ const likeVideo = asyncHandler(async function (req, res) {
     const video = await videoModel.aggregate([
         {
             $match: {
-                _id: mongoose.Types.ObjectId(video_id)
+                _id: new mongoose.Types.ObjectId(video_id)
             }
         },
         {

@@ -4,8 +4,9 @@ const upload = require("../middlewares/multer.middleware.js")
 const authMiddleware = require("../middlewares/user.middleware.js")
 const videoControllers = require("../controllers/video.controller.js")
 const commentController = require("../controllers/comment.controller.js")
-const likeController = require("../controllers/like.controller.js")
 
+
+//video manipulation 
 route.post("/create-video", upload.fields([
     {
         name: "videoFile",
@@ -21,25 +22,31 @@ route.delete("/delete-video/:videoId", authMiddleware, videoControllers.deleteVi
 
 route.patch("/update-video/:videoId", authMiddleware, videoControllers.updateVideoDetails)
 
+
+//video fetch
 route.get("/get-user-videos/:username", authMiddleware, videoControllers.getUserChannelVideos)
 
 route.get("/get-feed-videos", authMiddleware, videoControllers.getFeedVideos)
 
-route.get("/watch-video/:video_id", authMiddleware, videoControllers.watchVideo)
-
-//new(testing needed)
-
-route.post("/comment-video/:video_id", authMiddleware, commentController.commentOnVideo)
-
-route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, commentController.commentOnVideo)
-
 route.get("/get-liked-videos", authMiddleware, videoControllers.getLikedVideos)
 
+route.post("/search-video", authMiddleware, videoControllers.searchVideosOnFeed)
 
-//due
+route.get("/get-video/:video_id", authMiddleware, videoControllers.getVideo)
 
-route.get("/get-video/:video_id", authMiddleware)
 
+//watch video
+route.get("/watch-video/:video_id", authMiddleware, videoControllers.watchVideo)
+
+
+//comment
+route.post("/comment-video/:video_id", authMiddleware, commentController.commentOnVideo)
+
+route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, commentController.deleteVideoComment)
+
+
+//new(testing needed)
+route.get("/get-comments-video/:video_id", authMiddleware, videoControllers.getCommentsVideo)
 
 
 module.exports = route

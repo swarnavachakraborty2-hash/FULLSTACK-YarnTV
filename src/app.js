@@ -28,7 +28,7 @@ app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/subscription", subscriptionRoutes)
 app.use("/api/v1/video", videoRoutes)
 app.use("/api/v1/tweet", tweetRoutes)
-app.use("/api/v1/like", tweetRoutes)
+app.use("/api/v1/like", likeRoutes)
 
 
 module.exports = app

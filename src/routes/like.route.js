@@ -12,10 +12,10 @@ const likeController = require("../controllers/like.controller.js")
 route.get("/video/:video_id", authMiddleware,  likeController.likeVideo)
 
 //tweet
-route.post("/tweet/:tweet_id", authMiddleware, likeController.liketweet)
+route.get("/tweet/:tweet_id", authMiddleware, likeController.liketweet)//new
 
 //comment
-route.post("/comment/:comment_id", authMiddleware, likeController.likeComment)
+route.get("/comment/:comment_id", authMiddleware, likeController.likeComment)//new
 
 
 module.exports = route

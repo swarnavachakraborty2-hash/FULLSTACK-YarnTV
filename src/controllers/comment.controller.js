@@ -67,9 +67,9 @@ const commentOnTweet = asyncHandler(async function (req, res) {
 const deleteVideoComment = asyncHandler(async function (req, res) {
 
     const curr_user_id = req.user._id
-    const { comment_id, video_id } = req.params
+    const { video_id, comment_id } = req.params
 
-    const comment = commentModel.findOneAndDelete(
+    const comment = await commentModel.findOneAndDelete(
         {
             _id: comment_id,
             video: video_id,
@@ -83,7 +83,7 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
 
     const VideoComments = await commentModel.find(
         {
-            _id: video_id
+            video: video_id
         }
     )
 
@@ -97,7 +97,7 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
     const curr_user_id = req.user._id
     const { comment_id, tweet_id } = req.params
 
-    const comment = commentModel.findOneAndDelete(
+    const comment = await commentModel.findOneAndDelete(
         {
             _id: comment_id,
             tweet: tweet_id,
@@ -111,7 +111,7 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
 
     const tweetComments = await commentModel.find(
         {
-            _id: tweet_id
+            tweet: tweet_id
         }
     )
 
