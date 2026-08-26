@@ -40,8 +40,6 @@ const userSchema = new mongoose.Schema({
     password: {//hash 
         type: String,
         required: [true, 'user must have a password'],
-        minLength: [8, 'password must be of atleast 8 characters'],
-        maxLength: [20, 'password must be less than 20 characters '],
         trim: true
     },
     refreshToken: {

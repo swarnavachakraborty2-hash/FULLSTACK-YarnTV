@@ -2,7 +2,7 @@ const express = require("express")
 const route = express.Router()
 const authMiddleware = require("../middlewares/user.middleware.js")
 const commentController = require("../controllers/comment.controller.js")
-const likeController = require("../controllers/like.controller.js")
+
 
 route.post("/create-tweet", authMiddleware)//due
 

@@ -61,6 +61,9 @@ const Register = asyncHandler(async function (req, res) {
         coverURL = await uploadFile(req.files.coverImage[0].path)//uploaded the localpath of the file as a parameter
     }
 
+    if (!password || password.length < 8 || password.length > 20) {
+        throw new apiError(400, "password must be between 8 and 20 characters")
+    }
 
     const user = await userModel.create({
         username: username,
@@ -373,7 +376,7 @@ const getUserChannel = asyncHandler(async function (req, res) {
                 },
                 isSubscribed: {
                     $cond: { //this returns true or false based on if user is subscribed to the found user or not 
-                        if: { $in: [mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
+                        if: { $in: [ new mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
                         then: true,
                         else: false
                     }
@@ -393,8 +396,8 @@ const getUserChannel = asyncHandler(async function (req, res) {
             }
         }
     ])
-    
-    
+
+
     if (!channel?.length) {
         throw new apiError(400, "channel does not exists")
     }
@@ -415,7 +418,7 @@ const getWatchHistory = asyncHandler(async function (req, res) {
             }
         },
         {
-            $lookup: {//creates an array field with all videos
+            $lookup: {//creates an array field with all the videos where current user id is in its views array
                 from: "videos",
                 localField: "watchHistory",
                 foreignField: "_id",
@@ -436,10 +439,19 @@ const getWatchHistory = asyncHandler(async function (req, res) {
                         $addFields: {
                             owner: {
                                 $first: "$owner"//first element of owner array
-                            }
+                            },
+                            views: {$size: "$views"}
                         }
                     }
                 ]
+            }
+        },
+        {
+            $project: {
+               watchHistory: 1,
+               username: 1,
+               avatar: 1,
+               coverImage:1
             }
         }
     ])

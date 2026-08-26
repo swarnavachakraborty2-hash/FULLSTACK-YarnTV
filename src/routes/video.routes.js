@@ -44,8 +44,6 @@ route.post("/comment-video/:video_id", authMiddleware, commentController.comment
 
 route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, commentController.deleteVideoComment)
 
-
-//new(testing needed)
 route.get("/get-comments-video/:video_id", authMiddleware, videoControllers.getCommentsVideo)
 
 

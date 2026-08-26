@@ -128,7 +128,14 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
                 from: "videos",
                 localField: "_id",
                 foreignField: "owner",
-                as: "createdVideos"
+                as: "createdVideos",
+                pipeline: [
+                    {
+                        $addFields: {
+                            views: {$size: "$views"}
+                        }
+                    }
+                ]
             }
         },
         {
@@ -176,7 +183,8 @@ const getFeedVideos = asyncHandler(async function (req, res) {
             $addFields: {
                 owner: {
                     $first: "$owner"
-                }
+                },
+                views: {$size: "$views"}
             }
         }
     ])
@@ -194,19 +202,24 @@ const getFeedVideos = asyncHandler(async function (req, res) {
 
 const watchVideo = asyncHandler(async function (req, res) {
 
+    const curr_user_id = req.user._id
     const { video_id } = req.params
 
-    const video = await videoModel.findOneAndUpdate(
+    const video = await videoModel.findOne(
         {
             _id: video_id
         }
     )
 
+    const curr_user = await userModel.findOne({ _id: curr_user_id })
+    curr_user.watchHistory.push(video_id)
+    await curr_user.save()
+
     if (!video) {
         throw new apiError(400, "could'nt find the video")
     }
 
-    video.views = video.views + 1
+    video.views.push(curr_user_id)
     await video.save()
 
 
@@ -214,6 +227,8 @@ const watchVideo = asyncHandler(async function (req, res) {
         new apiResponse(200, "viewed successfully")
     )
 })
+
+
 
 const getLikedVideos = asyncHandler(async function (req, res) {
 
@@ -223,7 +238,7 @@ const getLikedVideos = asyncHandler(async function (req, res) {
         {
             $match: {
                 likedBy: curr_user_id,
-                video: {$exists: true} //video is not null
+                video: { $exists: true } //video is not null
             }
         },
         {
@@ -248,7 +263,8 @@ const getLikedVideos = asyncHandler(async function (req, res) {
                         $addFields: {
                             owner: {
                                 $first: "$owner"
-                            }
+                            },
+                            views: {$size: "$views"}
                         }
                     }
                 ]
@@ -273,7 +289,7 @@ const getLikedVideos = asyncHandler(async function (req, res) {
 })
 
 //get video page
-const getVideo = asyncHandler(async function(req, res){
+const getVideo = asyncHandler(async function (req, res) {
 
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
     const { video_id } = req.params
@@ -338,7 +354,8 @@ const getVideo = asyncHandler(async function(req, res){
                         else: false
                     }
                 },
-                likes: { $size: "$likes" }
+                likes: { $size: "$likes" },
+                views: { $size: "$views" }
             }
         }
     ])
@@ -354,17 +371,18 @@ const getVideo = asyncHandler(async function(req, res){
 
 
 const getCommentsVideo = asyncHandler(async function (req, res) {
-    const curr_user_id = mongoose.Types.ObjectId(req.user._id)
-    const { video_id } = mongoose.Types.ObjectId(req.params)
+
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = req.params
 
     const comments = await commentModel.aggregate([
         {
-            $match: { video: video_id }
+            $match: { video: new mongoose.Types.ObjectId(video_id) }
         },
         {
             $lookup: {
                 from: "users",
-                localField: "likedBy",
+                localField: "owner",
                 foreignField: "_id",
                 as: "owner",
                 pipeline: [
@@ -381,7 +399,7 @@ const getCommentsVideo = asyncHandler(async function (req, res) {
             $lookup: {
                 from: "likes",
                 localField: "_id",
-                foreignField: "video",
+                foreignField: "comment",
                 as: "likes"
             }
         },
@@ -390,7 +408,7 @@ const getCommentsVideo = asyncHandler(async function (req, res) {
                 owner: { $first: "$owner" },
                 isLiked: {
                     $cond: {
-                        if: { $in: [curr_user_id, "&likes.likedBy"] },
+                        if: { $in: [curr_user_id, "$likes.likedBy"] },
                         then: true,
                         else: false
                     }

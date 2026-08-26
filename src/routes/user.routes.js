@@ -37,10 +37,10 @@ route.patch("/edit-avatar", upload.single("avatar"), authMiddleware, userControl
 
 route.patch("/edit-coverImage", upload.single("coverImage"), authMiddleware, userControllers.updateCoverImage)
 
-route.get("/watch-history", authMiddleware, userControllers.getWatchHistory)//test
+route.get("/watch-history", authMiddleware, userControllers.getWatchHistory)
 
 //functions on different users
-route.get("/profile/:username", authMiddleware, userControllers.getUserChannel)//test
+route.get("/profile/:username", authMiddleware, userControllers.getUserChannel)
 
 
 module.exports = route 

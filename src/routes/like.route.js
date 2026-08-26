@@ -15,7 +15,7 @@ route.get("/video/:video_id", authMiddleware,  likeController.likeVideo)
 route.get("/tweet/:tweet_id", authMiddleware, likeController.liketweet)//new
 
 //comment
-route.get("/comment/:comment_id", authMiddleware, likeController.likeComment)//new
+route.get("/comment/:comment_id", authMiddleware, likeController.likeComment)
 
 
 module.exports = route
