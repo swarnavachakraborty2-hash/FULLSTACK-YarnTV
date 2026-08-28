@@ -1,12 +1,7 @@
 const mongoose = require('mongoose')
 const asyncHandler = require('../utils/asyncHandler')
-const userModel = require("../models/user.model")
-const subscriptionModel = require("../models/subscription.model")
-const videoModel = require("../models/video.model")
 const apiError = require("../utils/apiError")
 const apiResponse = require("../utils/apiResponse")
-const uploadFile = require("../utils/cloudinary")
-const likeModel = require('../models/like.model')
 const commentModel = require('../models/comment.model')
 const tweetModel = require('../models/tweet.model')
 
@@ -82,7 +77,7 @@ const getfeedTweets = asyncHandler(async function (req, res) {
         {
             $lookup: {
                 from: "likes",
-                localfield: "_id",
+                localField: "_id",
                 foreignField: "tweet",
                 as: "likes"
             }
@@ -140,7 +135,7 @@ const getUserTweets = asyncHandler(async function (req, res) {
         {
             $lookup: {
                 from: "likes",
-                localfield: "_id",
+                localField: "_id",
                 foreignField: "tweet",
                 as: "likes"
             }

@@ -24,11 +24,52 @@ const commentOnVideo = asyncHandler(async function (req, res) {
         owner: curr_user_id
     })
 
-    const comments = await commentModel.find({ video: video_id })
-    if (!comments) {
-        throw new apiError(400, "could'nt find the updated comments")
-    }
+    const comments = await commentModel.aggregate([
+        {
+            $match: { video: new mongoose.Types.ObjectId(video_id) }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "comment",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $first: "$owner" },
+                isLiked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                likes: { $size: "$likes" }
+            }
+        }
+    ])
 
+    if (!comments?.length) {
+        throw new apiError(400, "could'nt comment")
+    }
 
     return res.status(200).json(
         new apiResponse(200, "commented successfully", comments)
@@ -52,11 +93,52 @@ const commentOnTweet = asyncHandler(async function (req, res) {
         owner: curr_user_id
     })
 
-    const comments = await commentModel.find({ tweet: tweet_id })
-    if (!comments) {
-        throw new apiError(400, "could'nt find the updated comments")
-    }
+    const comments = await commentModel.aggregate([
+        {
+            $match: { tweet: new mongoose.Types.ObjectId(tweet_id) }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "comment",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $first: "$owner" },
+                isLiked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                likes: { $size: "$likes" }
+            }
+        }
+    ])
 
+    if (!comments?.length) {
+        throw new apiError(400, "could'nt comment")
+    }
 
     return res.status(200).json(
         new apiResponse(200, "commented successfully", comments)
@@ -81,14 +163,55 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
         throw new apiError(400, "could'nt find comment")
     }
 
-    const VideoComments = await commentModel.find(
+    const comments = await commentModel.aggregate([
         {
-            video: video_id
+            $match: { video: new mongoose.Types.ObjectId(video_id) }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "comment",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $first: "$owner" },
+                isLiked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                likes: { $size: "$likes" }
+            }
         }
-    )
+    ])
+
+    if (!comments?.length) {
+        throw new apiError(400, "could'nt delete comment")
+    }
 
     return res.status(200).json(
-        new apiResponse(200, "comment deleted successfully", VideoComments)
+        new apiResponse(200, "commented deleted successfully", comments)
     )
 })
 
@@ -109,14 +232,55 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
         throw new apiError(400, "could'nt find comment")
     }
 
-    const tweetComments = await commentModel.find(
+    const comments = await commentModel.aggregate([
         {
-            tweet: tweet_id
+            $match: { tweet: new mongoose.Types.ObjectId(tweet_id) }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "comment",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                owner: { $first: "$owner" },
+                isLiked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                likes: { $size: "$likes" }
+            }
         }
-    )
+    ])
+
+    if (!comments?.length) {
+        throw new apiError(400, "could'nt delete comment")
+    }
 
     return res.status(200).json(
-        new apiResponse(200, "comment deleted successfully", tweetComments)
+        new apiResponse(200, "commented deleted successfully", comments)
     )
 })
 
