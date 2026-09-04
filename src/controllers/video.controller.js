@@ -52,30 +52,18 @@ const deleteVideo = asyncHandler(async function (req, res) {
     const user_id = req.user._id
     const { videoId } = req.params
 
-    const video = await videoModel.findOneAndUpdate(
+    const video = await videoModel.findOneAndDelete(
         {
-            _id: videoId
-        },
-        {
-            isPublished: false
-        },
-        {
-            new: true
+            _id: videoId,
+            owner: user_id
         }
     )
     if (!video) {
         throw new apiError(400, "can't find video")
     }
 
-    if (video.owner != user_id) {
-        throw new apiError(401, "unauthorised request")
-    }
-
-    const Video = await videoModel.findByIdAndDelete(
-        { _id: videoId }
-    )
     return res.status(200).json(
-        new apiResponse(200, "video deleted successfully", Video)
+        new apiResponse(200, "video deleted successfully", video)
     )
 })
 
