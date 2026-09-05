@@ -410,65 +410,10 @@ const getUserChannel = asyncHandler(async function (req, res) {
 
 
 
-const getWatchHistory = asyncHandler(async function (req, res) {
-
-    const user = await userModel.aggregate([
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id) //mongoose does not automatically convert convert this to objectID here (we have to declare manually)
-            }
-        },
-        {
-            $lookup: {//creates an array field with all the videos where current user id is in its views array
-                from: "videos",
-                localField: "watchHistory",
-                foreignField: "_id",
-                as: "watchHistory",
-                pipeline: [
-                    {//creates an array field(owner) inside videos of owner details
-                        $lookup: {
-                            from: "users",
-                            localField: "owner",
-                            foreignField: "_id",
-                            as: "owner",//returns all the properties of owner in video documents
-                            pipeline: [
-                                { $project: { username: 1, avatar: 1, fullname: 1 } }//return only these in the array
-                            ]
-                        }
-                    },
-                    {// replace the array in the owner field with only the first element of owner array
-                        $addFields: {
-                            owner: {
-                                $first: "$owner"//first element of owner array
-                            },
-                            views: {$size: "$views"}
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $project: {
-               watchHistory: 1,
-               username: 1,
-               avatar: 1,
-               coverImage:1
-            }
-        }
-    ])
-
-    if (!user?.length) {
-        throw new apiError(400, "No videos watched")
-    }
-
-    return res.status(200).json(
-        new apiResponse(200, "videos fetched successfully", user[0])
-    )
-
-})
 
 
 
 
-module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken, changeUserPassword, getCurrentUser, changeAccountDetails, updateAvatar, updateCoverImage, getUserChannel, getWatchHistory }
+
+module.exports = { Register, Login, Logout, DeleteAccount, RefreshAccessToken, changeUserPassword, getCurrentUser, changeAccountDetails, updateAvatar, updateCoverImage, getUserChannel }
 

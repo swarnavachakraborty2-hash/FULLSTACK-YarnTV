@@ -191,6 +191,7 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
         },
         {
             $project: {
+                _id: 1,
                 name: 1,
                 owner_details: 1,
                 videos: 1,
@@ -199,8 +200,8 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
         }
     ])
 
-    if(!playlists?.length){
-        throw new apiError(400,"could'nt fetch playlists")
+    if (!playlists?.length) {
+        throw new apiError(400, "could'nt fetch playlists")
     }
 
     return res.status(200).json(
@@ -209,4 +210,89 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
 })
 
 
-module.exports = { createPlaylist, updateDetails, deletePlaylist, saveVideoToPlaylist, getUserChannelPlaylists, deleteVideoFromPlaylist }
+const getPlaylistVideos = asyncHandler(async function (req, res) {
+
+    const { playlist_id } = req.params
+
+    const playlistVideos = await playlistModel.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(playlist_id)
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "videos",
+                foreignField: "_id",
+                as: "videos",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        username: 1,
+                                        avatar: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            },
+                            views: {
+                                $size: "$views"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ])
+
+    if(!videos?.length){
+        throw new apiError(400, "can't fetch videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "fetched videos successfully")
+    )
+})
+
+
+const getUserPlaylistOptions = asyncHandler( async function (req, res){
+    const {user_id} = req.params
+
+    const playlistNames = await playlistModel.aggregate([
+        {
+            $match: {
+                owner: new mongoose.Types.ObjectId(user_id)
+            }
+        },
+        {
+            $project: {
+                name: 1
+            }
+        }
+    ])
+
+    if(!playlistNames?.length){
+        throw new apiError(400, "can't fetch playlist names")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "fetched playlist names successfully")
+    )
+
+})
+
+
+module.exports = { createPlaylist, updateDetails, deletePlaylist, saveVideoToPlaylist, getUserChannelPlaylists, deleteVideoFromPlaylist, getPlaylistVideos, getUserPlaylistOptions }

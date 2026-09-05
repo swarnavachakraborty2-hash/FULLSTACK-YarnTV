@@ -120,7 +120,7 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
                 pipeline: [
                     {
                         $addFields: {
-                            views: {$size: "$views"}
+                            views: { $size: "$views" }
                         }
                     }
                 ]
@@ -172,7 +172,7 @@ const getFeedVideos = asyncHandler(async function (req, res) {
                 owner: {
                     $first: "$owner"
                 },
-                views: {$size: "$views"}
+                views: { $size: "$views" }
             }
         }
     ])
@@ -234,7 +234,7 @@ const getLikedVideos = asyncHandler(async function (req, res) {
                 from: "videos",
                 localField: "video",
                 foreignField: "_id",
-                as: "video",
+                as: "videos",
                 pipeline: [
                     {
                         $lookup: {
@@ -252,17 +252,10 @@ const getLikedVideos = asyncHandler(async function (req, res) {
                             owner: {
                                 $first: "$owner"
                             },
-                            views: {$size: "$views"}
+                            views: { $size: "$views" }
                         }
                     }
                 ]
-            }
-        },
-        {
-            $addFields: {
-                video: {
-                    $first: "$video"
-                }
             }
         }
     ])
@@ -463,4 +456,55 @@ const searchVideosOnFeed = asyncHandler(async function (req, res) {
 
 })
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed }
+
+const getwatchedVideos = asyncHandler(async function (req, res) {
+    
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+
+    const Videos = await likeModel.aggregate([
+        {
+            $match: {
+                $views: { $in: [curr_user_id] }
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "videos",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                { $project: { username: 1, avatar: 1 } }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            },
+                            views: { $size: "$views" }
+                        }
+                    }
+                ]
+            }
+        }
+    ])
+
+    if (!Videos?.length) {
+        throw new apiError(400, "could'nt fetch videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "videos fetched successfully", Videos)
+    )
+})
+
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos }

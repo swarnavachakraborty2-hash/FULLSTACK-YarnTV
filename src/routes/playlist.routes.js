@@ -17,7 +17,10 @@ route.post("/delete-video-playlist/:playlist_id/:video_id", authMiddleware)
 
 route.post("/get-user-playlists/:user_id", authMiddleware)
 
-route.post("/get-currentUser-playlists-options/:username", authMiddleware)
+route.post("/get-currentUser-playlists-options/:user_id", authMiddleware)
+
+route.post("/get-playlist-videos/:playlist_id", authMiddleware)
+
 
 
 module.exports = route
