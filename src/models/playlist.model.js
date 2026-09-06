@@ -8,8 +8,7 @@ const playlistSchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: string,
-        required: true
+        type: String
     },
     videos: [
         {

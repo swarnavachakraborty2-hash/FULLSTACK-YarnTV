@@ -11,7 +11,8 @@ const playlistModel = require("../models/playlist.model")
 
 const createPlaylist = asyncHandler(async function (req, res) {
 
-    const { name, description, video_id } = req.body
+    const { name, description } = req.body
+    const { video_id } = req.params
     const curr_user_id = req.user._id
 
 
@@ -130,7 +131,7 @@ const deleteVideoFromPlaylist = asyncHandler(async function (req, res) {
     await playlist.save()
 
     return res.status(200).json(
-        new apiResponse(200, "video saved to playlist successfully")
+        new apiResponse(200, "video removed from playlist successfully")
     )
 })
 
@@ -205,7 +206,7 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
     }
 
     return res.status(200).json(
-        new apiResponse(200, "playlists fetched successfully")
+        new apiResponse(200, "playlists fetched successfully", playlists)
     )
 })
 
@@ -258,18 +259,18 @@ const getPlaylistVideos = asyncHandler(async function (req, res) {
         }
     ])
 
-    if(!videos?.length){
+    if (!playlistVideos?.length) {
         throw new apiError(400, "can't fetch videos")
     }
 
     return res.status(200).json(
-        new apiResponse(200, "fetched videos successfully")
+        new apiResponse(200, "fetched videos successfully", playlistVideos)
     )
 })
 
 
-const getUserPlaylistOptions = asyncHandler( async function (req, res){
-    const {user_id} = req.params
+const getUserPlaylistOptions = asyncHandler(async function (req, res) {
+    const { user_id } = req.params
 
     const playlistNames = await playlistModel.aggregate([
         {
@@ -284,12 +285,12 @@ const getUserPlaylistOptions = asyncHandler( async function (req, res){
         }
     ])
 
-    if(!playlistNames?.length){
+    if (!playlistNames?.length) {
         throw new apiError(400, "can't fetch playlist names")
     }
 
     return res.status(200).json(
-        new apiResponse(200, "fetched playlist names successfully")
+        new apiResponse(200, "fetched playlist names successfully", playlistNames)
     )
 
 })

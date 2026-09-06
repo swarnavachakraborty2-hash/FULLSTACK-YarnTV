@@ -34,7 +34,7 @@ route.post("/search-video", authMiddleware, videoControllers.searchVideosOnFeed)
 
 route.get("/get-video/:video_id", authMiddleware, videoControllers.getVideo)
 
-route.get("/get-watched-videos/:playlist_id", authMiddleware, videoControllers.getwatchedVideos)//due test
+route.get("/get-watched-videos", authMiddleware, videoControllers.getwatchedVideos)
 
 //watch video
 route.get("/watch-video/:video_id", authMiddleware, videoControllers.watchVideo)
