@@ -108,7 +108,8 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
     const user = await userModel.aggregate([
         {
             $match: {
-                username: username
+                username: username,
+                isPublished: true
             }
         },
         {
@@ -149,7 +150,9 @@ const getFeedVideos = asyncHandler(async function (req, res) {
 
     const videos = await videoModel.aggregate([
         {
-            $match: {}//no condition i.e. get all documents
+            $match: {
+                isPublished: true
+            }
         },
         {
             $lookup: {
@@ -240,7 +243,8 @@ const getLikedVideos = asyncHandler(async function (req, res) {
         {
             $match: {
                 likedBy: curr_user_id,
-                video: { $exists: true } //video is not null
+                video: { $exists: true }, //video is not null
+                isPublished: true
             }
         },
         {
@@ -384,6 +388,7 @@ const getCommentsVideo = asyncHandler(async function (req, res) {
                     {
                         $project: {
                             username: 1,
+                            fullname: 1,
                             avatar: 1
                         }
                     }
@@ -432,7 +437,8 @@ const searchVideosOnFeed = asyncHandler(async function (req, res) {
     const videos = await videoModel.aggregate([
         {
             $match: {
-                title: { $regex: regex }
+                title: { $regex: regex },
+                isPublished: true
             }// "regex" = get all documents with the particular string letter in title 
         },
         {
@@ -471,6 +477,7 @@ const searchVideosOnFeed = asyncHandler(async function (req, res) {
 })
 
 
+
 const getwatchedVideos = asyncHandler(async function (req, res) {
 
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
@@ -478,7 +485,8 @@ const getwatchedVideos = asyncHandler(async function (req, res) {
     const Videos = await videoModel.aggregate([
         {
             $match: {
-                views: { $in: [curr_user_id] }
+                views: { $in: [curr_user_id] },
+                isPublished: true
             }
         },
         {
@@ -512,4 +520,41 @@ const getwatchedVideos = asyncHandler(async function (req, res) {
     )
 })
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos }
+
+
+const publishVideoToggle = asyncHandler(async function (req, res) {
+
+    const { video_id } = req.params
+
+    const video = await videoModel.findOne({ _id: video_id })
+
+    if (!video) {
+        throw new apiError(400, "can't find video")
+    }
+
+    if (video.isPublished) {
+        video.isPublished = false
+        await video.save()
+
+        const updatedVideo = await videoModel.findOne({ _id: video_id })
+
+        return res.status(200).json(
+            new apiResponse(200, "video unpublished successfully", updatedVideo)
+        )
+    }
+    else {
+        video.isPublished = true
+        await video.save()
+
+        const updatedVideo = await videoModel.findOne({ _id: video_id })
+
+        return res.status(200).json(
+            new apiResponse(200, "video published successfully", updatedVideo)
+        )
+    }
+
+})
+
+
+
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos, publishVideoToggle }

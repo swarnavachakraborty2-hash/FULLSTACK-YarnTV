@@ -280,6 +280,7 @@ const getUserPlaylistOptions = asyncHandler(async function (req, res) {
         },
         {
             $project: {
+                _id: 1,
                 name: 1
             }
         }

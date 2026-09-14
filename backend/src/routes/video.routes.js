@@ -48,4 +48,8 @@ route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, comm
 route.get("/get-comments-video/:video_id", authMiddleware, videoControllers.getCommentsVideo)
 
 
+//admin page
+route.get("/publish-toggle-video/:video_id", authMiddleware, videoControllers.publishVideoToggle)
+
+
 module.exports = route

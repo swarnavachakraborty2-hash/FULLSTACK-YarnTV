@@ -186,6 +186,7 @@ const getCommentstweet = asyncHandler(async function (req, res) {
                     {
                         $project: {
                             username: 1,
+                            fullname: 1,
                             avatar: 1
                         }
                     }
