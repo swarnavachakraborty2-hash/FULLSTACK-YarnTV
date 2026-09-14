@@ -7,7 +7,7 @@ const commentController = require("../controllers/comment.controller.js")
 
 
 //video manipulation 
-route.post("/create-video", upload.fields([
+route.post("/create-video", authMiddleware, upload.fields([
     {
         name: "videoFile",
         maxCount: 1
@@ -16,7 +16,7 @@ route.post("/create-video", upload.fields([
         name: "thumbnail",
         maxCount: 1
     }
-]), authMiddleware, videoControllers.createVideo)
+]), videoControllers.createVideo)
 
 route.delete("/delete-video/:videoId", authMiddleware, videoControllers.deleteVideo)
 

@@ -11,16 +11,17 @@ const userSubscription = asyncHandler(async function (req, res) {
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
     const { username } = req.params
 
-    const channel = await userModel.findOne({ username: username })
+    const userchannel = await userModel.findOne({ username: username })
 
     const subscribeModel = await subscriptionModel.findOne({
+        channel: userchannel._id,
         subscriber: curr_user_id
     })
 
     if (!subscribeModel) {
         await subscriptionModel.create(
             {
-                channel: channel._id,
+                channel: userchannel._id,
                 subscriber: curr_user_id
             }
         )
@@ -28,7 +29,7 @@ const userSubscription = asyncHandler(async function (req, res) {
     else {
         await subscriptionModel.findOneAndDelete(
             {
-                channel: channel._id,
+                channel: userchannel._id,
                 subscriber: curr_user_id
             }
         )

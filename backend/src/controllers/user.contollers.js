@@ -367,6 +367,14 @@ const getUserChannel = asyncHandler(async function (req, res) {
             }
         },
         {
+            $lookup: {
+                from: "videos",
+                localField: "_id",
+                foreignField: "owner",
+                as: "videos"
+            }
+        },
+        {
             $addFields: {//adds an additional field allong with all the other fields of usermodel
                 subscribersCount: {
                     $size: "$subscribers"//returns the size of subscribers array(all the documents returned with user_id == channel id)
@@ -380,6 +388,9 @@ const getUserChannel = asyncHandler(async function (req, res) {
                         then: true,
                         else: false
                     }
+                },
+                videos: {
+                    $size: "$videos"
                 }
             }
         },
@@ -393,7 +404,8 @@ const getUserChannel = asyncHandler(async function (req, res) {
                 coverImage: 1,
                 subscribersCount: 1,
                 subcsribedToCount: 1,
-                isSubscribed: 1
+                isSubscribed: 1,
+                videos: 1
             }
         }
     ])
@@ -407,10 +419,6 @@ const getUserChannel = asyncHandler(async function (req, res) {
         new apiResponse(200, "channel fetched successfully", channel[0])
     )                                                         //return the first object of the channel array instead of passing array
 })
-
-
-
-
 
 
 

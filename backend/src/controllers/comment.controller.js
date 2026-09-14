@@ -206,12 +206,8 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
         }
     ])
 
-    if (!comments?.length) {
-        throw new apiError(400, "could'nt delete comment")
-    }
-
     return res.status(200).json(
-        new apiResponse(200, "commented deleted successfully", comments)
+        new apiResponse(200, "comment deleted successfully", comments || [])
     )
 })
 
@@ -275,12 +271,8 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
         }
     ])
 
-    if (!comments?.length) {
-        throw new apiError(400, "could'nt delete comment")
-    }
-
     return res.status(200).json(
-        new apiResponse(200, "commented deleted successfully", comments)
+        new apiResponse(200, "comment deleted successfully", comments || [])
     )
 })
 

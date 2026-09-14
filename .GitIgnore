@@ -24,6 +24,8 @@ coverage
 *.lcov
 
 # Image storage
+backend/public/temp/*
+!backend/public/temp/.gitkeep
 public/temp/*
 !public/temp/.gitkeep
 

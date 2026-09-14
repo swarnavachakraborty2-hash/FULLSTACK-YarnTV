@@ -199,18 +199,19 @@ const watchVideo = asyncHandler(async function (req, res) {
         }
     )
 
+
+    if (!video) {
+        throw new apiError(400, "could'nt find the video")
+    }
+
     const curr_user = await userModel.findOne({ _id: curr_user_id })
 
-    //watch history cannot contain duplicate ids
+    //watch history cannot contain duplicate video ids
     if (curr_user.watchHistory.includes(video_id)) {
         curr_user.watchHistory.pull(video_id)
     }
     curr_user.watchHistory.push(video_id)
     await curr_user.save()
-
-    if (!video) {
-        throw new apiError(400, "could'nt find the video")
-    }
 
     //a person can see a video maximum of three times to increase views of a video
 

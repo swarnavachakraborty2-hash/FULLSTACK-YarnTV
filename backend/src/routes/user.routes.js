@@ -33,9 +33,9 @@ route.get("/curr-user", authMiddleware, userControllers.getCurrentUser)
 
 route.patch("/edit-account", authMiddleware, userControllers.changeAccountDetails)// edit username or email
 
-route.patch("/edit-avatar", upload.single("avatar"), authMiddleware, userControllers.updateAvatar)
+route.patch("/edit-avatar", authMiddleware, upload.single("avatar"), userControllers.updateAvatar)
 
-route.patch("/edit-coverImage", upload.single("coverImage"), authMiddleware, userControllers.updateCoverImage)
+route.patch("/edit-coverImage", authMiddleware, upload.single("coverImage"), userControllers.updateCoverImage)
 
 
 //functions on different users

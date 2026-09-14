@@ -11,14 +11,14 @@ cloudinary.config({
 
 
 
-async function uploadFile(localFile) {
+async function uploadFile(localFile) {//upoad file path from temp folder
     try {
 
         if (!localFile) return null
         const uploadResult = await cloudinary.uploader.upload(localFile, {
             resource_type: "auto"// automatically detects which type of file was uploaded 
         })
-        fs.unlinkSync(localFile)// remove/unlink the file from the server after it is upload to cloudinary
+        fs.unlinkSync(localFile)// remove/unlink the file from the server(folder) after it is uploaded to cloudinary
         return uploadResult
 
     } catch (error) {
