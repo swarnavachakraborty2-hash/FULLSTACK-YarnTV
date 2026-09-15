@@ -51,10 +51,10 @@ route.get("/get-comments-video/:video_id", authMiddleware, videoControllers.getC
 //admin page
 route.get("/publish-toggle-video/:video_id", authMiddleware, videoControllers.publishVideoToggle)
 
-//get all admin videos (due)
+//get all admin videos 
 route.get("/get-admin-videos", authMiddleware, videoControllers.getAllAdminVideos )
 
-//get admin statistics (due)
+//get admin statistics
 route.get("/get-admin-stats", authMiddleware, videoControllers.getAdminStats )
 
 module.exports = route
