@@ -556,5 +556,156 @@ const publishVideoToggle = asyncHandler(async function (req, res) {
 })
 
 
+const getAllAdminVideos = asyncHandler(async function (req, res) {
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos, publishVideoToggle }
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+
+    const userVideos = await userModel.aggregate([
+        {
+            $match: {
+                _id: curr_user_id
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "_id",
+                foreignField: "owner",
+                as: "createdVideos",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "likes",
+                            localField: "_id",
+                            foreignField: "video",
+                            as: "likes"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            views: { $size: "$views" },
+                            likes: { $size: "$likes " },
+                        }
+                    },
+                    {
+                        $project: {
+                            isPublished: 1,
+                            thumbnail: 1,
+                            title: 1,
+                            views: 1,
+                            likes: 1,
+                            createdAt: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+                createdVideos: 1
+            }
+        }
+    ])
+
+    if (!userVideos?.length) {
+        throw new apiError(400, "could'nt find videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "videos fetched successfully", userVideos[0])
+    )
+})
+
+
+const getAdminStats = asyncHandler(async function (req, res) {
+
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+
+    const userStats = await userModel.aggregate([
+        {
+            $match: {
+                _id: curr_user_id
+            }
+        },
+        {
+            $lookup: {
+                from: "subscriptions",
+                localField: "_id",
+                foreignField: "channel",
+                as: "subscribers"
+            }
+        },
+        {
+            $lookup: {//will return an object with totalviews inside an array
+                from: "videos",
+                localField: "_id",
+                foreignField: "owner",
+                as: "totalViews",
+                pipeline: [
+                    {
+                        $group: {
+                            _id: null,
+                            views: { $sum: { $size: "$views" } }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "_id",
+                foreignField: "owner",
+                as: "totalLikes",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "likes",
+                            localField: "_id",
+                            foreignField: "video",
+                            as: "likes",
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            likes: { $sum: { $size: "$likes" } }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                subscribers: { $size: "$subscribers" },
+                totalViews: { $first: "$totalViews.views" },
+                totalLikes: { $first: "$totalLikes.likes" }
+            }
+        },
+        {
+            $project: {
+                username: 1,
+                fullname: 1,
+                subscribers: 1,
+                totalViews: 1,
+                totalLikes: 1,
+                avatar: 1,
+            }
+        }
+    ])
+
+
+    if (!userStats?.length) {
+        throw new apiError(400, "could'nt fetch user stats")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "user stats fetched successfully", userStats[0])
+    )
+
+
+})
+
+
+
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos, publishVideoToggle, getAllAdminVideos, getAdminStats }
