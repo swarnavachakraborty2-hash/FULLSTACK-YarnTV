@@ -27,7 +27,7 @@ route.patch("/update-video/:videoId", authMiddleware, videoControllers.updateVid
 //video fetch
 route.get("/get-user-videos/:username", authMiddleware, videoControllers.getUserChannelVideos)
 
-route.get("/get-feed-videos", authMiddleware, videoControllers.getFeedVideos)
+route.get("/get-feed-videos", videoControllers.getFeedVideos)
 
 route.get("/get-liked-videos", authMiddleware, videoControllers.getLikedVideos)
 
