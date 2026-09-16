@@ -354,6 +354,7 @@ const getVideo = asyncHandler(async function (req, res) {
                     }
                 },
                 likes: { $size: "$likes" },
+                dislikes: { $size: "$dislikes" },
                 views: { $size: "$views" }
             }
         }
@@ -439,7 +440,7 @@ const searchVideosOnFeed = asyncHandler(async function (req, res) {
             $match: {
                 title: { $regex: regex },
                 isPublished: true
-            }// "regex" = get all documents with the particular string letter in title 
+            }// "regex" = get all documents starting with the particular string letters in title 
         },
         {
             $lookup: {
@@ -585,6 +586,7 @@ const getAllAdminVideos = asyncHandler(async function (req, res) {
                         $addFields: {
                             views: { $size: "$views" },
                             likes: { $size: "$likes " },
+                            dislikes: { $size: "$dislikes" }
                         }
                     },
                     {
@@ -702,10 +704,43 @@ const getAdminStats = asyncHandler(async function (req, res) {
     return res.status(200).json(
         new apiResponse(200, "user stats fetched successfully", userStats[0])
     )
+})
+
+
+const dislikeVideoToggle = asyncHandler(async function (req, res) {
+
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+    const { video_id } = req.params
+
+    const video = await videoModel.findOne(
+        {
+            _id: video_id
+        }
+    )
+
+    if (!video) {
+        throw new apiError(400, "could'nt find video")
+    }
+
+    if (video.dislikes.includes(curr_user_id)) {
+        video.dislikes.pull(curr_user_id)
+        await video.save()
+
+        return res.status(200).json(
+            new apiResponse(200, "video not disliked successfully")
+        )
+    }
+
+    video.dislikes.push(curr_user_id)
+    await video.save()
+
+    return res.status(200).json(
+        new apiResponse(200, "video disliked successfully")
+    )
 
 
 })
 
 
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos, publishVideoToggle, getAllAdminVideos, getAdminStats }
+module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos, publishVideoToggle, getAllAdminVideos, getAdminStats, dislikeVideoToggle }

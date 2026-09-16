@@ -23,6 +23,7 @@ route.delete("/delete-video/:videoId", authMiddleware, videoControllers.deleteVi
 route.patch("/update-video/:videoId", authMiddleware, videoControllers.updateVideoDetails)
 
 
+
 //video fetch
 route.get("/get-user-videos/:username", authMiddleware, videoControllers.getUserChannelVideos)
 
@@ -40,6 +41,7 @@ route.get("/get-watched-videos", authMiddleware, videoControllers.getwatchedVide
 route.get("/watch-video/:video_id", authMiddleware, videoControllers.watchVideo)
 
 
+
 //comment
 route.post("/comment-video/:video_id", authMiddleware, commentController.commentOnVideo)
 
@@ -47,7 +49,12 @@ route.delete("/delete-comment-video/:video_id/:comment_id", authMiddleware, comm
 
 route.get("/get-comments-video/:video_id", authMiddleware, videoControllers.getCommentsVideo)
 
+//dislike video
+route.get("/dislike-video-toggle/:video_id", authMiddleware, videoControllers.dislikeVideoToggle)//due
 
+
+
+//due
 //admin page
 route.get("/publish-toggle-video/:video_id", authMiddleware, videoControllers.publishVideoToggle)
 

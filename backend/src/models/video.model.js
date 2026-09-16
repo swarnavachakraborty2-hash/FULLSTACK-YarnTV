@@ -30,6 +30,10 @@ const videoSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "user"//user_id
     }],
+    dislikes: [{
+        type: mongoose.Schema.ObjectId,
+        ref: "user"
+    }],
     isPublished: {
         type: Boolean,
         default: true
