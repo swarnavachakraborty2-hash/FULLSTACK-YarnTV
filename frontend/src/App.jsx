@@ -3,18 +3,22 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Feed from './pages/Feed'
 import Channel from './pages/Channel'
+import Register from './pages/Register'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Layout wraps all pages with persistent Navbar and Sidebar */}
+        <Route path="/register" element={<Register />} />
         <Route path="/" element={<Layout />}>
-          <Route index element={<Feed />} />{/*index = root */}
+          <Route index element={<Feed />} />
           <Route path="channel" element={<Channel />} />
+          {/* Add new pages here as nested routes: */}
+          {/* <Route path="tweets" element={<Tweets />} /> */}
+          {/* <Route path="liked" element={<LikedVideos />} /> */}
+          {/* <Route path="history" element={<History />} /> */}
         </Route>
-        <Route path="channel" element={<Channel />} />
       </Routes>
     </BrowserRouter>
   )

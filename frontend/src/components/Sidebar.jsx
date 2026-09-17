@@ -10,7 +10,8 @@ import {
   SettingsIcon,
   CloseIcon,
   PlayLogo,
-  YouIcon
+  YouIcon,
+  TweetIcon
 } from './Icons'
 
 function Sidebar({ isOpen = false, onClose }) {
@@ -20,6 +21,7 @@ function Sidebar({ isOpen = false, onClose }) {
   // Mini sidebar items (shown on the left column under the menu)
   const miniNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
+    { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/tweets' },
     { id: 'you', label: 'You', icon: YouIcon, path: '/channel' }
   ]
 
@@ -27,11 +29,11 @@ function Sidebar({ isOpen = false, onClose }) {
   const mainNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
     { id: 'you', label: 'You', icon: YouIcon, path: '/channel' },
+    { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/tweets' },
     { id: 'liked', label: 'Liked Videos', icon: LikeIcon, path: '/liked' },
     { id: 'history', label: 'History', icon: HistoryIcon, path: '/history' },
     { id: 'content', label: 'My Content', icon: VideoCameraIcon, path: '/my-content' },
     { id: 'collections', label: 'Collections', icon: FolderIcon, path: '/collections' },
-   ,
   ]
 
   const bottomNavItems = [

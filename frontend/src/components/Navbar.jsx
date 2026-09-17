@@ -1,7 +1,9 @@
 import React from 'react'
 import { PlayLogo, SearchIcon, MenuIcon } from './Icons'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 function Navbar({ onToggleSidebar }) {
+  const navigate = useNavigate()
   return (
     <header className="navbar">
       {/* Brand / Logo + Menu toggle button */}
@@ -34,7 +36,7 @@ function Navbar({ onToggleSidebar }) {
         <button type="button" className="btn-login">
           Log in
         </button>
-        <button type="button" className="btn-signup">
+        <button onClick={()=>{navigate("/register")}} type="button" className="btn-signup">
           Sign up
         </button>
       </div>
