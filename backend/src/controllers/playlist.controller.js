@@ -186,7 +186,7 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
                     $size: "$videos"
                 },
                 thumbnail: {
-                    $first: "$thumbnail"
+                    $first: "$thumbnail.thumbnail"
                 }
             }
         },

@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import Feed from './pages/Feed'
 import Channel from './pages/Channel'
 import Register from './pages/Register'
+import Login from "./pages/Login"
 import './App.css'
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Feed />} />
           <Route path="channel" element={<Channel />} />
