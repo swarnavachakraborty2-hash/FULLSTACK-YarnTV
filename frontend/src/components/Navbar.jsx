@@ -66,7 +66,7 @@ function Navbar({ onToggleSidebar }) {
           <>
             {user.avatar ? (
               <img
-                onClick={() => navigate("/channel")}
+                onClick={() => navigate("/profile")}
                 src={user.avatar}
                 alt={user.username}
                 className="navbar-avatar"

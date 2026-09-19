@@ -22,17 +22,17 @@ function Sidebar({ isOpen = false, onClose }) {
   const miniNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
     { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/tweets' },
-    { id: 'you', label: 'You', icon: YouIcon, path: '/channel' }
+    { id: 'you', label: 'You', icon: YouIcon, path: '/profile' }
   ]
 
   // Full drawer items
   const mainNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
-    { id: 'you', label: 'You', icon: YouIcon, path: '/channel' },
+    { id: 'you', label: 'You', icon: YouIcon, path: '/profile' },
     { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/tweets' },
     { id: 'liked', label: 'Liked Videos', icon: LikeIcon, path: '/liked' },
     { id: 'history', label: 'History', icon: HistoryIcon, path: '/history' },
-    { id: 'content', label: 'My Content', icon: VideoCameraIcon, path: '/my-content' },
+    { id: 'content', label: 'My Channel', icon: YouIcon, path: '/channel' },
     { id: 'collections', label: 'Collections', icon: FolderIcon, path: '/collections' },
   ]
 

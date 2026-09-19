@@ -737,6 +737,8 @@
 }
 
 .channel-info {
+  position: relative;
+  top:10px;
   display: flex;
   flex-direction: column;
 }
@@ -1350,4 +1352,10 @@
 .playlist-meta {
   color: var(--text-muted);
   font-size: 13px;
+}
+
+.channel-stats {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 2px 0 16px 0;
 }

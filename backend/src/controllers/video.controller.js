@@ -108,8 +108,7 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
     const user = await userModel.aggregate([
         {
             $match: {
-                username: username,
-                isPublished: true
+                username: username
             }
         },
         {
@@ -119,6 +118,9 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
                 foreignField: "owner",
                 as: "createdVideos",
                 pipeline: [
+                    {
+                         $match: {isPublished: true}
+                    },
                     {
                         $addFields: {
                             views: { $size: "$views" }
@@ -243,8 +245,7 @@ const getLikedVideos = asyncHandler(async function (req, res) {
         {
             $match: {
                 likedBy: curr_user_id,
-                video: { $exists: true }, //video is not null
-                isPublished: true
+                video: { $ne: null } //video is not equal(ne) null
             }
         },
         {
@@ -252,8 +253,13 @@ const getLikedVideos = asyncHandler(async function (req, res) {
                 from: "videos",
                 localField: "video",
                 foreignField: "_id",
-                as: "videos",
+                as: "video",
                 pipeline: [
+                    {
+                        $match: {
+                            isPublished: true
+                        }
+                    },
                     {
                         $lookup: {
                             from: "users",
@@ -274,6 +280,16 @@ const getLikedVideos = asyncHandler(async function (req, res) {
                         }
                     }
                 ]
+            }
+        },
+        {
+            $addFields: {
+                video: { $first: "$video" }
+            }
+        },
+        {
+            $project: {
+                video: 1
             }
         }
     ])
