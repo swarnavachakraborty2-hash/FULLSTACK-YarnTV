@@ -6,6 +6,9 @@ import Profile from './pages/Profile'
 import Register from './pages/Register'
 import Login from "./pages/Login"
 import Channel from './pages/Channel'
+import ChannelPlaylists from './pages/Channel.Playlists'
+import ChannelLayout from './components/ChannelLayout'
+import ChannelTweets from './pages/Channel.tweets'
 import './App.css'
 
 function App() {
@@ -17,7 +20,11 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="channel" element={<Channel />} />
+          <Route path="channel" element={<ChannelLayout />} >
+            <Route index element={<Channel />} />
+            <Route path="playlists" element={<ChannelPlaylists />} />
+            <Route path="tweets" element={<ChannelTweets />} />
+          </Route>
           {/* Add new pages here as nested routes: */}
           {/* <Route path="tweets" element={<Tweets />} /> */}
           {/* <Route path="liked" element={<LikedVideos />} /> */}

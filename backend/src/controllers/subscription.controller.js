@@ -83,4 +83,79 @@ const userSubscription = asyncHandler(async function (req, res) {
     )
 })
 
-module.exports = { userSubscription }
+
+const getSubscribedToUsers = asyncHandler(async function (req, res) {
+
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+
+    const users = await subscriptionModel.aggregate([
+        {
+            $match: {
+                subscriber: curr_user_id
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "channel",
+                foreignField: "_id",
+                as: "channel",
+                pipeline: [
+                    {
+                        $lookup: { 
+                            from: "subscriptions",
+                            localField: "_id",
+                            foreignField: "channel",
+                            as: "subscribers"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "subscriptions",
+                            localField: "_id",
+                            foreignField: "subscriber",
+                            as: "subscribedTo"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "videos",
+                            localField: "_id",
+                            foreignField: "owner",
+                            as: "videos"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            subscribersCount: {
+                                $size: "$subscribers"
+                            },
+                            subcsribedToCount: {
+                                $size: "$subscribedTo"
+                            },
+                            videos: {
+                                $size: "$videos"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+                channel: 1
+            }
+        }
+    ])
+
+    if(!users?.length){
+        throw new apiError(400, "could'nt find users")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "users fetched successfully", users)
+    )
+
+})
+
+module.exports = { userSubscription, getSubscribedToUsers }

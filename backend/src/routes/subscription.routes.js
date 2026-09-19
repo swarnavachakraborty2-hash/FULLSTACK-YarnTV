@@ -4,5 +4,6 @@ const subscriptionControllers = require("../controllers/subscription.controller.
 const route = express.Router()
 
 route.get("/:username", authMiddleware, subscriptionControllers.userSubscription )
+route.get("/get-subscribed-to-users", authMiddleware, subscriptionControllers.getSubscribedToUsers )
 
 module.exports = route
