@@ -19,5 +19,7 @@ route.delete("/delete-comment-tweet/:tweet_id/:comment_id", authMiddleware, comm
 
 route.get("/get-comments-tweet/:tweet_id", authMiddleware, tweetController.getCommentstweet)
 
+route.get("/dislike-tweet-toggle/:tweet_id", authMiddleware, tweetController.dislikeTweetToggle)//due
+
 
 module.exports = route

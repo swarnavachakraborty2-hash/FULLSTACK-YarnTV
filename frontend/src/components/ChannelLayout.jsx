@@ -138,7 +138,7 @@ function ChannelLayout() {
                     className={`channel-tab ${activeTab === "subscribed" ? "active" : ""}`}
                     onClick={() => setActiveTab("subscribed")}
                 >
-                    Subscribed
+                    Subscriptions
                 </div>
             </div>
 

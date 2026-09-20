@@ -88,7 +88,7 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
 
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
 
-    const users = await subscriptionModel.aggregate([
+    const usersVideos = await subscriptionModel.aggregate([
         {
             $match: {
                 subscriber: curr_user_id
@@ -96,64 +96,45 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
         },
         {
             $lookup: {
-                from: "users",
+                from: "videos",
                 localField: "channel",
-                foreignField: "_id",
-                as: "channel",
+                foreignField: "owner",
+                as: "videos",
                 pipeline: [
                     {
-                        $lookup: { 
-                            from: "subscriptions",
-                            localField: "_id",
-                            foreignField: "channel",
-                            as: "subscribers"
-                        }
-                    },
-                    {
                         $lookup: {
-                            from: "subscriptions",
-                            localField: "_id",
-                            foreignField: "subscriber",
-                            as: "subscribedTo"
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: "videos",
-                            localField: "_id",
-                            foreignField: "owner",
-                            as: "videos"
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        avatar: 1,
+                                        username: 1
+                                    }
+                                }
+                            ]
                         }
                     },
                     {
                         $addFields: {
-                            subscribersCount: {
-                                $size: "$subscribers"
-                            },
-                            subcsribedToCount: {
-                                $size: "$subscribedTo"
-                            },
-                            videos: {
-                                $size: "$videos"
+                            owner: {
+                                $first: "$owner"
                             }
                         }
                     }
                 ]
             }
-        },
-        {
-            $project: {
-                channel: 1
-            }
         }
     ])
 
-    if(!users?.length){
+    if (!usersVideos?.length) {
         throw new apiError(400, "could'nt find users")
     }
 
     return res.status(200).json(
-        new apiResponse(200, "users fetched successfully", users)
+        new apiResponse(200, "users fetched successfully", usersVideos)
     )
 
 })

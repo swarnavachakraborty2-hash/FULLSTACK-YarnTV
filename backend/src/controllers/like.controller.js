@@ -220,12 +220,6 @@ const liketweet = asyncHandler(async function (req, res) {
                     }
                 }
             }
-        },
-        {
-            $project: {
-                likes: 1,
-                isLiked: 1
-            }
         }
     ])
 

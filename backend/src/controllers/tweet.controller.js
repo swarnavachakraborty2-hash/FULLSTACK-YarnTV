@@ -141,6 +141,14 @@ const getUserTweets = asyncHandler(async function (req, res) {
             }
         },
         {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "tweet",
+                as: "comments"
+            }
+        },
+        {
             $addFields: {
                 owner: {
                     $first: "$owner"
@@ -149,6 +157,15 @@ const getUserTweets = asyncHandler(async function (req, res) {
                 isLiked: {
                     $cond: {
                         if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                comments: { $size: "$comments" },
+                dislikes: { $size: "$dislikes" },
+                isDisliked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$dislikes"] },
                         then: true,
                         else: false
                     }
@@ -227,4 +244,52 @@ const getCommentstweet = asyncHandler(async function (req, res) {
 
 
 
-module.exports = { createTweet, deleteTweet, getfeedTweets, getUserTweets, getCommentstweet }
+const dislikeTweetToggle = asyncHandler(async function (req, res) {
+
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+    const { tweet_id } = req.params
+
+    const tweet = await tweetModel.findOne(
+        {
+            _id: tweet_id
+        }
+    )
+
+    if (!tweet) {
+        throw new apiError(400, "could'nt find tweet")
+    }
+
+    if (tweet.dislikes.includes(curr_user_id)) {
+        tweet.dislikes.pull(curr_user_id)
+        await tweet.save()
+
+        return res.status(200).json(
+            new apiResponse(200, "tweet not disliked successfully")
+        )
+    }
+
+    tweet.dislikes.push(curr_user_id)
+    await tweet.save()
+
+    const Tweet = await tweetModel.aggregate([
+        {
+            $addFields: {
+                isDisliked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$dislikes"] },
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        }
+    ])
+
+    return res.status(200).json(
+        new apiResponse(200, "tweet disliked successfully", Tweet[0])
+    )
+})
+
+
+
+module.exports = { createTweet, deleteTweet, getfeedTweets, getUserTweets, getCommentstweet, dislikeTweetToggle }

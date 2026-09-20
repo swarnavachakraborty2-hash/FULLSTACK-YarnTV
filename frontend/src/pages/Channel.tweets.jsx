@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from "../api/axios"
-import { formatTimeAgo } from "../utils/formatters"
-import { ThumbsUpIcon } from '../components/Icons'
+import { formatTimeAgo, formatViews } from "../utils/formatters"
+import { ThumbsUpIcon, ThumbsDownIcon, CommentIcon } from '../components/Icons'
 
 function ChannelTweets() {
 
@@ -34,13 +34,38 @@ function ChannelTweets() {
             .catch((err) => {
                 console.log(err.response?.data)
             })
-    }, [userId])
+    }, [userId, userTweets])
+
+
+    const onLike = (tweet_id) => {
+        api.get(`like/tweet/${tweet_id}`)
+            .then((res) => {
+               console.log(res.data.message)
+            })
+            .catch((err) => {
+                console.log(err.response.data)
+            })
+    }
+
+    const onDisLike = (tweet_id) => {
+        api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
+            .then((res) => {
+                if (res.data.data) {
+                    console.log(res.data.message)
+                }
+            })
+            .catch((err) => {
+                console.log(err.response?.data)
+            })
+    }
+
+
 
     return (
         <div className="tweets-list">
             <div className="section-title-row">
-                    <h2 className="section-heading">My tweets</h2>
-                </div>
+                <h2 className="section-heading">My tweets</h2>
+            </div>
             {userTweets.length > 0 ? (
                 userTweets.map((tweet) => (
                     <div key={tweet._id} className="tweet-card">
@@ -56,9 +81,17 @@ function ChannelTweets() {
                             </div>
                             <p className="tweet-content">{tweet.content}</p>
                             <div className="tweet-actions">
-                                <div className={`tweet-action-btn ${tweet.isLiked ? 'liked' : ''}`}>
+                                <div onClick={() => onLike(tweet._id)} className={`tweet-action-btn ${tweet.isLiked ? 'liked' : ''}`}>
                                     <ThumbsUpIcon className="tweet-action-icon" />
-                                    <span>{tweet.likes}</span>
+                                    <span>{formatViews(tweet.likes)}</span>
+                                </div>
+                                <div onClick={() => onDisLike(tweet._id)} className={`tweet-action-btn ${tweet.isDisliked ? 'liked' : ''}`}>
+                                    <ThumbsDownIcon className="tweet-action-icon" />
+                                    <span>{formatViews(tweet.dislikes)}</span>
+                                </div>
+                                <div className="tweet-action-btn">
+                                    <CommentIcon className="tweet-action-icon" />
+                                    <span>{formatViews(tweet.comments)}</span>
                                 </div>
                             </div>
                         </div>
