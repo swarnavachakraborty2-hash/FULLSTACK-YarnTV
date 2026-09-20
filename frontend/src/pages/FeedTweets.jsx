@@ -4,28 +4,13 @@ import api from "../api/axios"
 import { formatTimeAgo, formatViews } from "../utils/formatters"
 import { ThumbsUpIcon, ThumbsDownIcon, CommentIcon } from '../components/Icons'
 
-function ChannelTweets() {
+function FeedTweets() {
 
     const navigate = useNavigate()
-    const [userId, setUserId] = useState("")
     const [userTweets, setUserTweets] = useState([])
 
     useEffect(() => {
-        api.get("user/curr-user")
-            .then((res) => {
-                if (res.data) {
-                    setUserId(res.data.data._id)
-                }
-            })
-            .catch((err) => {
-                console.log(err.response?.data)
-            })
-    }, [])
-
-    useEffect(() => {
-        if (!userId) return
-
-        api.get(`tweet/get-user-tweets/${userId}`)
+        api.get("tweet/get-feed-tweets")
             .then((res) => {
                 if (res.data) {
                     setUserTweets(res.data.data)
@@ -34,48 +19,50 @@ function ChannelTweets() {
             .catch((err) => {
                 console.log(err.response?.data)
             })
-    }, [userId])
+    }, [])
 
-    const onLike = (tweet_id) => {
-        api.get(`like/tweet/${tweet_id}`)
-            .then((res) => {
-                if (res.data.data) {
-                    const updated = res.data.data
-                    setUserTweets((prev) =>
-                        prev.map((t) =>
-                            t._id === tweet_id
-                                ? { ...t, isLiked: updated.isLiked, likes: updated.likes }
-                                : t
-                        )
-                    )
-                }
-            })
-            .catch((err) => {
-                console.log(err.response?.data)
-            })
-    }
 
-    const onDisLike = (tweet_id) => {
-        api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
-            .then((res) => {
-                if (res.data.data) {
-                    const updated = res.data.data
-                    setUserTweets((prev) =>
-                        prev.map((t) =>
-                            t._id === tweet_id
-                                ? { ...t, isDisliked: updated.isDisliked, dislikes: updated.dislikes }
-                                : t
-                        )
+   const onLike = (tweet_id) => {
+    api.get(`like/tweet/${tweet_id}`)
+        .then((res) => {
+            if (res.data.data) {
+                const updated = res.data.data
+                setUserTweets((prev) =>
+                    prev.map((t) =>
+                        t._id === tweet_id
+                            ? { ...t, isLiked: updated.isLiked, likes: updated.likes }
+                            : t
                     )
-                }
-            })
-            .catch((err) => {
-                console.log(err.response?.data)
-            })
-    }
+                )
+            }
+        })
+        .catch((err) => {
+            console.log(err.response?.data)
+        })
+}
+
+const onDisLike = (tweet_id) => {
+    api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
+        .then((res) => {
+            if (res.data.data) {
+                const updated = res.data.data
+                setUserTweets((prev) =>
+                    prev.map((t) =>
+                        t._id === tweet_id
+                            ? { ...t, isDisliked: updated.isDisliked, dislikes: updated.dislikes }
+                            : t
+                    )
+                )
+            }
+        })
+        .catch((err) => {
+            console.log(err.response?.data)
+        })
+}
+
 
     return (
-        <div className="feed-tweets-container centered">
+        <div className="feed-tweets-container">
             {userTweets.length > 0 ? (
                 userTweets.map((tweet) => (
                     <div key={tweet._id} className="feed-tweet-card">
@@ -86,9 +73,7 @@ function ChannelTweets() {
                         />
                         <div className="feed-tweet-main">
                             <div className="feed-tweet-header">
-                                <span className="feed-tweet-fullname">
-                                    {tweet.owner?.fullname || tweet.owner?.username}
-                                </span>
+                                <span className="feed-tweet-fullname">{tweet.owner?.fullname}</span>
                                 <span className="feed-tweet-meta">
                                     @{tweet.owner?.username} · {formatTimeAgo(tweet.createdAt)}
                                 </span>
@@ -120,4 +105,4 @@ function ChannelTweets() {
     )
 }
 
-export default ChannelTweets
+export default FeedTweets

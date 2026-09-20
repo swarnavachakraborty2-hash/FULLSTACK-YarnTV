@@ -69,7 +69,7 @@ const getfeedTweets = asyncHandler(async function (req, res) {
                 as: "owner",
                 pipeline: [
                     {
-                        $project: { username: 1, avatar: 1 }
+                        $project: { fullname: 1, username: 1, avatar: 1 }
                     }
                 ]
             }
@@ -91,6 +91,14 @@ const getfeedTweets = asyncHandler(async function (req, res) {
                 isLiked: {
                     $cond: {
                         if: { $in: [curr_user_id, "$likes.likedBy"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                dislikes: { $size: "$dislikes" },
+                isDisliked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$dislikes"] },
                         then: true,
                         else: false
                     }
@@ -127,7 +135,7 @@ const getUserTweets = asyncHandler(async function (req, res) {
                 as: "owner",
                 pipeline: [
                     {
-                        $project: { username: 1, avatar: 1 }
+                        $project: { fullname: 1, username: 1, avatar: 1 }
                     }
                 ]
             }
@@ -153,23 +161,23 @@ const getUserTweets = asyncHandler(async function (req, res) {
                 owner: {
                     $first: "$owner"
                 },
-                likes: { $size: "$likes" },
-                isLiked: {
+                 isLiked: {
                     $cond: {
                         if: { $in: [curr_user_id, "$likes.likedBy"] },
                         then: true,
                         else: false
                     }
                 },
+                likes: { $size: "$likes" },
                 comments: { $size: "$comments" },
-                dislikes: { $size: "$dislikes" },
                 isDisliked: {
                     $cond: {
                         if: { $in: [curr_user_id, "$dislikes"] },
                         then: true,
                         else: false
                     }
-                }
+                },
+                dislikes: { $size: "$dislikes" },
             }
         }
     ])
@@ -249,11 +257,7 @@ const dislikeTweetToggle = asyncHandler(async function (req, res) {
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
     const { tweet_id } = req.params
 
-    const tweet = await tweetModel.findOne(
-        {
-            _id: tweet_id
-        }
-    )
+    const tweet = await tweetModel.findOne({ _id: tweet_id })
 
     if (!tweet) {
         throw new apiError(400, "could'nt find tweet")
@@ -261,17 +265,16 @@ const dislikeTweetToggle = asyncHandler(async function (req, res) {
 
     if (tweet.dislikes.includes(curr_user_id)) {
         tweet.dislikes.pull(curr_user_id)
-        await tweet.save()
-
-        return res.status(200).json(
-            new apiResponse(200, "tweet not disliked successfully")
-        )
+    } else {
+        tweet.dislikes.push(curr_user_id)
     }
 
-    tweet.dislikes.push(curr_user_id)
     await tweet.save()
 
-    const Tweet = await tweetModel.aggregate([
+    const updatedTweet = await tweetModel.aggregate([
+        {
+            $match: { _id: new mongoose.Types.ObjectId(tweet_id) }
+        },
         {
             $addFields: {
                 isDisliked: {
@@ -280,16 +283,20 @@ const dislikeTweetToggle = asyncHandler(async function (req, res) {
                         then: true,
                         else: false
                     }
-                }
+                },
+                dislikes: { $size: "$dislikes" }
             }
         }
     ])
 
     return res.status(200).json(
-        new apiResponse(200, "tweet disliked successfully", Tweet[0])
+        new apiResponse(
+            200,
+            updatedTweet[0].isDisliked ? "tweet disliked successfully" : "tweet not disliked successfully",
+            updatedTweet[0]
+        )
     )
 })
-
 
 
 module.exports = { createTweet, deleteTweet, getfeedTweets, getUserTweets, getCommentstweet, dislikeTweetToggle }

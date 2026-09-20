@@ -21,7 +21,7 @@ function Sidebar({ isOpen = false, onClose }) {
   // Mini sidebar items (shown on the left column under the menu)
   const miniNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
-    { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/tweets' },
+    { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/feed/tweets' },
     { id: 'you', label: 'You', icon: YouIcon, path: '/profile' }
   ]
 
@@ -29,7 +29,7 @@ function Sidebar({ isOpen = false, onClose }) {
   const mainNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
     { id: 'you', label: 'You', icon: YouIcon, path: '/profile' },
-    { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/tweets' },
+    { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/feed/tweets' },
     { id: 'liked', label: 'Liked Videos', icon: LikeIcon, path: '/liked' },
     { id: 'history', label: 'History', icon: HistoryIcon, path: '/history' },
     { id: 'content', label: 'My Channel', icon: YouIcon, path: '/channel' },
