@@ -256,6 +256,13 @@ const getPlaylistVideos = asyncHandler(async function (req, res) {
                     }
                 ]
             }
+        },
+        {
+            $addFields: {
+                totalViews: {
+                    $sum: "$videos.views"
+                }
+            }
         }
     ])
 

@@ -31,7 +31,9 @@ route.get("/get-feed-videos", videoControllers.getFeedVideos)
 
 route.get("/get-liked-videos", authMiddleware, videoControllers.getLikedVideos)
 
-route.post("/search-video", authMiddleware, videoControllers.searchVideosOnFeed)
+route.post("/search-video-name", authMiddleware, videoControllers.getVideoNamesOnSearch)
+
+route.post("/search-video/:title", authMiddleware, videoControllers.searchVideosOnFeed)
 
 route.get("/get-video/:video_id", authMiddleware, videoControllers.getVideo)
 

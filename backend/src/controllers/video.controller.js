@@ -119,7 +119,7 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
                 as: "createdVideos",
                 pipeline: [
                     {
-                         $match: {isPublished: true}
+                        $match: { isPublished: true }
                     },
                     {
                         $addFields: {
@@ -447,8 +447,8 @@ const getCommentsVideo = asyncHandler(async function (req, res) {
 
 const searchVideosOnFeed = asyncHandler(async function (req, res) {
 
-    const { letter } = req.body
-    const regex = new RegExp(letter, "i")// "i" == case insensitive
+    const { title } = req.params
+    const regex = new RegExp(title, "i")// "i" == case insensitive
 
 
     const videos = await videoModel.aggregate([
@@ -478,7 +478,8 @@ const searchVideosOnFeed = asyncHandler(async function (req, res) {
             $addFields: {
                 owner: {
                     $first: "$owner"
-                }
+                },
+                views: { $size: "$views" }
             }
         }
     ])
@@ -757,6 +758,51 @@ const dislikeVideoToggle = asyncHandler(async function (req, res) {
 
 })
 
+const getVideoNamesOnSearch = asyncHandler(async function (req, res) {
+
+    const { letter } = req.body
+    const regex = new RegExp(letter, "i")
+
+    const videoNames = await videoModel.aggregate([
+        {
+            $match: { title: { $regex: regex } }
+        },
+        {
+            $limit: 10
+        },
+        {
+            $project: {
+                title: 1
+            }
+        }
+    ])
+
+    if (!videoNames?.length) {
+        throw new apiError(400, "could'nt find videos")
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "fetched successfully", videoNames)
+    )
+})
 
 
-module.exports = { createVideo, deleteVideo, updateVideoDetails, getUserChannelVideos, getFeedVideos, watchVideo, getLikedVideos, getVideo, getCommentsVideo, searchVideosOnFeed, getwatchedVideos, publishVideoToggle, getAllAdminVideos, getAdminStats, dislikeVideoToggle }
+
+module.exports = {
+    createVideo,
+    deleteVideo,
+    updateVideoDetails,
+    getUserChannelVideos,
+    getFeedVideos,
+    watchVideo,
+    getLikedVideos,
+    getVideo,
+    getCommentsVideo,
+    searchVideosOnFeed,
+    getwatchedVideos,
+    publishVideoToggle,
+    getAllAdminVideos,
+    getAdminStats,
+    dislikeVideoToggle,
+    getVideoNamesOnSearch
+}

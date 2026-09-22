@@ -10,6 +10,7 @@ import ChannelPlaylists from './pages/Channel.Playlists'
 import ChannelLayout from './components/ChannelLayout'
 import ChannelTweets from './pages/Channel.tweets'
 import FeedTweets from './pages/FeedTweets'
+import VideoListing from './pages/VideoListing'
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />
           <Route path="/feed/tweets" element={<FeedTweets />} />
+          <Route path="/feed/search/:title" element={<VideoListing />} />
           <Route path="channel" element={<ChannelLayout />} >
             <Route index element={<Channel />} />
             <Route path="playlists" element={<ChannelPlaylists />} />
