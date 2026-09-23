@@ -1,5 +1,6 @@
 import React from 'react'
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
+import { useNavigate } from 'react-router-dom'
 
 function VideoCard({
   title,
@@ -12,6 +13,7 @@ function VideoCard({
   description,
   layout = 'grid'
 }) {
+  const navigate = useNavigate()
   const formattedDuration = formatDuration(duration)
   const formattedViews = formatViews(views)
   const formattedTimeAgo = formatTimeAgo(createdAt)
@@ -68,7 +70,7 @@ function VideoCard({
             <span className="dot-separator">·</span>
             <span>{formattedTimeAgo}</span>
           </p>
-          <p className="channel-name">{channelName}</p>
+          <p className="channel-name" onClick={()=>navigate(`/profile/${channelName}`)}>{channelName}</p>
         </div>
       </div>
     </article>

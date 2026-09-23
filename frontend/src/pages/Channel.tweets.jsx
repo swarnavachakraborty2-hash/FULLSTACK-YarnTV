@@ -1,26 +1,38 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import api from "../api/axios"
 import { formatTimeAgo, formatViews } from "../utils/formatters"
 import { ThumbsUpIcon, ThumbsDownIcon, CommentIcon } from '../components/Icons'
 
 function ChannelTweets() {
 
-    const navigate = useNavigate()
+    const { name } = useParams()
     const [userId, setUserId] = useState("")
     const [userTweets, setUserTweets] = useState([])
 
     useEffect(() => {
-        api.get("user/curr-user")
-            .then((res) => {
-                if (res.data) {
-                    setUserId(res.data.data._id)
-                }
-            })
-            .catch((err) => {
-                console.log(err.response?.data)
-            })
-    }, [])
+        if (name) {
+            api.get(`user/profile/${name}`)
+                .then((res) => {
+                    if (res.data) {
+                        setUserId(res.data.data._id)
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.response?.data)
+                })
+        } else {
+            api.get("user/curr-user")
+                .then((res) => {
+                    if (res.data) {
+                        setUserId(res.data.data._id)
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.response?.data)
+                })
+        }
+    }, [name])
 
     useEffect(() => {
         if (!userId) return

@@ -29,10 +29,12 @@ function App() {
             <Route path="playlists" element={<ChannelPlaylists />} />
             <Route path="tweets" element={<ChannelTweets />} />
           </Route>
-          {/* Add new pages here as nested routes: */}
-          {/* <Route path="tweets" element={<Tweets />} /> */}
-          {/* <Route path="liked" element={<LikedVideos />} /> */}
-          {/* <Route path="history" element={<History />} /> */}
+
+          <Route path="profile/:name" element={<ChannelLayout />} >
+            <Route index element={<Channel />} />
+            <Route path="playlists" element={<ChannelPlaylists />} />
+            <Route path="tweets" element={<ChannelTweets />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
