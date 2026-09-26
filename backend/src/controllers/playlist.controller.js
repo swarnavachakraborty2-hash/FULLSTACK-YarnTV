@@ -102,6 +102,18 @@ const saveVideoToPlaylist = asyncHandler(async function (req, res) {
 
         })
 
+    if (!playlist) {
+        throw new apiError(400, "can't find playlist")
+    }
+
+    const exists = playlist.videos.filter((video) => video._id.toString() === playlist_id.toString())
+
+    if (exists.length > 0) {
+        return res.status(200).json(
+            new apiResponse(200, "video already saved to playlist")
+        )
+    }
+
     playlist.videos.push(video_id)
     await playlist.save()
 
@@ -167,7 +179,7 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
                 from: "videos",
                 localField: "videos",
                 foreignField: "_id",
-                as: "thumbnail",
+                as: "videos_data",
                 pipeline: [
                     {
                         $project: {
@@ -183,10 +195,10 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
                     $first: "$owner_details"
                 },
                 videos: {
-                    $size: "$videos"
+                    $size: "$videos_data"
                 },
                 thumbnail: {
-                    $first: "$thumbnail.thumbnail"
+                    $first: "$videos_data.thumbnail"
                 }
             }
         },
@@ -258,10 +270,29 @@ const getPlaylistVideos = asyncHandler(async function (req, res) {
             }
         },
         {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            fullname: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
             $addFields: {
+                owner: { $first: "$owner" },
                 totalViews: {
                     $sum: "$videos.views"
-                }
+                },
+                thumbnail: { $first: "$videos.thumbnail" }
             }
         }
     ])
@@ -271,7 +302,7 @@ const getPlaylistVideos = asyncHandler(async function (req, res) {
     }
 
     return res.status(200).json(
-        new apiResponse(200, "fetched videos successfully", playlistVideos)
+        new apiResponse(200, "fetched videos successfully", playlistVideos[0])
     )
 })
 
