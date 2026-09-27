@@ -57,13 +57,17 @@ const userSubscription = asyncHandler(async function (req, res) {
                         then: true,
                         else: false
                     }
+                },
+                subscribers: {
+                    $size: "$subscribers"
                 }
             }
         },
         {
             $project: {
                 _id: 1,
-                isSubscribed: 1
+                isSubscribed: 1,
+                subscribers: 1
             }
         }
     ])

@@ -12,7 +12,7 @@ const commentSchema = new mongoose.Schema({
     },
     tweet: {
         type: mongoose.Types.ObjectId,
-        ref: "video"
+        ref: "tweet"
     },
     owner: {
         type: mongoose.Types.ObjectId,

@@ -10,48 +10,16 @@ function VideoCard({
   createdAt,
   channelName,
   channelAvatar,
-  description,
-  layout = 'grid'
+  id
 }) {
+
   const navigate = useNavigate()
   const formattedDuration = formatDuration(duration)
   const formattedViews = formatViews(views)
   const formattedTimeAgo = formatTimeAgo(createdAt)
-
-  if (layout === 'list') {
-    return (
-      <article className="video-card-list">
-        {/* Thumbnail on Left */}
-        <div className="thumbnail-wrapper-list">
-          <img src={thumbnail} alt={title} className="thumbnail-img" />
-          <span className="duration-badge">{formattedDuration}</span>
-        </div>
-
-        {/* Video Info on Right */}
-        <div className="video-info-list">
-          <h3 className="video-title-list">{title}</h3>
-          <p className="video-meta">
-            <span>{formattedViews} views</span>
-            <span className="dot-separator">·</span>
-            <span>{formattedTimeAgo}</span>
-          </p>
-
-          <div className="channel-row">
-            <img src={channelAvatar} alt={channelName} className="channel-avatar-sm" />
-            <span className="channel-name">{channelName}</span>
-          </div>
-
-          {description && (
-            <p className="video-description">{description}</p>
-          )}
-        </div>
-      </article>
-    )
-  }
-
   // Default: Grid Card (Image 2)
   return (
-    <article className="video-card-grid">
+    <article className="video-card-grid" onClick={()=>navigate(`/watch/${id}`)}>
       {/* Thumbnail */}
       <div className="thumbnail-wrapper-grid">
         <img src={thumbnail} alt={title} className="thumbnail-img" />

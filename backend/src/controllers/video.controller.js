@@ -211,7 +211,7 @@ const watchVideo = asyncHandler(async function (req, res) {
 
     const curr_user = await userModel.findOne({ _id: curr_user_id })
 
-    //watch history cannot contain duplicate video ids
+    //no duplicate ids
     if (curr_user.watchHistory.includes(video_id)) {
         curr_user.watchHistory.pull(video_id)
     }
@@ -220,7 +220,7 @@ const watchVideo = asyncHandler(async function (req, res) {
 
     //a person can see a video maximum of three times to increase views of a video
 
-    let count = video.views.map((item) => item === curr_user_id).length
+    let count = video.views.filter((id) => id === curr_user_id).length
     if (count == 3) {
         return res.status(200).json(
             new apiResponse(200, "viewed successfully")
@@ -370,6 +370,13 @@ const getVideo = asyncHandler(async function (req, res) {
                     }
                 },
                 likes: { $size: "$likes" },
+                isDisliked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$dislikes"] },
+                        then: true,
+                        else: false
+                    }
+                },
                 dislikes: { $size: "$dislikes" },
                 views: { $size: "$views" }
             }
@@ -394,6 +401,11 @@ const getCommentsVideo = asyncHandler(async function (req, res) {
     const comments = await commentModel.aggregate([
         {
             $match: { video: new mongoose.Types.ObjectId(video_id) }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
         },
         {
             $lookup: {
@@ -434,10 +446,6 @@ const getCommentsVideo = asyncHandler(async function (req, res) {
             }
         }
     ])
-
-    if (!comments?.length) {
-        throw new apiError(400, "could'nt fetch comments")
-    }
 
     return res.status(200).json(
         new apiResponse(200, "comments fetched successfully", comments)
@@ -742,19 +750,40 @@ const dislikeVideoToggle = asyncHandler(async function (req, res) {
     if (video.dislikes.includes(curr_user_id)) {
         video.dislikes.pull(curr_user_id)
         await video.save()
-
-        return res.status(200).json(
-            new apiResponse(200, "video not disliked successfully")
-        )
+    }
+    else {
+        video.dislikes.push(curr_user_id)
+        await video.save()
     }
 
-    video.dislikes.push(curr_user_id)
-    await video.save()
+    const Video = await videoModel.aggregate([
+        {
+            $match: { _id: new mongoose.Types.ObjectId(video_id) }
+        },
+        {
+            $addFields: {
+                isDisliked: {
+                    $cond: {
+                        if: { $in: [curr_user_id, "$dislikes"] },
+                        then: true,
+                        else: false
+                    }
+                },
+                dislikes: { $size: "$dislikes" }
+            }
+        },
+        {
+            $project: {
+                isDisliked: 1,
+                dislikes: 1
+            }
+        }
+    ])
+
 
     return res.status(200).json(
-        new apiResponse(200, "video disliked successfully")
+        new apiResponse(200, Video[0].isDisliked ? "video disliked successfully" : "video not disliked successfully", Video[0])
     )
-
 
 })
 

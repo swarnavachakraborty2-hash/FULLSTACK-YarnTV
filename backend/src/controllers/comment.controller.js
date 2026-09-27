@@ -29,6 +29,11 @@ const commentOnVideo = asyncHandler(async function (req, res) {
             $match: { video: new mongoose.Types.ObjectId(video_id) }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "owner",
@@ -38,6 +43,7 @@ const commentOnVideo = asyncHandler(async function (req, res) {
                     {
                         $project: {
                             username: 1,
+                            fullname: 1,
                             avatar: 1
                         }
                     }
@@ -98,6 +104,11 @@ const commentOnTweet = asyncHandler(async function (req, res) {
             $match: { tweet: new mongoose.Types.ObjectId(tweet_id) }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "owner",
@@ -107,6 +118,7 @@ const commentOnTweet = asyncHandler(async function (req, res) {
                     {
                         $project: {
                             username: 1,
+                            fullname: 1,
                             avatar: 1
                         }
                     }
@@ -148,7 +160,7 @@ const commentOnTweet = asyncHandler(async function (req, res) {
 
 const deleteVideoComment = asyncHandler(async function (req, res) {
 
-    const curr_user_id = req.user._id
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
     const { video_id, comment_id } = req.params
 
     const comment = await commentModel.findOneAndDelete(
@@ -168,6 +180,11 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
             $match: { video: new mongoose.Types.ObjectId(video_id) }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "owner",
@@ -177,6 +194,7 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
                     {
                         $project: {
                             username: 1,
+                            fullname: 1,
                             avatar: 1
                         }
                     }
@@ -213,7 +231,7 @@ const deleteVideoComment = asyncHandler(async function (req, res) {
 
 
 const deleteTweetComment = asyncHandler(async function (req, res) {
-    const curr_user_id = req.user._id
+    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
     const { comment_id, tweet_id } = req.params
 
     const comment = await commentModel.findOneAndDelete(
@@ -233,6 +251,11 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
             $match: { tweet: new mongoose.Types.ObjectId(tweet_id) }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "owner",
@@ -242,6 +265,7 @@ const deleteTweetComment = asyncHandler(async function (req, res) {
                     {
                         $project: {
                             username: 1,
+                            fullname: 1,
                             avatar: 1
                         }
                     }

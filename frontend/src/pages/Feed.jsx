@@ -35,6 +35,7 @@ function Feed() {
             channelName={video.owner?.username}
             channelAvatar={video.owner?.avatar}
             description={video.description}
+            id={video._id}
             layout="grid"
           />
         ))}
