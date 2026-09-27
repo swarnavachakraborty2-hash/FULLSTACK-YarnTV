@@ -358,6 +358,14 @@ const getVideo = asyncHandler(async function (req, res) {
             }
         },
         {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "video",
+                as: "totalComments"
+            }
+        },
+        {
             $addFields: {
                 owner: {
                     $first: "$owner"
@@ -378,7 +386,8 @@ const getVideo = asyncHandler(async function (req, res) {
                     }
                 },
                 dislikes: { $size: "$dislikes" },
-                views: { $size: "$views" }
+                views: { $size: "$views" },
+                totalComments: { $size: "$totalComments" }
             }
         }
     ])
