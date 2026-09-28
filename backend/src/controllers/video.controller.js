@@ -220,14 +220,14 @@ const watchVideo = asyncHandler(async function (req, res) {
 
     //a person can see a video maximum of three times to increase views of a video
 
-    let count = video.views.filter((id) => id === curr_user_id).length
-    if (count == 3) {
+    let count = video.views.filter((id) => id.toString() === curr_user_id.toString()).length
+    if (count >= 3) {
         return res.status(200).json(
             new apiResponse(200, "viewed successfully")
         )
     }
     video.views.push(curr_user_id)
-    await video.save()
+    await video.save({ validateBeforeSave: false })
 
 
     return res.status(200).json(

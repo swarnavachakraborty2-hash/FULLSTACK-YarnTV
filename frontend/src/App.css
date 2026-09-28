@@ -2825,22 +2825,65 @@
   height: 15px;
   flex-shrink: 0;
 }
-
+/* Per-comment delete */
 /* Per-comment delete */
 .watch-comment-delete-btn {
+  margin-left: auto; /* pushes it to the right end of the actions row */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
   font-size: 12px;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
   cursor: pointer;
-  padding: 4px 10px;
-  border-radius: 6px;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease,
+              border-color 0.15s ease, background-color 0.15s ease;
+}
+
+/* if the button already contains an svg icon, give it a real size */
+.watch-comment-delete-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* if it has no svg, draw a trash icon in CSS instead */
+.watch-comment-delete-btn:not(:has(svg))::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 6h18'/><path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6'/><path d='M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 6h18'/><path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6'/><path d='M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/></svg>") center / contain no-repeat;
+}
+
+/* revealed when you hover the comment, or tab to the button */
+.watch-comment-card:hover .watch-comment-delete-btn,
+.watch-comment-delete-btn:focus-visible {
+  opacity: 1;
 }
 
 .watch-comment-delete-btn:hover {
   color: #f87171;
+  border-color: #f87171;
   background-color: rgba(248, 113, 113, 0.08);
 }
 
+.watch-comment-delete-btn:active {
+  transform: scale(0.97);
+}
+
+/* touch screens have no hover, so keep it visible */
+@media (hover: none) {
+  .watch-comment-delete-btn {
+    opacity: 1;
+  }
+}
 /* ── Right sidebar: related videos ── */
 .watch-sidebar {
   width: 360px;

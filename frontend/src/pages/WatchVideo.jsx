@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import api from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
+import '@videojs/react/video/skin.css'
+import { VideoPlayer, VideoSkin, Video } from '@videojs/react/video'
 
 function WatchVideo() {
+  const [Id, setUserId] = useState()
   const [video, setVideo] = useState()
   const [views, setviews] = useState(0)
   const [likes, setLikes] = useState(0)
@@ -22,16 +25,38 @@ function WatchVideo() {
   const [totalComments, setTotalcomments] = useState(0)
   const [myComment, setMycomment] = useState(false)
   const [showFullDesc, setShowFullDesc] = useState(false)
+  const [confirmingId, setConfirmingId] = useState(null)
+  const [showdropDown, setShowDropdown] = useState(false)
+  const [playlistOptions, setPlaylistOptions] = useState([])
+  const [showForm, setShowForm] = useState(false)
 
   const { id } = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.get(`video/watch-video/${id}`)
+    api.get("user/curr-user")
       .then((res) => {
-        console.log(res.data.message)
+        if (res.data) {
+          setUserId(res.data.data._id)
+        }
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
       })
   }, [id])
+
+
+  //increase the views if user stays on a video for 3 seconds minimum
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      api.get(`video/watch-video/${id}`)
+        .then((res) => console.log(res.data.message))
+        .catch((err) => console.log(err.response?.data?.message))
+    }, 3000);
+
+    return () => clearTimeout(timer)
+  }, [id])
+
 
   useEffect(() => {
     api.get(`video/get-video/${id}`)
@@ -121,6 +146,36 @@ function WatchVideo() {
       })
   }
 
+
+  const onClickSave = () => {
+    api.get(`playlist/get-currentUser-playlists-options/${Id}`)
+      .then((res) => {
+        setPlaylistOptions(res.data.data)
+        setShowDropdown(true)
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
+  }
+
+  const onClickPlaylistOptions = (option_id) => {
+    api.get(`playlist/save-video-playlist/${option_id}/${id}`)
+      .then(() => { showdropDown(false) })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
+  }
+
+  const onClickNewPlaylist = () => {
+    setShowDropdown(false)
+    setShowForm(true)
+    api.post(`playlist/create-new-playlist/${id}`)
+      .then(() => setShowForm(false))
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
+  }
+
   return (
     <div className="watch-page">
       {/* ── Left: video + info ── */}
@@ -129,12 +184,11 @@ function WatchVideo() {
         {/* Video Player */}
         <div className="watch-player-wrapper">
           {video ? (
-            <video
-              className="watch-video-player"
-              src={video}
-              controls
-              autoPlay
-            />
+            <VideoPlayer>
+              <VideoSkin style={{ width: '100%', height: '100%' }}>
+                <Video src={video} />
+              </VideoSkin>
+            </VideoPlayer>
           ) : (
             <div className="watch-player-skeleton" />
           )}
@@ -156,7 +210,7 @@ function WatchVideo() {
             >
               {/* thumb-up SVG */}
               <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
-                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
               </svg>
               <span>{likes}</span>
             </button>
@@ -168,7 +222,7 @@ function WatchVideo() {
             >
               {/* thumb-down SVG */}
               <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
-                <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
+                <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z" />
               </svg>
               <span>{dislikes}</span>
             </button>
@@ -288,7 +342,7 @@ function WatchVideo() {
                       onClick={() => onLikeComment(c._id)}
                     >
                       <svg viewBox="0 0 24 24" className="watch-comment-like-icon" fill="currentColor">
-                        <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+                        <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
                       </svg>
                       <span>{c.likes ?? 0}</span>
                     </button>

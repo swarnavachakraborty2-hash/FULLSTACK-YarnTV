@@ -1,6 +1,8 @@
 import React from 'react'
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
 import { useNavigate } from 'react-router-dom'
+import api from "../api/axios"
+
 
 function VideoCard({
   title,
@@ -38,7 +40,7 @@ function VideoCard({
             <span className="dot-separator">·</span>
             <span>{formattedTimeAgo}</span>
           </p>
-          <p className="channel-name" onClick={()=>navigate(`/profile/${channelName}`)}>{channelName}</p>
+          <p className="channel-name" onClick={() => navigate(`/profile/${channelName}`)}>{channelName}</p>
         </div>
       </div>
     </article>
