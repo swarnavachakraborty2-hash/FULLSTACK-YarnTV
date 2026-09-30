@@ -16,7 +16,7 @@ function SubscribedTo() {
         if (res.data.data) {
           const allVideos = res.data.data
           // Sort by newest 
-          allVideos.sort((a, b) => a.createdAt - b.createdAt)
+          allVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           setVideos(allVideos)
         }
         setLoading(false)
