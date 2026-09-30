@@ -125,10 +125,21 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
                         $addFields: {
                             owner: {
                                 $first: "$owner"
+                            },
+                            views: {
+                                $size: "$views"
                             }
                         }
                     }
                 ]
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                videos: {
+                    $push: "$videos"
+                }
             }
         }
     ])
@@ -138,7 +149,7 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
     }
 
     return res.status(200).json(
-        new apiResponse(200, "users fetched successfully", usersVideos)
+        new apiResponse(200, "users fetched successfully", usersVideos[0].videos[0])
     )
 
 })

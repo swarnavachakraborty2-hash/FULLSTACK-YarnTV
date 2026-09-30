@@ -22,8 +22,9 @@ function ChannelLayout() {
     const activeTab = location.pathname.endsWith('/playlists')
         ? 'playlist'
         : location.pathname.endsWith('/tweets')
-            ? 'tweets'
-            : 'videos'
+            ? 'tweets' : location.pathname.endsWith('/subscribed-to')
+                ? 'subscribed-to'
+                : 'videos'
 
     const basePath = name ? `/profile/${name}` : '/channel'
 
@@ -160,6 +161,13 @@ function ChannelLayout() {
                 >
                     Tweets
                 </div>
+               {!name && <div
+                    className={`channel-tab ${activeTab === "subscribed-to" ? "active" : ""}`}
+                    onClick={() => navigate(`${basePath}/subscribed-to`)}
+                >
+                    Subscribed
+                </div>}
+
             </div>
 
             <Outlet />

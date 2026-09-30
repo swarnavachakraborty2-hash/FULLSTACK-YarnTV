@@ -13,6 +13,7 @@ import FeedTweets from './pages/FeedTweets'
 import VideoListing from './pages/VideoListing'
 import PlaylistVideos from './pages/PlaylistVideos'
 import WatchVideo from './pages/WatchVideo'
+import SubscribedTo from './pages/Channel.SubscribedTo'
 import './App.css'
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route index element={<Channel />} />
             <Route path="playlists" element={<ChannelPlaylists />} />
             <Route path="tweets" element={<ChannelTweets />} />
+            <Route path="subscribed-to" element={<SubscribedTo />} />
           </Route>
           <Route path="profile/:name" element={<ChannelLayout />} >
             <Route index element={<Channel />} />
