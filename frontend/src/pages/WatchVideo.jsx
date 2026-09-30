@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import api from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
-import '@videojs/react/video/skin.css'
-import { VideoPlayer, VideoSkin, Video } from '@videojs/react/video'
 
 function WatchVideo() {
   const [Id, setUserId] = useState()
@@ -184,96 +182,98 @@ function WatchVideo() {
         {/* Video Player */}
         <div className="watch-player-wrapper">
           {video ? (
-            <VideoPlayer>
-              <VideoSkin style={{ width: '100%', height: '100%' }}>
-                <Video src={video} />
-              </VideoSkin>
-            </VideoPlayer>
+            <video
+              className="watch-video-player"
+              src={video}
+              controls
+              autoPlay
+            />
           ) : (
             <div className="watch-player-skeleton" />
           )}
         </div>
 
-        {/* Title + Views */}
+        {/* Title */}
         <h1 className="watch-title">{title}</h1>
-        <p className="watch-views">
-          {formatViews(views)} Views
-        </p>
 
-        {/* Like / Dislike / Save row */}
-        <div className="watch-actions-row">
-          <div className="watch-vote-group">
+        {/* Info Row (Channel + Actions) */}
+        <div className="watch-video-info-row">
+          <div className="watch-channel-group">
+            <div
+              className="watch-channel-info"
+              onClick={() => navigate(`/profile/${username}`)}
+            >
+              {avatar ? (
+                <img src={avatar} alt={username} className="watch-channel-avatar" />
+              ) : (
+                <div className="watch-channel-avatar watch-channel-avatar--placeholder">
+                  {username?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <p className="watch-channel-name">{username}</p>
+                <p className="watch-channel-subs">
+                  {Array.isArray(subscribers) ? formatViews(subscribers.length) : formatViews(subscribers)} Subscribers
+                </p>
+              </div>
+            </div>
+
             <button
               type="button"
-              className={`watch-vote-btn${liked ? ' watch-vote-btn--active' : ''}`}
-              onClick={onLike}
+              className={`watch-subscribe-btn${subscribed ? ' watch-subscribe-btn--subscribed' : ''}`}
+              onClick={onSubscribe}
             >
-              {/* thumb-up SVG */}
-              <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
-                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
-              </svg>
-              <span>{likes}</span>
-            </button>
-
-            <button
-              type="button"
-              className={`watch-vote-btn${disliked ? ' watch-vote-btn--active' : ''}`}
-              onClick={onDislike}
-            >
-              {/* thumb-down SVG */}
-              <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
-                <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z" />
-              </svg>
-              <span>{dislikes}</span>
+              {subscribed ? 'Subscribed' : 'Subscribe'}
             </button>
           </div>
-        </div>
 
-        {/* Channel row */}
-        <div className="watch-channel-row">
-          <div
-            className="watch-channel-info"
-            onClick={() => navigate(`/profile/${username}`)}
-          >
-            {avatar ? (
-              <img src={avatar} alt={username} className="watch-channel-avatar" />
-            ) : (
-              <div className="watch-channel-avatar watch-channel-avatar--placeholder">
-                {username?.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div>
-              <p className="watch-channel-name">{username}</p>
-              <p className="watch-channel-subs">
-                {Array.isArray(subscribers) ? formatViews(subscribers.length) : formatViews(subscribers)} Subscribers
-              </p>
+          <div className="watch-actions-group">
+            <div className="watch-vote-group">
+              <button
+                type="button"
+                className={`watch-vote-btn${liked ? ' watch-vote-btn--active' : ''}`}
+                onClick={onLike}
+              >
+                {/* thumb-up SVG */}
+                <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
+                  <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                </svg>
+                <span>{likes}</span>
+              </button>
+
+              <button
+                type="button"
+                className={`watch-vote-btn${disliked ? ' watch-vote-btn--active' : ''}`}
+                onClick={onDislike}
+              >
+                {/* thumb-down SVG */}
+                <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
+                  <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z" />
+                </svg>
+                <span>{dislikes}</span>
+              </button>
             </div>
           </div>
-
-          <button
-            type="button"
-            className={`watch-subscribe-btn${subscribed ? ' watch-subscribe-btn--subscribed' : ''}`}
-            onClick={onSubscribe}
-          >
-            {subscribed ? 'Subscribed' : 'Subscribe'}
-          </button>
         </div>
 
         {/* Description */}
-        {desc && (
-          <div className="watch-description">
-            <p className={`watch-desc-text${showFullDesc ? ' watch-desc-text--expanded' : ''}`}>
-              {desc}
-            </p>
-            <button
-              type="button"
-              className="watch-desc-toggle"
-              onClick={() => setShowFullDesc((v) => !v)}
-            >
-              {showFullDesc ? 'Show less' : 'Show more'}
-            </button>
-          </div>
-        )}
+        <div className="watch-description">
+          <p className="watch-views-date">{formatViews(views)} Views</p>
+          {desc && (
+            <>
+              <p className={`watch-desc-text${showFullDesc ? ' watch-desc-text--expanded' : ''}`}>
+                {desc}
+              </p>
+              <button
+                type="button"
+                className="watch-desc-toggle"
+                onClick={() => setShowFullDesc((v) => !v)}
+              >
+                {showFullDesc ? 'Show less' : 'Show more'}
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Comments */}
         <div className="watch-comments-section">
@@ -347,16 +347,14 @@ function WatchVideo() {
                       <span>{c.likes ?? 0}</span>
                     </button>
 
-                    {/* Delete (only if it's the user's own comment) */}
-                    {c.isMyComment && (
-                      <button
-                        type="button"
-                        className="watch-comment-delete-btn"
-                        onClick={() => onDeleteComment(c._id)}
-                      >
-                        Delete
-                      </button>
-                    )}
+                    {/* Delete */}
+                    <button
+                      type="button"
+                      className="watch-comment-delete-btn"
+                      onClick={() => onDeleteComment(c._id)}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>
