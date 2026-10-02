@@ -22,43 +22,43 @@ function FeedTweets() {
     }, [])
 
 
-   const onLike = (tweet_id) => {
-    api.get(`like/tweet/${tweet_id}`)
-        .then((res) => {
-            if (res.data.data) {
-                const updated = res.data.data
-                setUserTweets((prev) =>
-                    prev.map((t) =>
-                        t._id === tweet_id
-                            ? { ...t, isLiked: updated.isLiked, likes: updated.likes }
-                            : t
+    const onLike = (tweet_id) => {
+        api.get(`like/tweet/${tweet_id}`)
+            .then((res) => {
+                if (res.data.data) {
+                    const updated = res.data.data
+                    setUserTweets((prev) =>
+                        prev.map((t) =>
+                            t._id === tweet_id
+                                ? { ...t, isLiked: updated.isLiked, likes: updated.likes }
+                                : t
+                        )
                     )
-                )
-            }
-        })
-        .catch((err) => {
-            console.log(err.response?.data)
-        })
-}
+                }
+            })
+            .catch((err) => {
+                console.log(err.response?.data)
+            })
+    }
 
-const onDisLike = (tweet_id) => {
-    api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
-        .then((res) => {
-            if (res.data.data) {
-                const updated = res.data.data
-                setUserTweets((prev) =>
-                    prev.map((t) =>
-                        t._id === tweet_id
-                            ? { ...t, isDisliked: updated.isDisliked, dislikes: updated.dislikes }
-                            : t
+    const onDisLike = (tweet_id) => {
+        api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
+            .then((res) => {
+                if (res.data.data) {
+                    const updated = res.data.data
+                    setUserTweets((prev) =>
+                        prev.map((t) =>
+                            t._id === tweet_id
+                                ? { ...t, isDisliked: updated.isDisliked, dislikes: updated.dislikes }
+                                : t
+                        )
                     )
-                )
-            }
-        })
-        .catch((err) => {
-            console.log(err.response?.data)
-        })
-}
+                }
+            })
+            .catch((err) => {
+                console.log(err.response?.data)
+            })
+    }
 
 
     return (
@@ -90,7 +90,7 @@ const onDisLike = (tweet_id) => {
                                     <ThumbsDownIcon className="tweet-action-icon" />
                                     <span>{formatViews(tweet.dislikes)}</span>
                                 </div>
-                                <div className="tweet-action-btn">
+                                <div className="tweet-action-btn" onClick={() => navigate(`/${tweet._id}/comments`)}>
                                     <CommentIcon className="tweet-action-icon" />
                                     <span>{formatViews(tweet.comments)}</span>
                                 </div>

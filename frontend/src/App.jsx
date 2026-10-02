@@ -14,6 +14,7 @@ import VideoListing from './pages/VideoListing'
 import PlaylistVideos from './pages/PlaylistVideos'
 import WatchVideo from './pages/WatchVideo'
 import SubscribedTo from './pages/Channel.SubscribedTo'
+import TweetsComments from './pages/TweetsComments'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />
           <Route path="/feed/tweets" element={<FeedTweets />} />
+          <Route path="/:tweet_id/comments" element={<TweetsComments />} />
           <Route path="/feed/search/:title" element={<VideoListing />} />
           <Route path="channel" element={<ChannelLayout />} >
             <Route index element={<Channel />} />

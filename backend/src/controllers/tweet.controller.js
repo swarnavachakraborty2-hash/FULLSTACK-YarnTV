@@ -83,6 +83,14 @@ const getfeedTweets = asyncHandler(async function (req, res) {
             }
         },
         {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "tweet",
+                as: "comments"
+            }
+        },
+        {
             $addFields: {
                 owner: {
                     $first: "$owner"
@@ -102,7 +110,8 @@ const getfeedTweets = asyncHandler(async function (req, res) {
                         then: true,
                         else: false
                     }
-                }
+                },
+                comments: { $size: "$comments" }
             }
         }
     ])
@@ -161,7 +170,7 @@ const getUserTweets = asyncHandler(async function (req, res) {
                 owner: {
                     $first: "$owner"
                 },
-                 isLiked: {
+                isLiked: {
                     $cond: {
                         if: { $in: [curr_user_id, "$likes.likedBy"] },
                         then: true,
@@ -202,6 +211,11 @@ const getCommentstweet = asyncHandler(async function (req, res) {
             $match: { tweet: new mongoose.Types.ObjectId(tweet_id) }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "owner",
@@ -240,10 +254,6 @@ const getCommentstweet = asyncHandler(async function (req, res) {
             }
         }
     ])
-
-    if (!comments?.length) {
-        throw new apiError(400, "could'nt fetch comments")
-    }
 
     return res.status(200).json(
         new apiResponse(200, "comments fetched successfully", comments)

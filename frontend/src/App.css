@@ -2671,3 +2671,215 @@
     opacity: 1;
   }
 }
+
+
+/* =========================================================
+   Tweet Comments Page (standalone)
+   ========================================================= */
+.comments-page {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 0 60px;
+}
+
+.comments-page-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+/* Add comment */
+.comments-page-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 8px;
+}
+
+.comments-page-input {
+  flex: 1;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comments-page-input:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px var(--accent-purple-glow);
+}
+
+.comments-page-input::placeholder {
+  color: var(--text-muted);
+}
+
+.comments-page-submit {
+  padding: 11px 22px;
+  border-radius: 10px;
+  background-color: var(--accent-purple);
+  color: #09090b;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.comments-page-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.comments-page-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Comment cards — boxed, like feed-tweet-card */
+.comments-page-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comments-page-card {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--bg-surface);
+  transition: border-color 0.2s ease;
+}
+
+.comments-page-card:hover {
+  border-color: var(--border-hover);
+}
+
+.comments-page-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  transition: opacity 0.2s ease;
+}
+
+.comments-page-avatar:hover {
+  opacity: 0.85;
+}
+
+.comments-page-avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-purple);
+  color: #09090b;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.comments-page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.comments-page-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.comments-page-author {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.comments-page-author:hover {
+  color: var(--accent-purple);
+}
+
+.comments-page-time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.comments-page-text {
+  font-size: 14px;
+  color: #d4d4d8;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.comments-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.comments-page-like-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.comments-page-like-btn:hover {
+  color: var(--text-primary);
+}
+
+.comments-page-like-btn--liked {
+  color: var(--accent-purple);
+}
+
+.comments-page-like-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.comments-page-delete-btn {
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.comments-page-delete-btn:hover {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.08);
+}
+
+.comments-page-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .comments-page {
+    padding: 8px 16px 40px;
+  }
+}
