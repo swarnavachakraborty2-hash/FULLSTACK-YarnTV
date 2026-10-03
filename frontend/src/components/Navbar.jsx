@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { PlayLogo, SearchIcon, MenuIcon, LogoutIcon } from './Icons'
+import { PlayLogo, SearchIcon, MenuIcon, LogoutIcon, PlusIcon } from './Icons'
 import { useNavigate } from 'react-router-dom'
 import api from "../api/axios"
 
@@ -10,6 +10,9 @@ function Navbar({ onToggleSidebar }) {
   const [showDropdown, setShowDropdown] = useState(false)
   const navigate = useNavigate()
   const debounceRef = useRef(null)
+  const [showPostOptions, setShowPostOptions] = useState(false)
+  const [showCreateMenu, setShowCreateMenu] = useState(false)
+
 
   useEffect(() => {
     api.get("/user/curr-user")
@@ -132,6 +135,54 @@ function Navbar({ onToggleSidebar }) {
 
       {/* Auth Actions */}
       <div className="navbar-actions">
+
+        {user?.username && (
+          <div className="navbar-create">
+            <button
+              type="button"
+              className="btn-create"
+              onClick={() => setShowCreateMenu((v) => !v)}
+              aria-label="Create"
+              title="Create"
+            >
+              <PlusIcon className="create-icon" />
+            </button>
+
+            {showCreateMenu && (
+              <ul className="create-dropdown">
+                <li
+                  className="create-dropdown-item"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    setShowCreateMenu(false)
+                    navigate("/create-video")
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" className="create-dropdown-icon" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="23 7 16 12 23 17 23 7" />
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                  </svg>
+                  Upload video
+                </li>
+                <li
+                  className="create-dropdown-item"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    setShowCreateMenu(false)
+                    navigate("/upload-tweet")
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" className="create-dropdown-icon" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                  Create tweet
+                </li>
+              </ul>
+            )}
+          </div>
+        )}
+
+
         {user?.username ? (
           <>
             {user.avatar ? (
