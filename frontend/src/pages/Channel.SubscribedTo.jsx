@@ -15,7 +15,6 @@ function SubscribedTo() {
       .then((res) => {
         if (res.data.data) {
           const allVideos = res.data.data
-          // Sort by newest 
           allVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           setVideos(allVideos)
         }
@@ -44,23 +43,39 @@ function SubscribedTo() {
       ) : error ? (
         <p className="video-meta">{error}</p>
       ) : videos.length > 0 ? (
-        <div className="channel-videos-row">
+        <div className="videos-list">
           {videos.map((video) => (
             <div
               key={video._id}
-              className="channel-video-card"
+              className="video-card-list"
               onClick={() => navigate(`/watch/${video._id}`)}
             >
-              <div className="channel-video-thumb">
-                <img src={video.thumbnail} alt={video.title} />
+              <div className="thumbnail-wrapper-list">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="thumbnail-img"
+                />
                 <span className="duration-badge">{formatDuration(video.duration)}</span>
               </div>
-              <div className="channel-video-meta">
-                <h3 className="video-title-grid">{video.title}</h3>
-                <p className="channel-name">{video.owner?.username}</p>
+              <div className="video-info-list">
+                <h3 className="video-title-list">{video.title}</h3>
                 <p className="video-meta">
                   {formatViews(video.views)} views · {formatTimeAgo(video.createdAt)}
                 </p>
+                <div className="channel-row">
+                  {video.owner?.avatar && (
+                    <img
+                      src={video.owner.avatar}
+                      alt={video.owner?.username}
+                      className="channel-avatar-sm"
+                    />
+                  )}
+                  <span className="channel-name">{video.owner?.username}</span>
+                </div>
+                {video.description && (
+                  <p className="video-description">{video.description}</p>
+                )}
               </div>
             </div>
           ))}

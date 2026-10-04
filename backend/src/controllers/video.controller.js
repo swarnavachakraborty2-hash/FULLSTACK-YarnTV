@@ -122,6 +122,9 @@ const getUserChannelVideos = asyncHandler(async function (req, res) {
                         $match: { isPublished: true }
                     },
                     {
+                        $sort: { createdAt: -1 }
+                    },
+                    {
                         $addFields: {
                             views: { $size: "$views" }
                         }
@@ -211,11 +214,12 @@ const watchVideo = asyncHandler(async function (req, res) {
 
     const curr_user = await userModel.findOne({ _id: curr_user_id })
 
+    const exists = curr_user.watchHistory.filter((v_id)=>v_id.toString()===video_id)
     //no duplicate ids
-    if (curr_user.watchHistory.includes(video_id)) {
+    if (exists.length > 0) {
         curr_user.watchHistory.pull(video_id)
     }
-    curr_user.watchHistory.push(video_id)
+    curr_user.watchHistory.push(video_id)//push the watched video at the end of the array
     await curr_user.save()
 
     //a person can see a video maximum of three times to increase views of a video
@@ -286,6 +290,9 @@ const getLikedVideos = asyncHandler(async function (req, res) {
             $addFields: {
                 video: { $first: "$video" }
             }
+        },
+        {
+            $sort: { createdAt: -1 }
         },
         {
             $project: {
@@ -514,46 +521,31 @@ const searchVideosOnFeed = asyncHandler(async function (req, res) {
 
 
 const getwatchedVideos = asyncHandler(async function (req, res) {
+    const curr_user_id = req.user._id
 
-    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
-
-    const Videos = await videoModel.aggregate([
-        {
-            $match: {
-                views: { $in: [curr_user_id] },
-                isPublished: true
-            }
-        },
-        {
-
-            $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "owner",
-                pipeline: [
-                    { $project: { username: 1, avatar: 1 } }
-                ]
-            }
-        },
-        {
-            $addFields: {
-                owner: {
-                    $first: "$owner"
-                },
-                views: { $size: "$views" }
-            }
+    //aggregation does not return the documents in exact order of watchhistory after $lookup thats why populate is used 
+    const user = await userModel.findById(curr_user_id).populate({
+        path: "watchHistory",
+        select: "-videoFile -description",
+        populate: {
+            path: "owner",
+            select: "username avatar"
         }
-    ])
+    })
 
-    if (!Videos?.length) {
-        throw new apiError(400, "could'nt fetch videos")
+    if (!user?.watchHistory) {
+
+        return res.status(200).json(
+            new apiResponse(200, "videos fetches successfully", [])
+        )
     }
+    const history = user.watchHistory.reverse()
 
     return res.status(200).json(
-        new apiResponse(200, "videos fetched successfully", Videos)
+        new apiResponse(200, "videos fetches successfully", history)
     )
-})
+
+});
 
 
 

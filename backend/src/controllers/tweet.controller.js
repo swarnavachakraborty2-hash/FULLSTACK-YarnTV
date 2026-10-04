@@ -188,6 +188,11 @@ const getUserTweets = asyncHandler(async function (req, res) {
                 },
                 dislikes: { $size: "$dislikes" },
             }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
         }
     ])
 

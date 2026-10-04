@@ -106,9 +106,9 @@ const saveVideoToPlaylist = asyncHandler(async function (req, res) {
         throw new apiError(400, "can't find playlist")
     }
 
-    const exists = playlist.videos.filter((video) => video._id.toString() === playlist_id.toString())
+    const exists = playlist.videos.filter((video) => video._id.toString() === video_id.toString()).length
 
-    if (exists.length > 0) {
+    if (exists > 0) {
         return res.status(200).json(
             new apiResponse(200, "video already saved to playlist")
         )
@@ -203,12 +203,18 @@ const getUserChannelPlaylists = asyncHandler(async function (req, res) {
             }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $project: {
                 _id: 1,
                 name: 1,
                 owner_details: 1,
                 videos: 1,
-                thumbnail: 1
+                thumbnail: 1,
+                createdAt: 1
             }
         }
     ])

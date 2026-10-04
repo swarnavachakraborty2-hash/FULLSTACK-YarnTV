@@ -106,6 +106,11 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
                 as: "videos",
                 pipeline: [
                     {
+                        $match: {
+                            isPublished: true
+                        }
+                    },
+                    {
                         $lookup: {
                             from: "users",
                             localField: "owner",
@@ -135,21 +140,22 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
             }
         },
         {
-            $group: {
-                _id: null,
-                videos: {
-                    $push: "$videos"
-                }
+            $unwind: "$videos"
+        },
+        {
+            $replaceRoot: {
+                newRoot: "$videos"
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
             }
         }
     ])
 
-    if (!usersVideos?.length) {
-        throw new apiError(400, "could'nt find users")
-    }
-
     return res.status(200).json(
-        new apiResponse(200, "users fetched successfully", usersVideos[0].videos[0])
+        new apiResponse(200, "videos fetched successfully", usersVideos || [])
     )
 
 })

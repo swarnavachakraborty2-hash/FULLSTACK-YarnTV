@@ -30,9 +30,9 @@ function Channel() {
 
         api.get(`video/get-user-videos/${username}`)
             .then((res) => {
-                if (res.data) {
-                    setVideos(res.data.data.createdVideos)
-                }
+                    let videos = res.data.data.createdVideos || []
+                    videos = videos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    setVideos(videos)
             })
             .catch((err) => {
                 console.log(err.response?.data)

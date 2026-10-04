@@ -40,7 +40,9 @@ function ChannelTweets() {
         api.get(`tweet/get-user-tweets/${userId}`)
             .then((res) => {
                 if (res.data) {
-                    setUserTweets(res.data.data)
+                    let tweets = res.data.data || []
+                    tweets = tweets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    setUserTweets(tweets)
                 }
             })
             .catch((err) => {

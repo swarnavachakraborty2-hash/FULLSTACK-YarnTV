@@ -42,7 +42,9 @@ function ChannelPlaylists() {
         api.get(`playlist/get-user-playlists/${userId}`)
             .then((res) => {
                 if (res.data) {
-                    setPlaylists(res.data.data)
+                    let list = res.data.data || []
+                    list = list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    setPlaylists(list)
                 }
             })
             .catch((err) => {
