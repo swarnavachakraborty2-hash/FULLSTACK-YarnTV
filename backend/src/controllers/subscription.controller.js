@@ -88,6 +88,7 @@ const userSubscription = asyncHandler(async function (req, res) {
 })
 
 
+
 const getSubscribedToUsers = asyncHandler(async function (req, res) {
 
     const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
@@ -135,27 +136,43 @@ const getSubscribedToUsers = asyncHandler(async function (req, res) {
                                 $size: "$views"
                             }
                         }
+                    },
+                    {
+                        $project: {
+                            videoFile: 0,
+                            dislikes: 0
+                        }
                     }
                 ]
             }
         },
         {
-            $unwind: "$videos"
-        },
-        {
-            $replaceRoot: {
-                newRoot: "$videos"
-            }
-        },
-        {
-            $sort: {
-                createdAt: -1
+            $group: {
+                _id: null,
+                videos: { $push: "$videos" }
             }
         }
     ])
 
+    if (!usersVideos?.length) {
+        return res.status(200).json(
+            new apiResponse(200, "videos fetched successfully", [])
+        )
+    }
+
+    const videosArr = usersVideos[0].videos ? usersVideos[0].videos : []
+    let subscriptionVideos = []
+
+    for (let i = 0; i < videosArr.length; i++) {
+        for (let j = 0; j < videosArr[i].length; j++) {
+            subscriptionVideos.push(videosArr[i][j])
+        }
+    }
+
+    subscriptionVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
     return res.status(200).json(
-        new apiResponse(200, "videos fetched successfully", usersVideos || [])
+        new apiResponse(200, "videos fetched successfully", subscriptionVideos)
     )
 
 })

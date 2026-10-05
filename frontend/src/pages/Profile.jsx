@@ -152,25 +152,25 @@ function Profile() {
 
         {playlists.length > 0 ? (
           <div className="channel-videos-row">
-            {playlists.map((playlist, i) => (
-              i<=2 &&
+            {playlists.slice(0, 3).map((playlist) => (
               <div
                 key={playlist._id}
-                className="playlist-card"
+                className="channel-video-card"
                 onClick={() => navigate(`/playlist/${playlist._id}`)}
               >
-                <div className="playlist-thumb">
+                <div className="channel-video-thumb">
                   <img
                     src={playlist.thumbnail || playlist.videos?.[0]?.thumbnail}
                     alt={playlist.name}
                   />
-                  <span className="playlist-video-count">
+                  <span className="duration-badge">
                     🎞 {playlist.videos} videos
                   </span>
                 </div>
-                <div className="playlist-info">
-                  <h3 className="playlist-title">{playlist.name}</h3>
-                  <p className="playlist-meta">Playlist · View full playlist</p>
+                <div className="channel-video-meta">
+                  <h3 className="video-title-grid">{playlist.name}</h3>
+                  <p className="channel-name">Playlist</p>
+                  <p className="video-meta">View full playlist</p>
                 </div>
               </div>
             ))}
