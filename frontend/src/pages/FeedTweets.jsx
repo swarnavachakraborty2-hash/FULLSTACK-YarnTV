@@ -62,7 +62,7 @@ function FeedTweets() {
 
 
     return (
-        <div className="feed-tweets-container">
+        <div className="feed-tweets-container"> 
             {userTweets.length > 0 ? (
                 userTweets.map((tweet) => (
                     <div key={tweet._id} className="feed-tweet-card">
