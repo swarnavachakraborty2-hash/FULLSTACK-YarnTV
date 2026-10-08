@@ -43,7 +43,7 @@ function Channel() {
         <section className="channel-section">
             <div className="section-title-row">
                 <h2 className="section-heading">{name ? `Videos` : `My videos`}</h2>
-                <button type="button" className="btn-see-all">See all</button>
+                
             </div>
 
             {videos.length > 0 ? (

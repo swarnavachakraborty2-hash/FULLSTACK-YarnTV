@@ -113,12 +113,15 @@ function Profile() {
       <section className="channel-section">
         <div className="section-title-row">
           <h2 className="section-heading">History</h2>
-          <button type="button" className="btn-see-all">See all</button>
+          <button type="button" onClick={() => navigate('/history')} className="btn-see-all">
+            See all
+          </button>
         </div>
 
         {history.length > 0 ? (
           <div className="channel-videos-row">
-            {history.slice(0, 3).map((video) => (
+            {history.slice(0, 3).map((video, index) => (
+              index < 3 &&
               <div
                 key={video._id}
                 className="channel-video-card"
@@ -147,12 +150,15 @@ function Profile() {
       <section className="channel-section">
         <div className="section-title-row">
           <h2 className="section-heading">Playlists</h2>
-          <button type="button" className="btn-see-all">See all</button>
+          <button type="button" onClick={() => navigate('/playlists')} className="btn-see-all">
+            See all
+          </button>
         </div>
 
         {playlists.length > 0 ? (
           <div className="channel-videos-row">
-            {playlists.slice(0, 3).map((playlist) => (
+            {playlists.slice(0, 3).map((playlist, index) => (
+              index < 3 &&
               <div
                 key={playlist._id}
                 className="channel-video-card"
@@ -184,13 +190,15 @@ function Profile() {
       <section className="channel-section">
         <div className="section-title-row">
           <h2 className="section-heading">Liked videos</h2>
-          <button type="button" className="btn-see-all">See all</button>
+          <button type="button" onClick={() => navigate('/liked')} className="btn-see-all">
+            See all
+          </button>
         </div>
 
         {liked.length > 0 ? (
           <div className="channel-videos-row">
             {liked.map((item, i) => (
-              i<=2 &&
+              i < 3 &&
               <div
                 key={item._id}
                 className="channel-video-card"

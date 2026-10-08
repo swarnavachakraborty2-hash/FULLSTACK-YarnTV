@@ -17,6 +17,9 @@ import SubscribedTo from './pages/Channel.SubscribedTo'
 import TweetsComments from './pages/TweetsComments'
 import CreateVideo from './pages/CreateVideo'
 import UploadTweet from './pages/UploadTweet'
+import History from './pages/History'
+import Liked from './pages/Liked'
+
 import './App.css'
 
 function App() {
@@ -28,6 +31,9 @@ function App() {
         <Route path="/create-video" element={<CreateVideo />} />
         <Route path="/upload-tweet" element={<UploadTweet />} />
         <Route path="/" element={<Layout />}>
+          <Route path="history" element={<History />} />
+          <Route path="liked" element={<Liked />} />
+        
           <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />
           <Route path="/feed/tweets" element={<FeedTweets />} />
