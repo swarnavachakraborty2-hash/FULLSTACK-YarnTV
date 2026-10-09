@@ -132,9 +132,6 @@ function ChannelLayout() {
                                 <button type="button" className="btn-channel-edit">
                                     Customize channel
                                 </button>
-                                <button type="button" className="btn-channel-manage">
-                                    Manage videos
-                                </button>
                             </>
                         )}
                     </div>

@@ -19,6 +19,7 @@ import CreateVideo from './pages/CreateVideo'
 import UploadTweet from './pages/UploadTweet'
 import History from './pages/History'
 import Liked from './pages/Liked'
+import Admin from './pages/admin'
 
 import './App.css'
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="history" element={<History />} />
           <Route path="liked" element={<Liked />} />
+          <Route path="admin" element={<Admin />} />
         
           <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />

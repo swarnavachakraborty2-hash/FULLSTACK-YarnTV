@@ -11,7 +11,8 @@ import {
   CloseIcon,
   PlayLogo,
   YouIcon,
-  TweetIcon
+  TweetIcon,
+  BarChartIcon
 } from './Icons'
 
 function Sidebar({ isOpen = false, onClose }) {
@@ -22,7 +23,8 @@ function Sidebar({ isOpen = false, onClose }) {
   const miniNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
     { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/feed/tweets' },
-    { id: 'you', label: 'You', icon: YouIcon, path: '/profile' }
+    { id: 'you', label: 'You', icon: YouIcon, path: '/profile' },
+    { id: 'admin', label: 'Admin Stats', miniLabel: <>Admin<br />Stats</>, icon: BarChartIcon, path: '/admin' }
   ]
 
   // Full drawer items
@@ -33,7 +35,7 @@ function Sidebar({ isOpen = false, onClose }) {
     { id: 'liked', label: 'Liked Videos', icon: LikeIcon, path: '/liked' },
     { id: 'history', label: 'History', icon: HistoryIcon, path: '/history' },
     { id: 'content', label: 'My Channel', icon: YouIcon, path: '/channel' },
-    { id: 'collections', label: 'Collections', icon: FolderIcon, path: '/collections' },
+    { id: 'admin', label: 'Admin Statistics', icon: BarChartIcon, path: '/admin' },
   ]
 
   const bottomNavItems = [
@@ -62,7 +64,7 @@ function Sidebar({ isOpen = false, onClose }) {
               title={item.label}
             >
               <Icon className="mini-sidebar-icon" />
-              <span className="mini-sidebar-label">{item.label}</span>
+              <span className="mini-sidebar-label">{item.miniLabel || item.label}</span>
             </button>
           )
         })}

@@ -47,7 +47,7 @@ function UploadTweet() {
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
-        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Create Post</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>Create Tweet</h1>
       </div>
 
       {/* Compose card */}

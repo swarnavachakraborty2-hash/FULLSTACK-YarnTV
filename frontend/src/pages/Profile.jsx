@@ -102,9 +102,6 @@ function Profile() {
             <button type="button" className="btn-channel-edit">
               Customize channel
             </button>
-            <button type="button" className="btn-channel-manage">
-              Manage videos
-            </button>
           </div>
         </div>
       </section>
@@ -150,7 +147,7 @@ function Profile() {
       <section className="channel-section">
         <div className="section-title-row">
           <h2 className="section-heading">Playlists</h2>
-          <button type="button" onClick={() => navigate('/playlists')} className="btn-see-all">
+          <button type="button" onClick={() => navigate('/channel/playlists')} className="btn-see-all">
             See all
           </button>
         </div>

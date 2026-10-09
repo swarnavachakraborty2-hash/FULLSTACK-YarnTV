@@ -1,18 +1,21 @@
-﻿/* App Layout Container */
+/* App Layout Container */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--bg-main);
   position: relative;
+  padding-top: 64px;
 }
 
 /* =========================================================
    Navbar Styles
    ========================================================= */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   height: 64px;
   background-color: var(--bg-main);
@@ -197,6 +200,7 @@
   height: calc(100vh - 64px);
   position: relative;
   overflow: hidden;
+  padding-left: 72px;
 }
 
 /* Backdrop Overlay when drawer is open */
@@ -605,6 +609,10 @@
 }
 
 @media (max-width: 768px) {
+  .main-layout {
+    padding-left: 0;
+  }
+
   .navbar-search {
     margin: 0 12px;
   }
@@ -640,9 +648,11 @@
    Compact Mini Sidebar (Below menu button)
    ========================================================= */
 .mini-sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  bottom: 0;
   width: 72px;
-  flex-shrink: 0;
-  height: 100%;
   background-color: var(--bg-main);
   border-right: 1px solid var(--border-color);
   display: flex;
