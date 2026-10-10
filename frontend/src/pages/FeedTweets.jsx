@@ -8,8 +8,15 @@ function FeedTweets() {
     const navigate = useNavigate()
     const [userTweets, setUserTweets] = useState([])
     const [loading, setLoading] = useState(true)
+    const [currUserId, setCurrUserId] = useState(null)
 
     useEffect(() => {
+        api.get("user/curr-user").then((res) => {
+            if (res.data?.data?._id) {
+                setCurrUserId(res.data.data._id)
+            }
+        }).catch(() => {})
+
         api.get("tweet/get-feed-tweets")
             .then((res) => {
                 if (res.data) {
@@ -22,6 +29,16 @@ function FeedTweets() {
                 setLoading(false)
             })
     }, [])
+
+    const onDelete = (tweet_id) => {
+        api.delete(`tweet/delete-tweet/${tweet_id}`)
+            .then(() => {
+                setUserTweets(prev => prev.filter(t => t._id !== tweet_id))
+            })
+            .catch((err) => {
+                console.log(err.response?.data)
+            })
+    }
 
     const onLike = (tweet_id) => {
         api.get(`like/tweet/${tweet_id}`)
@@ -128,9 +145,45 @@ function FeedTweets() {
                                 padding: '20px',
                                 display: 'flex',
                                 gap: '14px',
-                                transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+                                transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+                                position: 'relative'
                             }}
                         >
+                            {/* Delete Button */}
+                            {currUserId === tweet.owner?._id && (
+                                <button
+                                    onClick={() => onDelete(tweet._id)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '16px',
+                                        right: '16px',
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'var(--text-muted)',
+                                        cursor: 'pointer',
+                                        padding: '4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '50%',
+                                        transition: 'color 0.2s ease, background-color 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = '#f87171'
+                                        e.currentTarget.style.backgroundColor = 'rgba(248, 113, 113, 0.1)'
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = 'var(--text-muted)'
+                                        e.currentTarget.style.backgroundColor = 'transparent'
+                                    }}
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            )}
+
                             {/* Avatar */}
                             {tweet.owner?.avatar ? (
                                 <img

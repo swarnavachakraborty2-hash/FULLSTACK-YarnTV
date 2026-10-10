@@ -20,6 +20,7 @@ import UploadTweet from './pages/UploadTweet'
 import History from './pages/History'
 import Liked from './pages/Liked'
 import Admin from './pages/admin'
+import CustomizeChannel from './pages/CustomizeChannel'
 
 import './App.css'
 
@@ -30,30 +31,35 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-video" element={<CreateVideo />} />
+        <Route Path="/customize-channel" element={<CustomizeChannel />} />
         <Route path="/upload-tweet" element={<UploadTweet />} />
+
         <Route path="/" element={<Layout />}>
+          <Route index element={<Feed />} />
           <Route path="history" element={<History />} />
           <Route path="liked" element={<Liked />} />
           <Route path="admin" element={<Admin />} />
-        
-          <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />
           <Route path="/feed/tweets" element={<FeedTweets />} />
           <Route path="/:tweet_id/comments" element={<TweetsComments />} />
           <Route path="/feed/search/:title" element={<VideoListing />} />
+
           <Route path="channel" element={<ChannelLayout />} >
             <Route index element={<Channel />} />
             <Route path="playlists" element={<ChannelPlaylists />} />
             <Route path="tweets" element={<ChannelTweets />} />
             <Route path="subscribed-to" element={<SubscribedTo />} />
           </Route>
+
           <Route path="profile/:name" element={<ChannelLayout />} >
             <Route index element={<Channel />} />
             <Route path="playlists" element={<ChannelPlaylists />} />
             <Route path="tweets" element={<ChannelTweets />} />
           </Route>
+
           <Route path="playlist/:id" element={<PlaylistVideos />} />
           <Route path="watch/:id" element={<WatchVideo />} />
+          
         </Route>
       </Routes>
     </BrowserRouter>

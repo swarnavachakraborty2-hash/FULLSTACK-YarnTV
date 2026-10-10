@@ -99,7 +99,7 @@ function Profile() {
           <h1 className="channel-display-name">{fullname || username}</h1>
           <p className="channel-handle">@{username} · View channel</p>
           <div className="channel-actions-row">
-            <button type="button" className="btn-channel-edit">
+            <button type="button" onClick={()=>navigate("/customize-channel")} className="btn-channel-edit">
               Customize channel
             </button>
           </div>

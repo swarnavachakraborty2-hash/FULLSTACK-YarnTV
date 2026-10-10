@@ -58,6 +58,16 @@ function TweetsComments() {
             })
     }
 
+    const onDeleteTweet = () => {
+        api.delete(`tweet/delete-tweet/${tweet_id}`)
+            .then((res) => {
+                console.log(res.data.message)
+            })
+            .catch((err) => {
+                console.log(err.response?.data)
+            })
+        }
+
     return (
         <div className="feed-content">
             <div className="comments-page">
