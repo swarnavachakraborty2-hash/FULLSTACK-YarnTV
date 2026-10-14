@@ -31,7 +31,6 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-video" element={<CreateVideo />} />
-        <Route Path="/customize-channel" element={<CustomizeChannel />} />
         <Route path="/upload-tweet" element={<UploadTweet />} />
 
         <Route path="/" element={<Layout />}>
@@ -40,6 +39,7 @@ function App() {
           <Route path="liked" element={<Liked />} />
           <Route path="admin" element={<Admin />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="customize-channel" element={<CustomizeChannel />} />
           <Route path="/feed/tweets" element={<FeedTweets />} />
           <Route path="/:tweet_id/comments" element={<TweetsComments />} />
           <Route path="/feed/search/:title" element={<VideoListing />} />
