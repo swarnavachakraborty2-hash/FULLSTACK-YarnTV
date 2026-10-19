@@ -49,15 +49,24 @@ const createVideo = asyncHandler(async function (req, res) {
 
 const deleteVideo = asyncHandler(async function (req, res) {
 
-    const user_id = req.user._id
+    const curr_user_id = req.user._id
     const { videoId } = req.params
 
     const video = await videoModel.findOneAndDelete(
         {
             _id: videoId,
-            owner: user_id
+            owner: curr_user_id
         }
     )
+
+    const user = await userModel.findById(curr_user_id)
+    user.watchHistory.pull(videoId)
+    await user.save()
+
+    await likeModel.deleteMany({
+        video: videoId
+    })
+
     if (!video) {
         throw new apiError(400, "can't find video")
     }
@@ -711,7 +720,7 @@ const getAdminStats = asyncHandler(async function (req, res) {
         },
         {
             $addFields: {
-                subscribers: { $size: "$subscribers" },
+                totalSubscribers: { $size: "$subscribers" },
                 totalViews: { $first: "$totalViews.views" },
                 totalLikes: { $first: "$totalLikes.likes" }
             }
@@ -721,6 +730,7 @@ const getAdminStats = asyncHandler(async function (req, res) {
                 username: 1,
                 fullname: 1,
                 subscribers: 1,
+                totalSubscribers: 1,
                 totalViews: 1,
                 totalLikes: 1,
                 avatar: 1,
