@@ -1,6 +1,9 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import api from "../api/axios"
+import statsChart from '../components/statsChart'
+import SubscriberChart from '../components/subscriberChart'
+
 
 function Admin() {
 
@@ -47,16 +50,16 @@ function Admin() {
           setErr(err.response.data)
         }
       })
-  }, [username])
+  }, [])
 
   const onDelete = (v_id) => {
     api.delete(`video/delete-video/${v_id}`)
       .then((res) => {
-        setVideos((videos) => {
+        setVideos((videos) =>
           videos.filter((prev_video) => {
             prev_video._id != v_id.toString()
           })
-        })
+        )
       })
       .catch((err) => {
         if (err?.response.data) {
@@ -69,9 +72,9 @@ function Admin() {
     api.get(`video/publish-toggle-video/${v_id}`)
       .then((res) => {
         setVideos((videos) => {
-          videos.map((prev_video) => {
+          videos.map((prev_video) =>
             prev_video._id === v_id ? { ...prev_video, isPublished: res.data.data.isPublished } : prev_video
-          })
+          )
         })
       })
       .catch((err) => {
@@ -81,9 +84,34 @@ function Admin() {
       })
   }
 
-  const onUpdateVideo = (v_id) => {
+  /*const onUpdateVideo = (v_id) => {
     api.patch(``)
-  }
+  }*/
+
+
+  //views and likes
+  const statsData = [
+    {
+      name: 'Page A',
+      uv: 400,
+      pv: 2400,
+      amt: 2400,
+    },
+    {
+      name: 'Page B',
+      uv: 300,
+      pv: 4567,
+      amt: 2400,
+    }
+  ];
+
+
+  const subscriberData = [
+
+
+  ]
+
+
 
   return (
     <main className="feed-content" style={{ padding: '28px 36px', height: '100%', overflowY: 'auto' }}>
@@ -91,6 +119,8 @@ function Admin() {
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>Admin Statistics</h1>
         <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>Welcome to your creator dashboard.</p>
       </div>
+      <SubscriberChart data={subscriberData} />
+      <statsChart data={statsData} />
     </main>
   )
 }
