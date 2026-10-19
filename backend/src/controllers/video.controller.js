@@ -214,7 +214,7 @@ const watchVideo = asyncHandler(async function (req, res) {
 
     const curr_user = await userModel.findOne({ _id: curr_user_id })
 
-    const exists = curr_user.watchHistory.filter((v_id)=>v_id.toString()===video_id)
+    const exists = curr_user.watchHistory.filter((v_id) => v_id.toString() === video_id)
     //no duplicate ids
     if (exists.length > 0) {
         curr_user.watchHistory.pull(video_id)
@@ -609,9 +609,14 @@ const getAllAdminVideos = asyncHandler(async function (req, res) {
                         }
                     },
                     {
+                        $sort: {
+                            createdAt: -1
+                        }
+                    },
+                    {
                         $addFields: {
                             views: { $size: "$views" },
-                            likes: { $size: "$likes " },
+                            likes: { $size: "$likes" },
                             dislikes: { $size: "$dislikes" }
                         }
                     },
@@ -622,6 +627,7 @@ const getAllAdminVideos = asyncHandler(async function (req, res) {
                             title: 1,
                             views: 1,
                             likes: 1,
+                            dislikes: 1,
                             createdAt: 1
                         }
                     }
