@@ -4075,3 +4075,264 @@
 }
 
 
+
+
+/* =========================================================
+   Watch Save Button & Playlist Dropdown Styles
+   ========================================================= */
+.watch-save-container {
+  position: relative;
+  display: inline-block;
+}
+
+.watch-save-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-card);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.watch-save-btn:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.watch-save-btn--active {
+  background-color: var(--bg-card-hover);
+  color: var(--accent-purple);
+  border-color: var(--accent-purple);
+}
+
+.watch-save-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Playlist Dropdown */
+.watch-playlist-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 270px;
+  background-color: #18181b;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.watch-playlist-form-dropdown {
+  width: 300px;
+}
+
+.watch-playlist-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.watch-dropdown-close {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.watch-dropdown-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.watch-playlist-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.watch-playlist-option-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.watch-playlist-option-item:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--accent-purple);
+}
+
+.watch-playlist-option-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.watch-playlist-option-item:hover .watch-playlist-option-icon {
+  color: var(--accent-purple);
+}
+
+.watch-playlist-option-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watch-no-playlists {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 12px 0;
+}
+
+.watch-create-playlist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(174, 122, 255, 0.12);
+  border: 1px solid rgba(174, 122, 255, 0.25);
+  color: var(--accent-purple);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-top: 4px;
+}
+
+.watch-create-playlist-btn:hover {
+  background: var(--accent-purple);
+  color: #0f0f0f;
+  box-shadow: 0 2px 10px var(--accent-purple-glow);
+}
+
+/* Create New Playlist Form inside Dropdown */
+.watch-create-playlist-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.watch-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.watch-form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.watch-form-input,
+.watch-form-textarea {
+  width: 100%;
+  background: #121214;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.watch-form-input:focus,
+.watch-form-textarea:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px var(--accent-purple-glow);
+}
+
+.watch-form-textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.watch-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.watch-form-btn-cancel {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.watch-form-btn-cancel:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.watch-form-btn-submit {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: var(--accent-purple);
+  color: #0f0f0f;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.watch-form-btn-submit:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 2px 10px var(--accent-purple-glow);
+}
+
+.watch-form-btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

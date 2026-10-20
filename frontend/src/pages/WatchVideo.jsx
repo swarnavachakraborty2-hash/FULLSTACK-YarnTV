@@ -21,12 +21,12 @@ function WatchVideo() {
   const [desc, setDesc] = useState("")
   const [comment, setComment] = useState("")
   const [totalComments, setTotalcomments] = useState(0)
-  const [myComment, setMycomment] = useState(false)
   const [showFullDesc, setShowFullDesc] = useState(false)
-  const [confirmingId, setConfirmingId] = useState(null)
   const [showdropDown, setShowDropdown] = useState(false)
   const [playlistOptions, setPlaylistOptions] = useState([])
   const [showForm, setShowForm] = useState(false)
+  const [playlistName, setPlaylistName] = useState("")
+  const [playlistDesc, setPlaylistDesc] = useState("")
 
   const { id } = useParams()
   const navigate = useNavigate()
@@ -75,6 +75,9 @@ function WatchVideo() {
           setTotalcomments(res.data.data.totalComments)
         }
       })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
   }, [id, liked, subscribers, comments, disliked])
 
   useEffect(() => {
@@ -82,12 +85,18 @@ function WatchVideo() {
       .then((res) => {
         setComments(res.data.data)
       })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
   }, [video])
 
   useEffect(() => {
     api.get("video/get-feed-videos")
       .then((res) => {
         setVideos(res.data.data)
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
       })
   }, [video])
 
@@ -97,6 +106,9 @@ function WatchVideo() {
         setSubscribed(res.data.data.isSubscribed)
         setSubscribers(res.data.data.subscribers)
       })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
   }
 
   const onLike = () => {
@@ -104,6 +116,9 @@ function WatchVideo() {
       .then((res) => {
         setLiked(res.data.data.isLiked)
         setLikes(res.data.data.likes)
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
       })
   }
 
@@ -113,6 +128,9 @@ function WatchVideo() {
         setDisLiked(res.data.data.isDisliked)
         setDisLikes(res.data.data.dislikes)
       })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
   }
 
   const onCommentSubmit = (e) => {
@@ -121,6 +139,9 @@ function WatchVideo() {
       .then((res) => {
         setComments(res.data.data)
         setComment("")
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
       })
   }
 
@@ -135,6 +156,9 @@ function WatchVideo() {
           )
         )
       })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
   }
 
   const onDeleteComment = (comment_id) => {
@@ -142,36 +166,55 @@ function WatchVideo() {
       .then((res) => {
         setComments(res.data.data)
       })
+      .catch((err) => {
+        console.log(err.response?.data)
+      })
   }
 
 
   const onClickSave = () => {
+    if (showdropDown) {
+      setShowDropdown(false)
+      return
+    }
+    setShowForm(false)
     api.get(`playlist/get-currentUser-playlists-options/${Id}`)
       .then((res) => {
-        setPlaylistOptions(res.data.data)
         setShowDropdown(true)
+        setPlaylistOptions(res.data.data || [])
       })
       .catch((err) => {
         console.log(err.response?.data)
+        setShowDropdown(true)
+        setPlaylistOptions([])
       })
   }
 
   const onClickPlaylistOptions = (option_id) => {
     api.get(`playlist/save-video-playlist/${option_id}/${id}`)
-      .then(() => { showdropDown(false) })
+      .then(() => setShowDropdown(false))
       .catch((err) => {
         console.log(err.response?.data)
+      })
+  }
+
+  const onCreateNewPlaylist = (e) => {
+    e.preventDefault()
+    api.post(`playlist/create-new-playlist/${id}`, {name: playlistName, description: playlistDesc})
+      .then(() => {
+        setShowForm(false)
+        setPlaylistName("")
+        setPlaylistDesc("")
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
+        setShowForm(false)
       })
   }
 
   const onClickNewPlaylist = () => {
     setShowDropdown(false)
     setShowForm(true)
-    api.post(`playlist/create-new-playlist/${id}`)
-      .then(() => setShowForm(false))
-      .catch((err) => {
-        console.log(err.response?.data)
-      })
   }
 
   return (
@@ -252,6 +295,134 @@ function WatchVideo() {
                 </svg>
                 <span>{dislikes}</span>
               </button>
+            </div>
+
+            {/* Save to Playlist Button & Dropdown */}
+            <div className="watch-save-container">
+              <button
+                type="button"
+                className={`watch-save-btn${showdropDown || showForm ? ' watch-save-btn--active' : ''}`}
+                onClick={onClickSave}
+              >
+                <svg viewBox="0 0 24 24" className="watch-save-icon" fill="currentColor">
+                  <path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z" />
+                </svg>
+                <span>Save</span>
+              </button>
+
+              {/* Dropdown with available playlists */}
+              {showdropDown && (
+                <div className="watch-playlist-dropdown">
+                  <div className="watch-playlist-dropdown-header">
+                    <span>Save to playlist</span>
+                    <button
+                      type="button"
+                      className="watch-dropdown-close"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="watch-playlist-options-list">
+                    {playlistOptions && playlistOptions.length > 0 ? (
+                      playlistOptions.map((option) => (
+                        <button
+                          key={option._id}
+                          type="button"
+                          className="watch-playlist-option-item"
+                          onClick={() => onClickPlaylistOptions(option._id)}
+                        >
+                          <svg viewBox="0 0 24 24" className="watch-playlist-option-icon" fill="currentColor">
+                            <path d="M4 10h12v2H4zm0-4h12v2H4zm0 8h8v2H4zm10 0v6l5-3z"/>
+                          </svg>
+                          <span className="watch-playlist-option-name">{option.name}</span>
+                        </button>
+                      ))
+                    ) : (
+                      <p className="watch-no-playlists">No playlists found</p>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="watch-create-playlist-btn"
+                    onClick={onClickNewPlaylist}
+                  >
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
+                    <span>Create New Playlist</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Create New Playlist Form */}
+              {showForm && (
+                <div className="watch-playlist-dropdown watch-playlist-form-dropdown">
+                  <div className="watch-playlist-dropdown-header">
+                    <span>New Playlist</span>
+                    <button
+                      type="button"
+                      className="watch-dropdown-close"
+                      onClick={() => {
+                        setShowForm(false);
+                        setPlaylistName("");
+                        setPlaylistDesc("");
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <form onSubmit={onCreateNewPlaylist} className="watch-create-playlist-form">
+                    <div className="watch-form-group">
+                      <label className="watch-form-label">Title</label>
+                      <input
+                        type="text"
+                        className="watch-form-input"
+                        placeholder="Enter playlist title..."
+                        value={playlistName}
+                        onChange={(e) => setPlaylistName(e.target.value)}
+                        required
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="watch-form-group">
+                      <label className="watch-form-label">Description</label>
+                      <textarea
+                        className="watch-form-textarea"
+                        placeholder="Enter description..."
+                        value={playlistDesc}
+                        onChange={(e) => setPlaylistDesc(e.target.value)}
+                        rows="2"
+                      />
+                    </div>
+
+                    <div className="watch-form-actions">
+                      <button
+                        type="button"
+                        className="watch-form-btn-cancel"
+                        onClick={() => {
+                          setShowForm(false);
+                          setPlaylistName("");
+                          setPlaylistDesc("");
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="watch-form-btn-submit"
+                        disabled={!playlistName.trim()}
+                      >
+                        Create
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
         </div>
