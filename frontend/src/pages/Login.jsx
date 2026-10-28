@@ -116,6 +116,9 @@ function Login() {
                         <button type="submit" className="btn-register">
                             Log In
                         </button>
+                        <button onClick={()=>navigate("/")} type='button' className="btn-register">
+                            Continue as guest
+                        </button>
 
                     </form>
                 </div>

@@ -4336,3 +4336,174 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+
+/* =========================================================
+   Guest Login Card Luxury Styles
+   ========================================================= */
+.guest-card-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: guestFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.guest-card-modal {
+  position: relative;
+  background: linear-gradient(145deg, #18181b 0%, #121214 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 32px 36px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(174, 122, 255, 0.12);
+  animation: guestScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.guest-card-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.guest-card-close-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+  transform: rotate(90deg);
+}
+
+.guest-card-columns {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.guest-card-col-icon {
+  flex-shrink: 0;
+}
+
+.guest-card-icon-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(174, 122, 255, 0.18) 0%, rgba(174, 122, 255, 0.05) 100%);
+  border: 1px solid rgba(174, 122, 255, 0.35);
+  box-shadow: 0 0 24px var(--accent-purple-glow);
+  color: var(--accent-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guest-card-col-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.guest-card-heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.guest-card-desc {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.guest-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.guest-card-btn {
+  flex: 1;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.guest-card-btn-login {
+  background: var(--accent-purple);
+  color: #0f0f0f;
+  border: none;
+  box-shadow: 0 4px 14px var(--accent-purple-glow);
+}
+
+.guest-card-btn-login:hover {
+  background: #bf8fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-purple-glow);
+}
+
+.guest-card-btn-register {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.guest-card-btn-register:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+@keyframes guestFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes guestScaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+  .guest-card-modal {
+    padding: 28px 22px;
+  }
+  .guest-card-columns {
+    flex-direction: column;
+    text-align: center;
+    gap: 18px;
+  }
+  .guest-card-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .guest-card-btn {
+    width: 100%;
+  }
+}

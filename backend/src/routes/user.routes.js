@@ -2,7 +2,7 @@ const express = require("express")
 const userControllers = require("../controllers/user.contollers.js")
 const route = express.Router()
 const upload = require("../middlewares/multer.middleware.js")
-const authMiddleware = require("../middlewares/user.middleware.js")
+const authMiddlewares = require("../middlewares/user.middleware.js")
 
 
 
@@ -21,25 +21,25 @@ route.post("/register", upload.fields([
 
 route.post("/login", userControllers.Login)
 
-route.get("/logout", authMiddleware, userControllers.Logout)
+route.get("/logout", authMiddlewares.requiredMiddleware, userControllers.Logout)
 
-route.delete("/deleteAccount", authMiddleware, userControllers.DeleteAccount)
+route.delete("/deleteAccount", authMiddlewares.requiredMiddleware, userControllers.DeleteAccount)
 
 route.get("/refresh-token", userControllers.RefreshAccessToken)
 
-route.patch("/change-password", authMiddleware, userControllers.changeUserPassword)
+route.patch("/change-password", authMiddlewares.requiredMiddleware, userControllers.changeUserPassword)
 
-route.get("/curr-user", authMiddleware, userControllers.getCurrentUser)
+route.get("/curr-user", authMiddlewares.requiredMiddleware, userControllers.getCurrentUser)
 
-route.patch("/edit-account", authMiddleware, userControllers.changeAccountDetails)// edit username or email
+route.patch("/edit-account", authMiddlewares.requiredMiddleware, userControllers.changeAccountDetails)// edit username or email
 
-route.patch("/edit-avatar", authMiddleware, upload.single("avatar"), userControllers.updateAvatar)
+route.patch("/edit-avatar", authMiddlewares.requiredMiddleware, upload.single("avatar"), userControllers.updateAvatar)
 
-route.patch("/edit-coverImage", authMiddleware, upload.single("coverImage"), userControllers.updateCoverImage)
+route.patch("/edit-coverImage", authMiddlewares.requiredMiddleware, upload.single("coverImage"), userControllers.updateCoverImage)
 
 
 //functions on different users
-route.get("/profile/:username", authMiddleware, userControllers.getUserChannel)
+route.get("/profile/:username", authMiddlewares.requiredMiddleware, userControllers.getUserChannel)
 
 
 module.exports = route 

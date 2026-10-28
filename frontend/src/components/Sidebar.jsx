@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import api from '../api/axios'
+import GuestLoginCard from './GuestLoginCard'
 import {
   HomeIcon,
   LikeIcon,
@@ -18,6 +20,23 @@ import {
 function Sidebar({ isOpen = false, onClose }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const [currUser, setCurrUser] = useState(null)
+  const [showLoginCard, setShowLoginCard] = useState(false)
+
+  useEffect(() => {
+    api.get("user/curr-user")
+      .then((res) => {
+        if (res.data) {
+          setCurrUser(res.data.data)
+        }
+      })
+      .catch((err) => {
+        console.log(err.response?.data)
+        setCurrUser(null)
+      })
+  }, [])
+
+  const exists = Boolean(currUser?._id)
 
   // Mini sidebar items (shown on the left column under the menu)
   const miniNavItems = [
@@ -40,11 +59,26 @@ function Sidebar({ isOpen = false, onClose }) {
 
   const bottomNavItems = [
     { id: 'support', label: 'Support', icon: SupportIcon, path: '/support' },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon, path: '/settings' },
   ]
 
   const handleNavigation = (path) => {
-    navigate(path)
+    // Protected paths that require user ID
+    const protectedPaths = [
+      '/profile',
+      '/liked',
+      '/history',
+      '/channel',
+      '/admin',
+      '/feed/tweets'
+    ]
+    const isProtected = protectedPaths.includes(path)
+
+    if (isProtected && !exists) {
+      setShowLoginCard(true)
+    } else {
+      navigate(path)
+    }
+
     if (onClose) onClose()
   }
 
@@ -70,7 +104,7 @@ function Sidebar({ isOpen = false, onClose }) {
         })}
       </aside>
 
-      {/* Full Sliding Drawer Sidebar (Appears when ☰ menu is clicked) */}
+      {/* Full Sliding Drawer Sidebar (Appears when menu is clicked) */}
       <aside className={`sidebar-drawer ${isOpen ? 'open' : 'closed'}`}>
         {/* Drawer Header with Close Button */}
         <div className="sidebar-header">
@@ -126,6 +160,11 @@ function Sidebar({ isOpen = false, onClose }) {
           })}
         </div>
       </aside>
+
+      {/* Guest Login / Register Card Modal */}
+      {showLoginCard && (
+        <GuestLoginCard onClose={() => setShowLoginCard(false)} />
+      )}
     </>
   )
 }

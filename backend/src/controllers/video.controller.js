@@ -207,41 +207,43 @@ const getFeedVideos = asyncHandler(async function (req, res) {
 
 const watchVideo = asyncHandler(async function (req, res) {
 
-    const curr_user_id = req.user._id
+    const curr_user_id = req.user ? req.user._id : null
+
     const { video_id } = req.params
+    if (curr_user_id) {
 
-    const video = await videoModel.findOne(
-        {
-            _id: video_id
-        }
-    )
-
-
-    if (!video) {
-        throw new apiError(400, "could'nt find the video")
-    }
-
-    const curr_user = await userModel.findOne({ _id: curr_user_id })
-
-    const exists = curr_user.watchHistory.filter((v_id) => v_id.toString() === video_id)
-    //no duplicate ids
-    if (exists.length > 0) {
-        curr_user.watchHistory.pull(video_id)
-    }
-    curr_user.watchHistory.push(video_id)//push the watched video at the end of the array
-    await curr_user.save()
-
-    //a person can see a video maximum of three times to increase views of a video
-
-    let count = video.views.filter((id) => id.toString() === curr_user_id.toString()).length
-    if (count >= 3) {
-        return res.status(200).json(
-            new apiResponse(200, "viewed successfully")
+        const video = await videoModel.findOne(
+            {
+                _id: video_id
+            }
         )
-    }
-    video.views.push(curr_user_id)
-    await video.save({ validateBeforeSave: false })
+        if (!video) {
+            throw new apiError(400, "could'nt find the video")
+        }
 
+        const curr_user = curr_user_id ? await userModel.findOne({ _id: curr_user_id }) : null
+
+
+        const exists = curr_user.watchHistory.filter((v_id) => v_id.toString() === video_id)
+        //no duplicate ids
+        if (exists.length > 0) {
+            curr_user.watchHistory.pull(video_id)
+        }
+        curr_user.watchHistory.push(video_id)//push the watched video at the end of the array
+        await curr_user.save()
+
+
+        //a person can see a video maximum of three times to increase views of a video
+
+        let count = video.views.filter((id) => id.toString() === curr_user_id.toString()).length
+        if (count >= 3) {
+            return res.status(200).json(
+                new apiResponse(200, "viewed successfully")
+            )
+        }
+        video.views.push(curr_user_id)
+        await video.save({ validateBeforeSave: false })
+    }
 
     return res.status(200).json(
         new apiResponse(200, "viewed successfully")
@@ -258,7 +260,7 @@ const getLikedVideos = asyncHandler(async function (req, res) {
         {
             $match: {
                 likedBy: curr_user_id,
-                video: { $ne: null } //video is not equal(ne) null
+                video: { $ne: null } //video is not equalto(ne) null
             }
         },
         {
@@ -322,7 +324,7 @@ const getLikedVideos = asyncHandler(async function (req, res) {
 //get video page
 const getVideo = asyncHandler(async function (req, res) {
 
-    const curr_user_id = new mongoose.Types.ObjectId(req.user._id)
+    const curr_user_id = req.user? new mongoose.Types.ObjectId(req.user._id) : null
     const { video_id } = req.params
 
     const video = await videoModel.aggregate([
@@ -409,7 +411,7 @@ const getVideo = asyncHandler(async function (req, res) {
     ])
 
     if (!video?.length) {
-        throw new apiError("could'nt find videos")
+        throw new apiError(404,"could'nt find videos")
     }
 
     return res.status(200).json(
@@ -545,7 +547,7 @@ const getwatchedVideos = asyncHandler(async function (req, res) {
     if (!user?.watchHistory) {
 
         return res.status(200).json(
-            new apiResponse(200, "videos fetches successfully", [])
+            new apiResponse(200, "no watchHistiry videos found", [])
         )
     }
     const history = user.watchHistory.reverse()

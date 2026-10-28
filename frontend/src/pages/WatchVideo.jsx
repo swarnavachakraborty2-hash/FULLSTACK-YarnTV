@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import api from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
+import GuestLoginCard from '../components/GuestLoginCard'
 
 function WatchVideo() {
   const [Id, setUserId] = useState()
@@ -27,6 +28,7 @@ function WatchVideo() {
   const [showForm, setShowForm] = useState(false)
   const [playlistName, setPlaylistName] = useState("")
   const [playlistDesc, setPlaylistDesc] = useState("")
+  const [showLoginCard, setShowLoginCard] = useState(false)
 
   const { id } = useParams()
   const navigate = useNavigate()
@@ -40,11 +42,11 @@ function WatchVideo() {
       })
       .catch((err) => {
         console.log(err.response?.data)
+        setUserId(null)
       })
   }, [id])
 
-
-  //increase the views if user stays on a video for 3 seconds minimum
+  // Increase the views if user stays on a video for 3 seconds minimum
   useEffect(() => {
     const timer = setTimeout(() => {
       api.get(`video/watch-video/${id}`)
@@ -54,7 +56,6 @@ function WatchVideo() {
 
     return () => clearTimeout(timer)
   }, [id])
-
 
   useEffect(() => {
     api.get(`video/get-video/${id}`)
@@ -66,13 +67,13 @@ function WatchVideo() {
           setLikes(res.data.data.likes)
           setDisLiked(res.data.data.isDisliked)
           setLiked(res.data.data.isLiked)
-          setSubscribers(res.data.data.owner.subscribers)
-          setSubscribed(res.data.data.owner.isSubscribed)
+          setSubscribers(res.data.data.owner?.subscribers || 0)
+          setSubscribed(res.data.data.owner?.isSubscribed || false)
           setTitle(res.data.data.title)
           setDesc(res.data.data.description)
-          setUsername(res.data.data.owner.username)
-          setAvatar(res.data.data.owner.avatar)
-          setTotalcomments(res.data.data.totalComments)
+          setUsername(res.data.data.owner?.username || "")
+          setAvatar(res.data.data.owner?.avatar || "")
+          setTotalcomments(res.data.data.totalComments || 0)
         }
       })
       .catch((err) => {
@@ -83,7 +84,7 @@ function WatchVideo() {
   useEffect(() => {
     api.get(`video/get-comments-video/${id}`)
       .then((res) => {
-        setComments(res.data.data)
+        setComments(res.data.data || [])
       })
       .catch((err) => {
         console.log(err.response?.data)
@@ -93,7 +94,7 @@ function WatchVideo() {
   useEffect(() => {
     api.get("video/get-feed-videos")
       .then((res) => {
-        setVideos(res.data.data)
+        setVideos(res.data.data?.videos || res.data.data || [])
       })
       .catch((err) => {
         console.log(err.response?.data)
@@ -101,6 +102,10 @@ function WatchVideo() {
   }, [video])
 
   const onSubscribe = () => {
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     api.get(`subscription/${username}`)
       .then((res) => {
         setSubscribed(res.data.data.isSubscribed)
@@ -112,6 +117,10 @@ function WatchVideo() {
   }
 
   const onLike = () => {
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     api.get(`like/video/${id}`)
       .then((res) => {
         setLiked(res.data.data.isLiked)
@@ -123,6 +132,10 @@ function WatchVideo() {
   }
 
   const onDislike = () => {
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     api.get(`video/dislike-video-toggle/${id}`)
       .then((res) => {
         setDisLiked(res.data.data.isDisliked)
@@ -135,6 +148,10 @@ function WatchVideo() {
 
   const onCommentSubmit = (e) => {
     e.preventDefault()
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     api.post(`video/comment-video/${id}`, { comment })
       .then((res) => {
         setComments(res.data.data)
@@ -146,6 +163,10 @@ function WatchVideo() {
   }
 
   const onLikeComment = (comment_id) => {
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     api.get(`like/comment/${comment_id}`)
       .then((res) => {
         setComments((prevComments) =>
@@ -162,6 +183,10 @@ function WatchVideo() {
   }
 
   const onDeleteComment = (comment_id) => {
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     api.delete(`video/delete-comment-video/${id}/${comment_id}`)
       .then((res) => {
         setComments(res.data.data)
@@ -171,8 +196,11 @@ function WatchVideo() {
       })
   }
 
-
   const onClickSave = () => {
+    if (!Id) {
+      setShowLoginCard(true)
+      return
+    }
     if (showdropDown) {
       setShowDropdown(false)
       return
@@ -200,7 +228,7 @@ function WatchVideo() {
 
   const onCreateNewPlaylist = (e) => {
     e.preventDefault()
-    api.post(`playlist/create-new-playlist/${id}`, {name: playlistName, description: playlistDesc})
+    api.post(`playlist/create-new-playlist/${id}`, { name: playlistName, description: playlistDesc })
       .then(() => {
         setShowForm(false)
         setPlaylistName("")
@@ -215,6 +243,14 @@ function WatchVideo() {
   const onClickNewPlaylist = () => {
     setShowDropdown(false)
     setShowForm(true)
+  }
+
+  const handleProfileNavigation = () => {
+    if (Id) {
+      navigate(`/profile/${username}`)
+    } else {
+      setShowLoginCard(true)
+    }
   }
 
   return (
@@ -244,7 +280,7 @@ function WatchVideo() {
           <div className="watch-channel-group">
             <div
               className="watch-channel-info"
-              onClick={() => navigate(`/profile/${username}`)}
+              onClick={() => handleProfileNavigation()}
             >
               {avatar ? (
                 <img src={avatar} alt={username} className="watch-channel-avatar" />
@@ -446,7 +482,7 @@ function WatchVideo() {
           )}
         </div>
 
-        {/* Comments */}
+        {/* Comments Section */}
         <div className="watch-comments-section">
           <h2 className="watch-comments-heading">{totalComments} Comments</h2>
 
@@ -457,6 +493,9 @@ function WatchVideo() {
               className="watch-comment-input"
               placeholder="Add a comment..."
               value={comment}
+              onClick={() => {
+                if (!Id) setShowLoginCard(true)
+              }}
               onChange={(e) => setComment(e.target.value)}
             />
             <button
@@ -478,12 +517,12 @@ function WatchVideo() {
                     src={c.owner.avatar}
                     alt={c.owner.username}
                     className="watch-comment-avatar"
-                    onClick={() => navigate(`/profile/${c.owner?.username}`)}
+                    onClick={() => handleProfileNavigation(c.owner?.username)}
                   />
                 ) : (
                   <div
                     className="watch-comment-avatar watch-comment-avatar--placeholder"
-                    onClick={() => navigate(`/profile/${c.owner?.username}`)}
+                    onClick={() => handleProfileNavigation(c.owner?.username)}
                   >
                     {c.owner?.username?.charAt(0).toUpperCase()}
                   </div>
@@ -494,7 +533,7 @@ function WatchVideo() {
                   <div className="watch-comment-header">
                     <span
                       className="watch-comment-author"
-                      onClick={() => navigate(`/profile/${c.owner?.username}`)}
+                      onClick={() => handleProfileNavigation(c.owner?.username)}
                     >
                       {c.owner?.username}
                     </span>
@@ -519,13 +558,15 @@ function WatchVideo() {
                     </button>
 
                     {/* Delete */}
-                    <button
-                      type="button"
-                      className="watch-comment-delete-btn"
-                      onClick={() => onDeleteComment(c._id)}
-                    >
-                      Delete
-                    </button>
+                    {Id && c.owner?._id === Id && (
+                      <button
+                        type="button"
+                        className="watch-comment-delete-btn"
+                        onClick={() => onDeleteComment(c._id)}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -560,6 +601,11 @@ function WatchVideo() {
           </div>
         ))}
       </aside>
+
+      {/* Guest Login / Register Card Modal */}
+      {showLoginCard && (
+        <GuestLoginCard onClose={() => setShowLoginCard(false)} />
+      )}
     </div>
   )
 }
