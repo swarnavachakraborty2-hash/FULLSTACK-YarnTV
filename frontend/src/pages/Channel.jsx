@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from "../utils/formatters"
 
 function Channel() {
@@ -13,7 +13,7 @@ function Channel() {
         if (name) {
             setUsername(name)
         } else {
-            api.get("user/curr-user")
+            apiCall(() => api.get("user/curr-user")
                 .then((res) => {
                     if (res.data) {
                         setUsername(res.data.data.username)
@@ -21,14 +21,14 @@ function Channel() {
                 })
                 .catch((err) => {
                     console.log(err.response?.data)
-                })
+                }))
         }
     }, [name])
 
     useEffect(() => {
         if (!username) return
 
-        api.get(`video/get-user-videos/${username}`)
+        apiCall(() => api.get(`video/get-user-videos/${username}`)
             .then((res) => {
                     let videos = res.data.data.createdVideos || []
                     videos = videos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -36,7 +36,7 @@ function Channel() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }, [username])
 
     return (

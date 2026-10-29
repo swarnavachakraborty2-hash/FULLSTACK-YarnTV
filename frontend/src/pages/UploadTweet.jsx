@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { useNavigate } from 'react-router-dom'
 
 function UploadTweet() {
@@ -13,12 +13,12 @@ function UploadTweet() {
     if (!tweet.trim()) { setError('Please write something before posting.'); return }
     setError('')
     setPosting(true)
-    api.post('tweet/create-tweet', { content: tweet })
+    apiCall(() => api.post('tweet/create-tweet', { content: tweet })
       .then(() => navigate('/channel/tweets'))
       .catch(err => {
         setError(err?.response?.data?.message || 'Failed to post. Please try again.')
         setPosting(false)
-      })
+      }))
   }
 
   const autoResize = (e) => {

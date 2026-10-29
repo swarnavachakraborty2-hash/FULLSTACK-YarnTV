@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { PlayLogo, SearchIcon, MenuIcon, LogoutIcon, PlusIcon } from './Icons'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 
 function Navbar({ onToggleSidebar }) {
   const [user, setUser] = useState(null)
@@ -15,7 +15,7 @@ function Navbar({ onToggleSidebar }) {
 
 
   useEffect(() => {
-    api.get("/user/curr-user")
+    apiCall(() => api.get("/user/curr-user")
       .then((res) => {
         if (res.data.data) {
           setUser(res.data.data)
@@ -25,11 +25,11 @@ function Navbar({ onToggleSidebar }) {
       })
       .catch(() => {
         setUser(null)
-      })
+      }))
   }, [])
 
   const handleLogout = () => {
-    api.get("/user/logout")
+    apiCall(() => api.get("/user/logout")
       .then((res) => {
         console.log(res.data.data.message)
         setUser(null)
@@ -37,7 +37,7 @@ function Navbar({ onToggleSidebar }) {
       })
       .catch((err) => {
         console.log(err.response?.data?.message)
-      })
+      }))
   }
 
   const fetchSuggestions = useCallback((value) => {
@@ -47,7 +47,7 @@ function Navbar({ onToggleSidebar }) {
       return
     }
 
-    api.post("/video/search-video-name", { letter: value })
+    apiCall(() => api.post("/video/search-video-name", { letter: value })
       .then((res) => {
         if (res.data?.data) {
           setSuggestions(res.data.data)
@@ -57,7 +57,7 @@ function Navbar({ onToggleSidebar }) {
       .catch(() => {
         setSuggestions([])
         setShowDropdown(false)
-      })
+      }))
   }, [])
 
   const handleSearchChange = (e) => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
 import GuestLoginCard from '../components/GuestLoginCard'
 
@@ -34,7 +34,7 @@ function WatchVideo() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.get("user/curr-user")
+    apiCall(() => api.get("user/curr-user")
       .then((res) => {
         if (res.data) {
           setUserId(res.data.data._id)
@@ -43,22 +43,22 @@ function WatchVideo() {
       .catch((err) => {
         console.log(err.response?.data)
         setUserId(null)
-      })
+      }))
   }, [id])
 
   // Increase the views if user stays on a video for 3 seconds minimum
   useEffect(() => {
     const timer = setTimeout(() => {
-      api.get(`video/watch-video/${id}`)
+      apiCall(() => api.get(`video/watch-video/${id}`)
         .then((res) => console.log(res.data.message))
-        .catch((err) => console.log(err.response?.data?.message))
+        .catch((err) => console.log(err.response?.data?.message)))
     }, 3000);
 
     return () => clearTimeout(timer)
   }, [id])
 
   useEffect(() => {
-    api.get(`video/get-video/${id}`)
+    apiCall(() => api.get(`video/get-video/${id}`)
       .then((res) => {
         if (res.data.data) {
           setVideo(res.data.data.videoFile)
@@ -78,27 +78,27 @@ function WatchVideo() {
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [id, liked, subscribers, comments, disliked])
 
   useEffect(() => {
-    api.get(`video/get-comments-video/${id}`)
+    apiCall(() => api.get(`video/get-comments-video/${id}`)
       .then((res) => {
         setComments(res.data.data || [])
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [video])
 
   useEffect(() => {
-    api.get("video/get-feed-videos")
+    apiCall(() => api.get("video/get-feed-videos")
       .then((res) => {
         setVideos(res.data.data?.videos || res.data.data || [])
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [video])
 
   const onSubscribe = () => {
@@ -106,14 +106,14 @@ function WatchVideo() {
       setShowLoginCard(true)
       return
     }
-    api.get(`subscription/${username}`)
+    apiCall(() => api.get(`subscription/${username}`)
       .then((res) => {
         setSubscribed(res.data.data.isSubscribed)
         setSubscribers(res.data.data.subscribers)
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onLike = () => {
@@ -121,14 +121,14 @@ function WatchVideo() {
       setShowLoginCard(true)
       return
     }
-    api.get(`like/video/${id}`)
+    apiCall(() => api.get(`like/video/${id}`)
       .then((res) => {
         setLiked(res.data.data.isLiked)
         setLikes(res.data.data.likes)
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onDislike = () => {
@@ -136,14 +136,14 @@ function WatchVideo() {
       setShowLoginCard(true)
       return
     }
-    api.get(`video/dislike-video-toggle/${id}`)
+    apiCall(() => api.get(`video/dislike-video-toggle/${id}`)
       .then((res) => {
         setDisLiked(res.data.data.isDisliked)
         setDisLikes(res.data.data.dislikes)
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onCommentSubmit = (e) => {
@@ -152,14 +152,14 @@ function WatchVideo() {
       setShowLoginCard(true)
       return
     }
-    api.post(`video/comment-video/${id}`, { comment })
+    apiCall(() => api.post(`video/comment-video/${id}`, { comment })
       .then((res) => {
         setComments(res.data.data)
         setComment("")
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onLikeComment = (comment_id) => {
@@ -167,7 +167,7 @@ function WatchVideo() {
       setShowLoginCard(true)
       return
     }
-    api.get(`like/comment/${comment_id}`)
+    apiCall(() => api.get(`like/comment/${comment_id}`)
       .then((res) => {
         setComments((prevComments) =>
           prevComments.map((prevComment) =>
@@ -179,7 +179,7 @@ function WatchVideo() {
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onDeleteComment = (comment_id) => {
@@ -187,13 +187,13 @@ function WatchVideo() {
       setShowLoginCard(true)
       return
     }
-    api.delete(`video/delete-comment-video/${id}/${comment_id}`)
+    apiCall(() => api.delete(`video/delete-comment-video/${id}/${comment_id}`)
       .then((res) => {
         setComments(res.data.data)
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onClickSave = () => {
@@ -206,7 +206,7 @@ function WatchVideo() {
       return
     }
     setShowForm(false)
-    api.get(`playlist/get-currentUser-playlists-options/${Id}`)
+    apiCall(() => api.get(`playlist/get-currentUser-playlists-options/${Id}`)
       .then((res) => {
         setShowDropdown(true)
         setPlaylistOptions(res.data.data || [])
@@ -215,20 +215,20 @@ function WatchVideo() {
         console.log(err.response?.data)
         setShowDropdown(true)
         setPlaylistOptions([])
-      })
+      }))
   }
 
   const onClickPlaylistOptions = (option_id) => {
-    api.get(`playlist/save-video-playlist/${option_id}/${id}`)
+    apiCall(() => api.get(`playlist/save-video-playlist/${option_id}/${id}`)
       .then(() => setShowDropdown(false))
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }
 
   const onCreateNewPlaylist = (e) => {
     e.preventDefault()
-    api.post(`playlist/create-new-playlist/${id}`, { name: playlistName, description: playlistDesc })
+    apiCall(() => api.post(`playlist/create-new-playlist/${id}`, { name: playlistName, description: playlistDesc })
       .then(() => {
         setShowForm(false)
         setPlaylistName("")
@@ -237,7 +237,7 @@ function WatchVideo() {
       .catch((err) => {
         console.log(err.response?.data)
         setShowForm(false)
-      })
+      }))
   }
 
   const onClickNewPlaylist = () => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from "../utils/formatters"
 
 function History() {
@@ -9,7 +9,7 @@ function History() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        api.get("video/get-watched-videos")
+        apiCall(() => api.get("video/get-watched-videos")
             .then((res) => {
                 if (res.data) {
                     setVideos(res.data.data)
@@ -19,7 +19,7 @@ function History() {
             .catch((err) => {
                 console.log(err.response?.data)
                 setLoading(false)
-            })
+            }))
     }, [])
 
     return (

@@ -196,13 +196,16 @@ const RefreshAccessToken = asyncHandler(async function (req, res) {
     }
 
     const AccessToken = await user.generateAccessToken()
-    const RefreshToken = await user.generateRefreshToken()
+    const newRefreshToken = await user.generateRefreshToken()
+
+    user.refreshToken = newRefreshToken
+    await user.save()
 
     return res.status(200)
         .cookie("AccessToken", AccessToken, options)
-        .cookie("RefreshToken", RefreshToken, options)
+        .cookie("RefreshToken", newRefreshToken, options)
         .json(
-            new apiResponse(201, "refreshed access token", { AccessToken, RefreshToken })
+            new apiResponse(201, "refreshed access token", { AccessToken, newRefreshToken })
         )
 })
 
@@ -384,7 +387,7 @@ const getUserChannel = asyncHandler(async function (req, res) {
                 },
                 isSubscribed: {
                     $cond: { //this returns true or false based on if user is subscribed to the found user or not 
-                        if: { $in: [ new mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
+                        if: { $in: [new mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
                         then: true,
                         else: false
                     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../api/axios'
+import api, { apiCall } from '../api/axios'
 
 function CustomizeChannel() {
   const navigate = useNavigate()
@@ -22,7 +22,7 @@ function CustomizeChannel() {
 
   // Load current user details as default values on page load
   useEffect(() => {
-    api.get("/user/curr-user")
+    apiCall(() => api.get("/user/curr-user")
       .then((res) => {
         const user = res.data?.data || {}
         setUsername(user.username || '')
@@ -30,7 +30,7 @@ function CustomizeChannel() {
         setAvatar(user.avatar || '')
         setCoverImage(user.coverImage || '')
       })
-      .catch((err) => console.log(err.response?.data))
+      .catch((err) => console.log(err.response?.data)))
   }, [])
 
   // ONE button updates both username and email
@@ -39,7 +39,7 @@ function CustomizeChannel() {
     setMessage('')
     setError('')
 
-    api.patch("user/edit-account", { username, email })
+    apiCall(() => api.patch("user/edit-account", { username, email })
       .then((res) => {
         setUsername(res.data.data.username)
         setEmail(res.data.data.email)
@@ -47,7 +47,7 @@ function CustomizeChannel() {
       })
       .catch((err) => {
         setError(err.response?.data?.message || "Failed to update account details.")
-      })
+      }))
   }
 
   // Update password
@@ -56,7 +56,7 @@ function CustomizeChannel() {
     setMessage('')
     setError('')
 
-    api.patch("user/change-password", { oldPassword, newPassword })
+    apiCall(() => api.patch("user/change-password", { oldPassword, newPassword })
       .then(() => {
         setOldPassword(newPassword)
         setNewPassword('')
@@ -65,7 +65,7 @@ function CustomizeChannel() {
       })
       .catch((err) => {
         setError(err.response?.data?.message || "Failed to change password.")
-      })
+      }))
   }
 
   // Update Avatar
@@ -75,12 +75,12 @@ function CustomizeChannel() {
     const formData = new FormData()
     formData.append("avatar", file)
 
-    api.patch("user/edit-avatar", formData)
+    apiCall(() => api.patch("user/edit-avatar", formData)
       .then((res) => {
         setAvatar(res.data.data.avatar)
         setMessage("Avatar updated!")
       })
-      .catch((err) => console.log(err.response?.data))
+      .catch((err) => console.log(err.response?.data)))
   }
 
   // Update Cover Image
@@ -90,20 +90,20 @@ function CustomizeChannel() {
     const formData = new FormData()
     formData.append("coverImage", file)
 
-    api.patch("user/edit-coverImage", formData)
+    apiCall(() => api.patch("user/edit-coverImage", formData)
       .then((res) => {
         setCoverImage(res.data.data.coverImage)
         setMessage("Cover image updated!")
       })
-      .catch((err) => console.log(err.response?.data))
+      .catch((err) => console.log(err.response?.data)))
   }
 
   // Delete account
   const onDeleteAccount = () => {
     if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      api.delete("user/deleteAccount")
+      apiCall(() => api.delete("user/deleteAccount")
         .then(() => navigate("/register"))
-        .catch((err) => console.log(err.response?.data))
+        .catch((err) => console.log(err.response?.data)))
     }
   }
 

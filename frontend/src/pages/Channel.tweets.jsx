@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatTimeAgo, formatViews } from "../utils/formatters"
 import { ThumbsUpIcon, ThumbsDownIcon, CommentIcon } from '../components/Icons'
 
@@ -13,7 +13,7 @@ function ChannelTweets() {
 
     useEffect(() => {
         if (name) {
-            api.get(`user/profile/${name}`)
+            apiCall(() => api.get(`user/profile/${name}`)
                 .then((res) => {
                     if (res.data) {
                         setUserId(res.data.data._id)
@@ -21,9 +21,9 @@ function ChannelTweets() {
                 })
                 .catch((err) => {
                     console.log(err.response?.data)
-                })
+                }))
         } else {
-            api.get("user/curr-user")
+            apiCall(() => api.get("user/curr-user")
                 .then((res) => {
                     if (res.data) {
                         setUserId(res.data.data._id)
@@ -31,14 +31,14 @@ function ChannelTweets() {
                 })
                 .catch((err) => {
                     console.log(err.response?.data)
-                })
+                }))
         }
     }, [name])
 
     useEffect(() => {
         if (!userId) return
 
-        api.get(`tweet/get-user-tweets/${userId}`)
+        apiCall(() => api.get(`tweet/get-user-tweets/${userId}`)
             .then((res) => {
                 if (res.data) {
                     let tweets = res.data.data || []
@@ -48,31 +48,31 @@ function ChannelTweets() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }, [userId])
 
     const [currUserId, setCurrUserId] = useState(null)
 
     useEffect(() => {
-        api.get("user/curr-user").then((res) => {
+        apiCall(() => api.get("user/curr-user").then((res) => {
             if (res.data?.data?._id) {
                 setCurrUserId(res.data.data._id)
             }
-        }).catch(() => {})
+        }).catch(() => {}))
     }, [])
 
     const onDelete = (tweet_id) => {
-        api.delete(`tweet/delete-tweet/${tweet_id}`)
+        apiCall(() => api.delete(`tweet/delete-tweet/${tweet_id}`)
             .then(() => {
                 setUserTweets(prev => prev.filter(t => t._id !== tweet_id))
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onLike = (tweet_id) => {
-        api.get(`like/tweet/${tweet_id}`)
+        apiCall(() => api.get(`like/tweet/${tweet_id}`)
             .then((res) => {
                 if (res.data.data) {
                     const updated = res.data.data
@@ -87,11 +87,11 @@ function ChannelTweets() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onDisLike = (tweet_id) => {
-        api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
+        apiCall(() => api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
             .then((res) => {
                 if (res.data.data) {
                     const updated = res.data.data
@@ -106,7 +106,7 @@ function ChannelTweets() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     return (

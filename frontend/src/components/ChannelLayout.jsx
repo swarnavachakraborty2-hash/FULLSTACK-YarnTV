@@ -1,6 +1,6 @@
 import { Outlet, useParams, useNavigate, useLocation } from 'react-router-dom'
 import React, { useEffect, useState, useRef } from 'react'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews } from "../utils/formatters"
 import { CameraIcon } from '../components/Icons'
 
@@ -39,7 +39,7 @@ function ChannelLayout() {
         if (name) {
             setUsername(name)
         } else {
-            api.get("user/curr-user")
+            apiCall(() => api.get("user/curr-user")
                 .then((res) => {
                     if (res.data) {
                         setUsername(res.data.data.username)
@@ -50,7 +50,7 @@ function ChannelLayout() {
                 })
                 .catch((err) => {
                     console.log(err.response?.data)
-                })
+                }))
         }
     }, [name])
 
@@ -58,7 +58,7 @@ function ChannelLayout() {
     useEffect(() => {
         if (!username) return
 
-        api.get(`user/profile/${username}`)
+        apiCall(() => api.get(`user/profile/${username}`)
             .then((res) => {
                 if (res.data) {
                     setSubscribers(res.data.data.subscribersCount)
@@ -76,12 +76,12 @@ function ChannelLayout() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }, [username])
 
     const onToggleSubscribe = () => {
         // confirm this matches your actual mounted subscription-toggle route
-        api.get(`subscription/${username}`)
+        apiCall(() => api.get(`subscription/${username}`)
             .then((res) => {
                 if (res.data?.data) {
                     const nowSubscribed = res.data.data.isSubscribed
@@ -91,7 +91,7 @@ function ChannelLayout() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const handleAvatarChange = (e) => {
@@ -100,7 +100,7 @@ function ChannelLayout() {
         const formData = new FormData()
         formData.append("avatar", file)
         setUpdatingAvatar(true)
-        api.patch("user/edit-avatar", formData)
+        apiCall(() => api.patch("user/edit-avatar", formData)
             .then((res) => {
                 if (res.data?.data?.avatar) {
                     setAavatar(res.data.data.avatar)
@@ -110,7 +110,7 @@ function ChannelLayout() {
             .catch((err) => {
                 console.log(err.response?.data)
                 setUpdatingAvatar(false)
-            })
+            }))
     }
 
     const handleCoverChange = (e) => {
@@ -119,7 +119,7 @@ function ChannelLayout() {
         const formData = new FormData()
         formData.append("coverImage", file)
         setUpdatingCover(true)
-        api.patch("user/edit-coverImage", formData)
+        apiCall(() => api.patch("user/edit-coverImage", formData)
             .then((res) => {
                 if (res.data?.data?.coverImage) {
                     setCoverImage(res.data.data.coverImage)
@@ -129,7 +129,7 @@ function ChannelLayout() {
             .catch((err) => {
                 console.log(err.response?.data)
                 setUpdatingCover(false)
-            })
+            }))
     }
 
     return (

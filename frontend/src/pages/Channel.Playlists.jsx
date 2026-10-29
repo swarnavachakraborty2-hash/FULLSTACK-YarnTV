@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 
 function ChannelPlaylists() {
     const navigate = useNavigate()
@@ -14,7 +14,7 @@ function ChannelPlaylists() {
             // profile route only gives us a username, not an id —
             // resolve it via the profile endpoint (adjust if get-user-playlists
             // accepts a username instead of an id on your backend)
-            api.get(`user/profile/${name}`)
+            apiCall(() => api.get(`user/profile/${name}`)
                 .then((res) => {
                     if (res.data) {
                         setUserId(res.data.data._id)
@@ -22,9 +22,9 @@ function ChannelPlaylists() {
                 })
                 .catch((err) => {
                     console.log(err.response?.data)
-                })
+                }))
         } else {
-            api.get("user/curr-user")
+            apiCall(() => api.get("user/curr-user")
                 .then((res) => {
                     if (res.data) {
                         setUserId(res.data.data._id)
@@ -32,14 +32,14 @@ function ChannelPlaylists() {
                 })
                 .catch((err) => {
                     console.log(err.response?.data)
-                })
+                }))
         }
     }, [name])
 
     useEffect(() => {
         if (!userId) return
 
-        api.get(`playlist/get-user-playlists/${userId}`)
+        apiCall(() => api.get(`playlist/get-user-playlists/${userId}`)
             .then((res) => {
                 if (res.data) {
                     let list = res.data.data || []
@@ -49,7 +49,7 @@ function ChannelPlaylists() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }, [userId])
 
     return (

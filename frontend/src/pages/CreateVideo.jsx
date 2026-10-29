@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 
 function CreateVideo() {
   const [video, setVideo] = useState(null)
@@ -19,14 +19,14 @@ function CreateVideo() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.get('/user/curr-user')
+    apiCall(() => api.get('/user/curr-user')
       .then(res => {
         const userId = res.data.data._id
-        api.get(`/playlist/get-currentUser-playlists-options/${userId}`)
+        apiCall(() => api.get(`/playlist/get-currentUser-playlists-options/${userId}`)
           .then(r => setPlaylistOptions(r.data.data || []))
-          .catch(err => console.log(err))
+          .catch(err => console.log(err)))
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err)))
   }, [])
 
   const handleVideoChange = (e) => {
@@ -68,14 +68,14 @@ function CreateVideo() {
       formData.append('thumbnail', thumbnail)
     }
 
-    api.post('video/create-video', formData, {
+    apiCall(() => api.post('video/create-video', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
       .then(res => {
         const videoId = res.data.data._id
         if (selectedPlaylist) {
-          api.get(`playlist/save-video-playlist/${selectedPlaylist}/${videoId}`)
-            .catch(err => console.log(err))
+          apiCall(() => api.get(`playlist/save-video-playlist/${selectedPlaylist}/${videoId}`)
+            .catch(err => console.log(err)))
         }
         setUploading(false)
         navigate('/channel')
@@ -83,7 +83,7 @@ function CreateVideo() {
       .catch(err => {
         setUploading(false)
         setError(err?.response?.data?.message || 'Upload failed. Please try again.')
-      })
+      }))
   }
 
   return (

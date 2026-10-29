@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from "../utils/formatters"
 
 function VideoListing() {
@@ -12,7 +12,7 @@ function VideoListing() {
     useEffect(() => {
         if (!title) return
 
-        api.post(`video/search-video/${title}`)
+        apiCall(() => api.post(`video/search-video/${title}`)
             .then((res) => {
                 if (res.data) {
                     setVideos(res.data.data)
@@ -20,7 +20,7 @@ function VideoListing() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }, [title])
 
     return (

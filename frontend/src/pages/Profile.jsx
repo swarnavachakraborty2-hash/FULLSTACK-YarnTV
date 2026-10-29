@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from "../utils/formatters"
 import { CameraIcon } from '../components/Icons'
 
@@ -23,7 +23,7 @@ function Profile() {
   const coverInputRef = useRef(null)
 
   useEffect(() => {
-    api.get("user/curr-user")
+    apiCall(() => api.get("user/curr-user")
       .then((res) => {
         if (res.data) {
           setUserId(res.data.data._id)
@@ -35,11 +35,11 @@ function Profile() {
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [userId])
 
   useEffect(() => {
-    api.get("video/get-watched-videos")
+    apiCall(() => api.get("video/get-watched-videos")
       .then((res) => {
         if (res.data) {
           setHistory(res.data.data)
@@ -47,11 +47,11 @@ function Profile() {
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [])
 
   useEffect(() => {
-    api.get("video/get-liked-videos")
+    apiCall(() => api.get("video/get-liked-videos")
       .then((res) => {
         if (res.data) {
           setLiked(res.data.data)
@@ -59,13 +59,13 @@ function Profile() {
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [])
 
   useEffect(() => {
     if (!userId) return // wait until we actually have a user id
 
-    api.get(`playlist/get-user-playlists/${userId}`)
+    apiCall(() => api.get(`playlist/get-user-playlists/${userId}`)
       .then((res) => {
         if (res.data) {
           setPlaylists(res.data.data)
@@ -73,7 +73,7 @@ function Profile() {
       })
       .catch((err) => {
         console.log(err.response?.data)
-      })
+      }))
   }, [userId])
 
   const handleAvatarChange = (e) => {
@@ -82,7 +82,7 @@ function Profile() {
     const formData = new FormData()
     formData.append("avatar", file)
     setUpdatingAvatar(true)
-    api.patch("user/edit-avatar", formData)
+    apiCall(() => api.patch("user/edit-avatar", formData)
       .then((res) => {
         if (res.data?.data?.avatar) {
           setAavatar(res.data.data.avatar)
@@ -92,7 +92,7 @@ function Profile() {
       .catch((err) => {
         console.log(err.response?.data)
         setUpdatingAvatar(false)
-      })
+      }))
   }
 
   const handleCoverChange = (e) => {
@@ -101,7 +101,7 @@ function Profile() {
     const formData = new FormData()
     formData.append("coverImage", file)
     setUpdatingCover(true)
-    api.patch("user/edit-coverImage", formData)
+    apiCall(() => api.patch("user/edit-coverImage", formData)
       .then((res) => {
         if (res.data?.data?.coverImage) {
           setCoverImage(res.data.data.coverImage)
@@ -111,7 +111,7 @@ function Profile() {
       .catch((err) => {
         console.log(err.response?.data)
         setUpdatingCover(false)
-      })
+      }))
   }
   
   return (

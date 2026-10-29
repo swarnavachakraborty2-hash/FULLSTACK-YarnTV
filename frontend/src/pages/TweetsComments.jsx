@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import api from '../api/axios'
+import api, { apiCall } from '../api/axios'
 import { formatTimeAgo } from '../utils/formatters'
 
 function TweetsComments() {
@@ -11,17 +11,17 @@ function TweetsComments() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        api.get(`tweet/get-comments-tweet/${tweet_id}`)
+        apiCall(() => api.get(`tweet/get-comments-tweet/${tweet_id}`)
             .then((res) => {
                 setComments(res.data.data)
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }, [tweet_id])
 
     const onLikeComment = (comment_id) => {
-        api.get(`like/comment/${comment_id}`)
+        apiCall(() => api.get(`like/comment/${comment_id}`)
             .then((res) => {
                 setComments((prevComments) =>
                     prevComments.map((c) =>
@@ -33,39 +33,39 @@ function TweetsComments() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onCommentSubmit = (e) => {
         e.preventDefault()
-        api.post(`tweet/comment-tweet/${tweet_id}`, { comment })
+        apiCall(() => api.post(`tweet/comment-tweet/${tweet_id}`, { comment })
             .then((res) => {
                 setComments(res.data.data)
                 setComment("")
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onDeleteComment = (comment_id) => {
-        api.delete(`tweet/delete-comment-tweet/${tweet_id}/${comment_id}`)
+        apiCall(() => api.delete(`tweet/delete-comment-tweet/${tweet_id}/${comment_id}`)
             .then((res) => {
                 setComments(res.data.data)
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onDeleteTweet = () => {
-        api.delete(`tweet/delete-tweet/${tweet_id}`)
+        apiCall(() => api.delete(`tweet/delete-tweet/${tweet_id}`)
             .then((res) => {
                 console.log(res.data.message)
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
         }
 
     return (

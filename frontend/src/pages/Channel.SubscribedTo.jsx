@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from "../utils/formatters"
 
 function SubscribedTo() {
@@ -11,7 +11,7 @@ function SubscribedTo() {
 
   useEffect(() => {
     setLoading(true)
-    api.get("subscription/get-subscribed-to-users")
+    apiCall(() => api.get("subscription/get-subscribed-to-users")
       .then((res) => {
         if (res.data.data) {
           const allVideos = res.data.data
@@ -29,7 +29,7 @@ function SubscribedTo() {
           setError(err.response?.data?.message || "Failed to load videos")
         }
         setLoading(false)
-      })
+      }))
   }, [])
 
   return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import api from '../api/axios'
+import api, { apiCall } from '../api/axios'
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
 
 function PlaylistVideos() {
@@ -31,7 +31,7 @@ function PlaylistVideos() {
 
   useEffect(() => {
     setLoading(true)
-    api.get(`/playlist/get-playlist-videos/${id}`)
+    apiCall(() => api.get(`/playlist/get-playlist-videos/${id}`)
       .then((res) => {
         if (res.data?.data) {
           setPlaylist(res.data.data)
@@ -45,7 +45,7 @@ function PlaylistVideos() {
         console.error('Error fetching playlist videos:', err)
         setPlaylist(null)
       })
-      .finally(() => setLoading(false))
+      .finally(() => setLoading(false)))
   }, [id])
 
   if (loading) {
@@ -66,30 +66,30 @@ function PlaylistVideos() {
 
   const onClickUpdateDesc = (e) => {
     e.preventDefault()
-    api.patch(`playlist/update-playlist-details/${id}`, { description })
+    apiCall(() => api.patch(`playlist/update-playlist-details/${id}`, { description })
       .then(() => {
         setShowDropdown(false)
         setShowform(false)
         setPlaylist(prev => ({ ...prev, description }))
       })
-      .catch((err) => console.error(err.response?.data || err))
+      .catch((err) => console.error(err.response?.data || err)))
   }
 
   const onClickDeletePlaylist = () => {
-    api.delete(`playlist/delete-playlist/${id}`)
+    apiCall(() => api.delete(`playlist/delete-playlist/${id}`)
       .then(() => {
         setShowDropdown(false)
         navigate('/profile')
       })
-      .catch((err) => console.error(err.response?.data || err))
+      .catch((err) => console.error(err.response?.data || err)))
   }
 
   const onClickRemoveVideo = (video_id) => {
-    api.delete(`playlist/delete-video-playlist/${id}/${video_id}`)
+    apiCall(() => api.delete(`playlist/delete-video-playlist/${id}/${video_id}`)
       .then(() => {
         setVideos(prev => prev.filter(v => v._id !== video_id))
       })
-      .catch((err) => console.error(err.response?.data || err))
+      .catch((err) => console.error(err.response?.data || err)))
   }
 
   return (

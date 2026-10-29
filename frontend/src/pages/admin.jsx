@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import StatsChart from '../components/statsChart'
 import SubscriberChart from '../components/subscriberChart'
 
@@ -24,7 +24,7 @@ function Admin() {
 
 
   useEffect(() => {
-    api.get(`/video/get-admin-stats`)
+    apiCall(() => api.get(`/video/get-admin-stats`)
       .then((res) => {
         setAvatar(res.data.data.avatar)
         setUsername(res.data.data.username)
@@ -39,12 +39,12 @@ function Admin() {
         if (err?.response?.data) {
           setErr(err.response.data)
         }
-      })
+      }))
   }, [])
 
 
   useEffect(() => {
-    api.get("/video/get-admin-videos")
+    apiCall(() => api.get("/video/get-admin-videos")
       .then((res) => {
         setTotalVideos(res.data.data.createdVideos.length)
         setVideos(res.data.data.createdVideos) //shows all the list of videos
@@ -53,12 +53,12 @@ function Admin() {
         if (err?.response?.data) {
           setErr(err.response.data)
         }
-      })
+      }))
   }, [])
 
 
   const onDelete = (v_id) => {
-    api.delete(`video/delete-video/${v_id}`)
+    apiCall(() => api.delete(`video/delete-video/${v_id}`)
       .then((res) => {
         setVideos((prevVideos) =>
           prevVideos.filter((prev_video) =>
@@ -71,12 +71,12 @@ function Admin() {
         if (err?.response?.data) {
           setErr(err.response.data)
         }
-      })
+      }))
   }
 
 
   const onPublishToggle = (v_id) => {
-    api.get(`video/publish-toggle-video/${v_id}`)
+    apiCall(() => api.get(`video/publish-toggle-video/${v_id}`)
       .then((res) => {
         setVideos((prevVideos) =>
           prevVideos.map((prev_video) =>
@@ -88,13 +88,13 @@ function Admin() {
         if (err?.response?.data) {
           setErr(err.response.data)
         }
-      })
+      }))
   }
 
 
   const onUpdateVideo = (e, v_id) => {
     e.preventDefault();
-    api.patch(`video/update-video/${v_id}`, { title, description })
+    apiCall(() => api.patch(`video/update-video/${v_id}`, { title, description })
       .then((res) => {
         setVideos((prevVideos) =>
           prevVideos.map((prev_video) =>
@@ -109,7 +109,7 @@ function Admin() {
           setErr(err.response.data)
         }
         setShowUpdateForm(false)
-      })
+      }))
   }
 
   //areachart

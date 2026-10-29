@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import api from '../api/axios'
+import api, { apiCall } from '../api/axios'
 import GuestLoginCard from './GuestLoginCard'
 import {
   HomeIcon,
@@ -24,7 +24,7 @@ function Sidebar({ isOpen = false, onClose }) {
   const [showLoginCard, setShowLoginCard] = useState(false)
 
   useEffect(() => {
-    api.get("user/curr-user")
+    apiCall(() => api.get("user/curr-user")
       .then((res) => {
         if (res.data) {
           setCurrUser(res.data.data)
@@ -33,7 +33,7 @@ function Sidebar({ isOpen = false, onClose }) {
       .catch((err) => {
         console.log(err.response?.data)
         setCurrUser(null)
-      })
+      }))
   }, [])
 
   const exists = Boolean(currUser?._id)

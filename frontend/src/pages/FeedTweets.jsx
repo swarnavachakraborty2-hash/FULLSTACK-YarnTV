@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatTimeAgo, formatViews } from "../utils/formatters"
 import { ThumbsUpIcon, ThumbsDownIcon, CommentIcon } from '../components/Icons'
 
@@ -11,13 +11,13 @@ function FeedTweets() {
     const [currUserId, setCurrUserId] = useState(null)
 
     useEffect(() => {
-        api.get("user/curr-user").then((res) => {
+        apiCall(() => api.get("user/curr-user").then((res) => {
             if (res.data?.data?._id) {
                 setCurrUserId(res.data.data._id)
             }
-        }).catch(() => {})
+        }).catch(() => {}))
 
-        api.get("tweet/get-feed-tweets")
+        apiCall(() => api.get("tweet/get-feed-tweets")
             .then((res) => {
                 if (res.data) {
                     setUserTweets(res.data.data)
@@ -27,21 +27,21 @@ function FeedTweets() {
             .catch((err) => {
                 console.log(err.response?.data)
                 setLoading(false)
-            })
+            }))
     }, [])
 
     const onDelete = (tweet_id) => {
-        api.delete(`tweet/delete-tweet/${tweet_id}`)
+        apiCall(() => api.delete(`tweet/delete-tweet/${tweet_id}`)
             .then(() => {
                 setUserTweets(prev => prev.filter(t => t._id !== tweet_id))
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onLike = (tweet_id) => {
-        api.get(`like/tweet/${tweet_id}`)
+        apiCall(() => api.get(`like/tweet/${tweet_id}`)
             .then((res) => {
                 if (res.data.data) {
                     const updated = res.data.data
@@ -56,11 +56,11 @@ function FeedTweets() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     const onDisLike = (tweet_id) => {
-        api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
+        apiCall(() => api.get(`tweet/dislike-tweet-toggle/${tweet_id}`)
             .then((res) => {
                 if (res.data.data) {
                     const updated = res.data.data
@@ -75,7 +75,7 @@ function FeedTweets() {
             })
             .catch((err) => {
                 console.log(err.response?.data)
-            })
+            }))
     }
 
     return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import VideoCard from '../components/VideoCard'
-import api from '../api/axios'
+import api, { apiCall } from '../api/axios'
 
 function Feed() {
   const [videos, setVideos] = useState([])
@@ -9,7 +9,7 @@ function Feed() {
     async function fetchVideos() {
       try {
        
-        const res = await api.get('/video/get-feed-videos')
+        const res = await apiCall(() => api.get('/video/get-feed-videos'))
         if (res.data?.data) {
           setVideos(res.data.data)
         }

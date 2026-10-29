@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../api/axios"
+import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from "../utils/formatters"
 
 function Liked() {
@@ -9,7 +9,7 @@ function Liked() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        api.get("video/get-liked-videos")
+        apiCall(() => api.get("video/get-liked-videos")
             .then((res) => {
                 if (res.data) {
                     setLiked(res.data.data)
@@ -19,7 +19,7 @@ function Liked() {
             .catch((err) => {
                 console.log(err.response?.data)
                 setLoading(false)
-            })
+            }))
     }, [])
 
     const firstVideo = liked[0]?.video
