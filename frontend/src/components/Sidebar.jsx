@@ -10,6 +10,8 @@ import {
   FolderIcon,
   SupportIcon,
   SettingsIcon,
+  InfoIcon,
+  YarnTVLogo,
   CloseIcon,
   PlayLogo,
   YouIcon,
@@ -58,7 +60,7 @@ function Sidebar({ isOpen = false, onClose }) {
   ]
 
   const bottomNavItems = [
-    { id: 'support', label: 'Support', icon: SupportIcon, path: '/support' },
+    { id: 'info', label: 'Info & About', icon: InfoIcon, path: '/info' },
   ]
 
   const handleNavigation = (path) => {
@@ -109,8 +111,10 @@ function Sidebar({ isOpen = false, onClose }) {
         {/* Drawer Header with Close Button */}
         <div className="sidebar-header">
           <div className="sidebar-brand-mini" onClick={() => handleNavigation('/')}>
-            <PlayLogo className="brand-logo-sm" />
-            <span className="brand-name-mini">PLAY</span>
+            <YarnTVLogo className="brand-logo-sm" />
+            <span className="brand-name-mini">
+              yarn<span style={{ color: 'var(--accent-purple)' }}>TV</span>
+            </span>
           </div>
           <button
             type="button"

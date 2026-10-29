@@ -21,6 +21,7 @@ import History from './pages/History'
 import Liked from './pages/Liked'
 import Admin from './pages/admin'
 import CustomizeChannel from './pages/CustomizeChannel'
+import Info from './pages/Info'
 
 import './App.css'
 
@@ -40,6 +41,7 @@ function App() {
           <Route path="admin" element={<Admin />} />
           <Route path="profile" element={<Profile />} />
           <Route path="customize-channel" element={<CustomizeChannel />} />
+          <Route path="info" element={<Info />} />
           <Route path="/feed/tweets" element={<FeedTweets />} />
           <Route path="/:tweet_id/comments" element={<TweetsComments />} />
           <Route path="/feed/search/:title" element={<VideoListing />} />

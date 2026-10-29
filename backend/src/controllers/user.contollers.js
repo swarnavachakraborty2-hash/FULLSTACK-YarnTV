@@ -9,7 +9,8 @@ const { default: mongoose } = require("mongoose")
 
 const options = {
     httpOnly: true,
-    secure: true
+    secure: true,
+    sameSite: "none"//works when frontend and backend are on different domains
 }//for secure cookies
 
 /*stores the response */      /*this funtion is passed as a parameter*/

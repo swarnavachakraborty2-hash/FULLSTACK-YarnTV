@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PlayLogo, EyeIcon, EyeOffIcon, UploadIcon, ImageIcon } from '../components/Icons'
+import { YarnTVLogo, EyeIcon, EyeOffIcon, UploadIcon, ImageIcon } from '../components/Icons'
 import api from "../api/axios"
 
 function Register() {
@@ -56,8 +56,8 @@ function Register() {
       {/* Left Panel – Branding */}
       <aside className="auth-brand-panel">
         <div className="auth-brand-content">
-          <PlayLogo className="auth-brand-logo" />
-          <h1 className="auth-brand-title">PLAY</h1>
+          <YarnTVLogo className="auth-brand-logo" />
+          <h1 className="auth-brand-title">yarn<span style={{ color: 'var(--accent-purple)' }}>TV</span></h1>
           <p className="auth-brand-tagline">
             Your next-gen video &amp; social platform.
             <br />

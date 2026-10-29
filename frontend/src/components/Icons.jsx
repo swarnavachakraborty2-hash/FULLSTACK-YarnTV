@@ -1,22 +1,46 @@
 import React from 'react'
 
-export const PlayLogo = ({ className = "w-9 h-9" }) => (
-  <svg className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="19" stroke="url(#play_logo_gradient)" strokeWidth="2" fill="#121212" />
-    <path d="M16 13L27 20L16 27V13Z" fill="url(#play_logo_fill)" />
-    <text x="13.5" y="21.5" fill="#ffffff" fontSize="6" fontWeight="900" letterSpacing="0.5" fontFamily="sans-serif">PLAY</text>
+export const YarnTVLogo = ({ className = "w-9 h-9" }) => (
+  <svg className={className} viewBox="0 0 44 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* TV Antennas */}
+    <path d="M16 4L22 10L28 4" stroke="url(#yarntv_antenna)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    
+    {/* TV Outer Body */}
+    <rect x="3" y="9" width="38" height="27" rx="6" fill="#14091f" stroke="url(#yarntv_border)" strokeWidth="2" />
+    
+    {/* TV Screen Inset */}
+    <rect x="6.5" y="12" width="25.5" height="21" rx="3.5" fill="#0b0413" stroke="rgba(174, 122, 255, 0.25)" strokeWidth="1" />
+    
+    {/* TV Controls on Right */}
+    <circle cx="36" cy="16" r="2" fill="#ae7aff" opacity="0.9" />
+    <circle cx="36" cy="22" r="2" fill="#ec4899" opacity="0.9" />
+    <line x1="34" y1="28" x2="38" y2="28" stroke="#71717a" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="34" y1="31" x2="38" y2="31" stroke="#71717a" strokeWidth="1.5" strokeLinecap="round" />
+    
+    {/* Screen Brand Text: yarnTV */}
+    <text x="8.5" y="24" fill="#ffffff" fontSize="5.5" fontWeight="900" fontFamily="system-ui, -apple-system, sans-serif" letterSpacing="0.2">
+      yarn<tspan fill="#ae7aff">TV</tspan>
+    </text>
+
+    {/* TV Base Stand feet */}
+    <path d="M13 36.5L10 39M31 36.5L34 39" stroke="url(#yarntv_border)" strokeWidth="2" strokeLinecap="round" />
+
     <defs>
-      <linearGradient id="play_logo_gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <linearGradient id="yarntv_border" x1="3" y1="9" x2="41" y2="36" gradientUnits="userSpaceOnUse">
         <stop stopColor="#ae7aff" />
+        <stop offset="0.5" stopColor="#a855f7" />
         <stop offset="1" stopColor="#ec4899" />
       </linearGradient>
-      <linearGradient id="play_logo_fill" x1="16" y1="13" x2="27" y2="27" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#a855f7" stopOpacity="0.85" />
-        <stop offset="1" stopColor="#38bdf8" stopOpacity="0.85" />
+      <linearGradient id="yarntv_antenna" x1="16" y1="4" x2="28" y2="10" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#ae7aff" />
+        <stop offset="1" stopColor="#38bdf8" />
       </linearGradient>
     </defs>
   </svg>
-)
+);
+
+// Backward-compatible alias
+export const PlayLogo = YarnTVLogo;
 
 export function ThumbsUpIcon({ className }) {
   return (
@@ -241,3 +265,12 @@ export const EditIcon = ({ className = "icon", style }) => (
   </svg>
 )
 
+
+
+export const InfoIcon = ({ className = "icon" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+    <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="currentColor" strokeWidth="0.5" />
+  </svg>
+);

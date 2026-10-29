@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { PlayLogo, SearchIcon, MenuIcon, LogoutIcon, PlusIcon } from './Icons'
+import { PlayLogo, YarnTVLogo, SearchIcon, MenuIcon, LogoutIcon, PlusIcon } from './Icons'
 import { useNavigate } from 'react-router-dom'
 import api, { apiCall } from "../api/axios"
 
@@ -96,7 +96,12 @@ function Navbar({ onToggleSidebar }) {
         >
           <MenuIcon className="menu-icon" />
         </button>
-        <PlayLogo className="brand-logo" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate('/')}>
+          <YarnTVLogo className="brand-logo" />
+          <span style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff' }}>
+            yarn<span style={{ color: 'var(--accent-purple)' }}>TV</span>
+          </span>
+        </div>
       </div>
 
       {/* Search Bar */}
