@@ -29,9 +29,9 @@ function Admin() {
         setAvatar(res.data.data.avatar)
         setUsername(res.data.data.username)
         setFullname(res.data.data.fullname)
-        setTotalLikes(res.data.data.totalLikes)
+        setTotalLikes(res.data.data.totalLikes ?? 0)
         setTotalSubscribers(res.data.data.totalSubscribers ?? res.data.data.subscribers?.length ?? 0)
-        setTotalViews(res.data.data.totalViews)
+        setTotalViews(res.data.data.totalViews ?? 0)
         res.data.data.subscribers.length > 0 &&
           setSubscribers(res.data.data.subscribers)
       })
@@ -193,7 +193,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{totalSubscribers.toLocaleString()}</div>
+            <div className="admin-kpi-value">{(totalSubscribers ?? 0).toLocaleString()}</div>
             <span className="admin-kpi-trend">Total channel subscribers</span>
           </div>
 
@@ -207,7 +207,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{totalVideos.toLocaleString()}</div>
+            <div className="admin-kpi-value">{(totalVideos ?? 0).toLocaleString()}</div>
             <span className="admin-kpi-trend">Uploaded content library</span>
           </div>
 
@@ -221,7 +221,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{totalLikes.toLocaleString()}</div>
+            <div className="admin-kpi-value">{(totalLikes ?? 0).toLocaleString()}</div>
             <span className="admin-kpi-trend">Viewer positive reactions</span>
           </div>
 
@@ -236,7 +236,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{totalViews.toLocaleString()}</div>
+            <div className="admin-kpi-value">{(totalViews ?? 0).toLocaleString()}</div>
             <span className="admin-kpi-trend">Lifetime video impressions</span>
           </div>
         </div>
