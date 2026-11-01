@@ -723,8 +723,8 @@ const getAdminStats = asyncHandler(async function (req, res) {
         {
             $addFields: {
                 totalSubscribers: { $size: "$subscribers" },
-                totalViews: { $ifNull: [{ $first: "$totalViews.views" }, 0] },
-                totalLikes: { $ifNull: [{ $first: "$totalLikes.likes" }, 0] }
+                totalViews: { $first: "$totalViews.views" }, 
+                totalLikes: { $first: "$totalLikes.likes" }
             }
         },
         {

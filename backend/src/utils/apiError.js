@@ -1,6 +1,6 @@
 class apiError extends Error {
     constructor(statusCode, message = "something went wrong", errors = []) {
-        super(message)//used from nodeJS's Error class
+        super(message)//used from nodeJS's self Error class
         this.statusCode = statusCode
         this.data = null
         this.success = false

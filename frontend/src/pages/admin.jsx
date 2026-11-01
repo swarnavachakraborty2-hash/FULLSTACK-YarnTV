@@ -193,7 +193,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{(totalSubscribers ?? 0).toLocaleString()}</div>
+            <div className="admin-kpi-value">{totalSubscribers}</div>
             <span className="admin-kpi-trend">Total channel subscribers</span>
           </div>
 
@@ -207,7 +207,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{(totalVideos ?? 0).toLocaleString()}</div>
+            <div className="admin-kpi-value">{totalVideos}</div>
             <span className="admin-kpi-trend">Uploaded content library</span>
           </div>
 
@@ -221,7 +221,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{(totalLikes ?? 0).toLocaleString()}</div>
+            <div className="admin-kpi-value">{totalLikes}</div>
             <span className="admin-kpi-trend">Viewer positive reactions</span>
           </div>
 
@@ -236,7 +236,7 @@ function Admin() {
                 </svg>
               </div>
             </div>
-            <div className="admin-kpi-value">{(totalViews ?? 0).toLocaleString()}</div>
+            <div className="admin-kpi-value">{totalViews}</div>
             <span className="admin-kpi-trend">Lifetime video impressions</span>
           </div>
         </div>

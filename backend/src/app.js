@@ -10,25 +10,10 @@ const app = express()
 app.use(express.json({ limit: '16kb' }))//accept data in json format 
 app.use(express.urlencoded({ extended: true, limit: '16kb' }))//accept data from urls
 app.use(cookieParser())//allows storing and accessing cookies from user browser 
-const allowedOrigins = [
-    process.env.CORS_ORIGIN,
-    process.env.CORS_ORIGIN?.replace(/\/$/, ""),
-    "https://fullstack-yarn-tv.vercel.app",
-    "http://localhost:5173"
-].filter(Boolean);
-
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        const cleanOrigin = origin.replace(/\/$/, "");
-        if (allowedOrigins.some(o => o && o.replace(/\/$/, "") === cleanOrigin)) {
-            return callback(null, true);
-        }
-        return callback(null, cleanOrigin);
-    },
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true
 }))
-
 
 
 //routes
