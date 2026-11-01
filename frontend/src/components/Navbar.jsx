@@ -99,7 +99,6 @@ function Navbar({ onToggleSidebar }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate('/')}>
           <YarnTVLogo className="brand-logo" />
           <span style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff' }}>
-            yarn<span style={{ color: 'var(--accent-purple)' }}>TV</span>
           </span>
         </div>
       </div>
