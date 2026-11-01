@@ -119,9 +119,13 @@ function Sidebar({ isOpen = false, onClose }) {
                   src={currUser.avatar}
                   alt={currUser.username || 'Profile'}
                   className="mini-sidebar-avatar"
+                  style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, display: 'block' }}
                 />
               ) : item.id === 'you' && currUser?.username ? (
-                <div className="mini-sidebar-avatar-fallback">
+                <div
+                  className="mini-sidebar-avatar-fallback"
+                  style={{ width: '26px', height: '26px', borderRadius: '50%', backgroundColor: 'var(--accent-purple)', color: '#09090b', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                >
                   {currUser.username.charAt(0).toUpperCase()}
                 </div>
               ) : (
