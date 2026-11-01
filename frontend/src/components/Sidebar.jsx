@@ -16,7 +16,9 @@ import {
   PlayLogo,
   YouIcon,
   TweetIcon,
-  BarChartIcon
+  BarChartIcon,
+  PlusIcon,
+  LogoutIcon
 } from './Icons'
 
 function Sidebar({ isOpen = false, onClose }) {
@@ -24,6 +26,7 @@ function Sidebar({ isOpen = false, onClose }) {
   const location = useLocation()
   const [currUser, setCurrUser] = useState(null)
   const [showLoginCard, setShowLoginCard] = useState(false)
+  const [showMobileCreate, setShowMobileCreate] = useState(false)
 
   useEffect(() => {
     apiCall(() => api.get("user/curr-user")
@@ -40,12 +43,13 @@ function Sidebar({ isOpen = false, onClose }) {
 
   const exists = Boolean(currUser?._id)
 
-  // Mini sidebar items (shown on the left column under the menu)
+  // Mini sidebar items (shown on the left column on desktop, and bottom bar on mobile)
+  // 'you' is placed last so it appears on the right side of the bottom navigation bar on mobile
   const miniNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
     { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/feed/tweets' },
-    { id: 'you', label: 'You', icon: YouIcon, path: '/profile' },
-    { id: 'admin', label: 'Admin Stats', miniLabel: <>Admin<br />Stats</>, icon: BarChartIcon, path: '/admin' }
+    { id: 'admin', label: 'Admin Stats', miniLabel: <>Admin<br />Stats</>, icon: BarChartIcon, path: '/admin' },
+    { id: 'you', label: 'You', icon: YouIcon, path: '/profile' }
   ]
 
   // Full drawer items
@@ -62,6 +66,17 @@ function Sidebar({ isOpen = false, onClose }) {
   const bottomNavItems = [
     { id: 'info', label: 'Info & About', icon: InfoIcon, path: '/info' },
   ]
+
+  const handleLogout = () => {
+    apiCall(() => api.get("/user/logout")
+      .then(() => {
+        setCurrUser(null)
+        navigate("/login")
+      })
+      .catch((err) => {
+        console.log(err.response?.data?.message)
+      }))
+  }
 
   const handleNavigation = (path) => {
     // Protected paths that require user ID
@@ -86,7 +101,7 @@ function Sidebar({ isOpen = false, onClose }) {
 
   return (
     <>
-      {/* Compact Mini Sidebar (Below the hamburger menu, YouTube-style) */}
+      {/* Compact Mini Sidebar (Below menu button on desktop, fixed bottom navigation bar on mobile) */}
       <aside className="mini-sidebar">
         {miniNavItems.map((item) => {
           const Icon = item.icon
@@ -95,16 +110,84 @@ function Sidebar({ isOpen = false, onClose }) {
             <button
               key={item.id}
               type="button"
-              className={`mini-sidebar-btn ${isActive ? 'active' : ''}`}
+              className={`mini-sidebar-btn ${isActive ? 'active' : ''} ${item.id === 'you' ? 'mini-sidebar-btn-you' : ''}`}
               onClick={() => handleNavigation(item.path)}
               title={item.label}
             >
-              <Icon className="mini-sidebar-icon" />
+              {item.id === 'you' && currUser?.avatar ? (
+                <img
+                  src={currUser.avatar}
+                  alt={currUser.username || 'Profile'}
+                  className="mini-sidebar-avatar"
+                />
+              ) : item.id === 'you' && currUser?.username ? (
+                <div className="mini-sidebar-avatar-fallback">
+                  {currUser.username.charAt(0).toUpperCase()}
+                </div>
+              ) : (
+                <Icon className="mini-sidebar-icon" />
+              )}
               <span className="mini-sidebar-label">{item.miniLabel || item.label}</span>
             </button>
           )
         })}
       </aside>
+
+      {/* Floating Action Button (+) for mobile - directly above bottom sidebar on the right */}
+      <div className="mobile-fab-container">
+        {showMobileCreate && (
+          <>
+            <div
+              className="mobile-fab-backdrop"
+              onClick={() => setShowMobileCreate(false)}
+            />
+            <div className="mobile-fab-menu">
+              <button
+                type="button"
+                className="mobile-fab-menu-item"
+                onClick={() => {
+                  setShowMobileCreate(false)
+                  handleNavigation('/create-video')
+                }}
+              >
+                <svg viewBox="0 0 24 24" className="mobile-fab-menu-icon" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
+                <span>Upload video</span>
+              </button>
+              <button
+                type="button"
+                className="mobile-fab-menu-item"
+                onClick={() => {
+                  setShowMobileCreate(false)
+                  handleNavigation('/upload-tweet')
+                }}
+              >
+                <svg viewBox="0 0 24 24" className="mobile-fab-menu-icon" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <span>Create tweet</span>
+              </button>
+            </div>
+          </>
+        )}
+        <button
+          type="button"
+          className={`mobile-fab-btn ${showMobileCreate ? 'active' : ''}`}
+          onClick={() => {
+            if (!exists) {
+              setShowLoginCard(true)
+            } else {
+              setShowMobileCreate((prev) => !prev)
+            }
+          }}
+          aria-label="Create content"
+          title="Create"
+        >
+          <PlusIcon className="mobile-fab-icon" />
+        </button>
+      </div>
 
       {/* Full Sliding Drawer Sidebar (Appears when menu is clicked) */}
       <aside className={`sidebar-drawer ${isOpen ? 'open' : 'closed'}`}>
@@ -147,6 +230,16 @@ function Sidebar({ isOpen = false, onClose }) {
 
         {/* Bottom Settings & Support Navigation */}
         <div className="sidebar-bottom">
+          {exists && (
+            <button
+              type="button"
+              className="sidebar-link sidebar-link-logout"
+              onClick={handleLogout}
+            >
+              <LogoutIcon className="sidebar-icon" />
+              <span className="sidebar-label">Log out</span>
+            </button>
+          )}
           {bottomNavItems.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.path

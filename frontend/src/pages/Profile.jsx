@@ -231,8 +231,7 @@ function Profile() {
 
         {history.length > 0 ? (
           <div className="channel-videos-row">
-            {history.slice(0, 3).map((video, index) => (
-              index < 3 &&
+            {history.slice(0, 10).map((video) => (
               <div
                 key={video._id}
                 className="channel-video-card"
@@ -268,8 +267,7 @@ function Profile() {
 
         {playlists.length > 0 ? (
           <div className="channel-videos-row">
-            {playlists.slice(0, 3).map((playlist, index) => (
-              index < 3 &&
+            {playlists.slice(0, 10).map((playlist) => (
               <div
                 key={playlist._id}
                 className="channel-video-card"
@@ -308,8 +306,7 @@ function Profile() {
 
         {liked.length > 0 ? (
           <div className="channel-videos-row">
-            {liked.map((item, i) => (
-              i < 3 &&
+            {liked.slice(0, 10).map((item) => (
               <div
                 key={item._id}
                 className="channel-video-card"
