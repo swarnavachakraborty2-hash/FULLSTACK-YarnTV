@@ -695,32 +695,31 @@
     background: transparent;
   }
 
-  
-.mini-sidebar-avatar {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1.5px solid var(--accent-purple);
-  flex-shrink: 0;
-  display: block;
-}
+  .mini-sidebar-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--accent-purple);
+    flex-shrink: 0;
+    display: block;
+  }
 
-.mini-sidebar-avatar-fallback {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background-color: var(--accent-purple);
-  color: #09090b;
-  font-size: 11px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+  .mini-sidebar-avatar-fallback {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--accent-purple);
+    color: #09090b;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
-.mini-sidebar-icon {
+  .mini-sidebar-icon {
     width: 20px;
     height: 20px;
   }
@@ -1219,6 +1218,36 @@
 /* Highlight "You" button in drawer */
 .sidebar-link-you {
   border-color: rgba(174, 122, 255, 0.35);
+}
+
+/* Mini sidebar profile avatar (You button) */
+.mini-sidebar-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--accent-purple);
+  flex-shrink: 0;
+  display: block;
+}
+
+.mini-sidebar-avatar-fallback {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--accent-purple);
+  color: #09090b;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* FAB container hidden by default on desktop */
+.mobile-fab-container {
+  display: none;
 }
 
 /* =========================================================
