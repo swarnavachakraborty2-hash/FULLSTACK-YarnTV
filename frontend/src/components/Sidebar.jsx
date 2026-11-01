@@ -48,7 +48,7 @@ function Sidebar({ isOpen = false, onClose }) {
   const miniNavItems = [
     { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
     { id: 'tweets', label: 'Tweets', icon: TweetIcon, path: '/feed/tweets' },
-    { id: 'admin', label: 'Admin Stats', miniLabel: <>Admin<br />Stats</>, icon: BarChartIcon, path: '/admin' },
+    { id: 'admin', label: 'Stats', miniLabel: <>Admin<br />Stats</>, icon: BarChartIcon, path: '/admin' },
     { id: 'you', label: 'You', icon: YouIcon, path: '/profile' }
   ]
 
