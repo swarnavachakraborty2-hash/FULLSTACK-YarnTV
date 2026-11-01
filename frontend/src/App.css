@@ -88,8 +88,7 @@
 .navbar-search {
   flex: 1;
   max-width: 520px;
-  margin: 0 32px;
-  left: -80px;
+  margin: 0 5%;
 }
 
 .search-box {
