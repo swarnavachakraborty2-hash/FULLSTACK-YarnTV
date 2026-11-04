@@ -6,20 +6,20 @@ export const YarnTVLogo = ({ className = "w-9 h-9" }) => (
     <path d="M16 4L22 10L28 4" stroke="url(#yarntv_antenna)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     
     {/* TV Outer Body */}
-    <rect x="3" y="9" width="38" height="27" rx="6" fill="#14091f" stroke="url(#yarntv_border)" strokeWidth="2" />
+    <rect x="3" y="9" width="38" height="27" rx="6" fill="#121212" stroke="url(#yarntv_border)" strokeWidth="2" />
     
     {/* TV Screen Inset */}
-    <rect x="6.5" y="12" width="25.5" height="21" rx="3.5" fill="#0b0413" stroke="rgba(174, 122, 255, 0.25)" strokeWidth="1" />
+    <rect x="6.5" y="12" width="25.5" height="21" rx="3.5" fill="#0a0a0a" stroke="rgba(250, 204, 21, 0.2)" strokeWidth="1" />
     
     {/* TV Controls on Right */}
-    <circle cx="36" cy="16" r="2" fill="#ae7aff" opacity="0.9" />
-    <circle cx="36" cy="22" r="2" fill="#ec4899" opacity="0.9" />
+    <circle cx="36" cy="16" r="2" fill="#facc15" opacity="0.9" />
+    <circle cx="36" cy="22" r="2" fill="#eab308" opacity="0.9" />
     <line x1="34" y1="28" x2="38" y2="28" stroke="#71717a" strokeWidth="1.5" strokeLinecap="round" />
     <line x1="34" y1="31" x2="38" y2="31" stroke="#71717a" strokeWidth="1.5" strokeLinecap="round" />
     
     {/* Screen Brand Text: yarnTV */}
     <text x="8.5" y="24" fill="#ffffff" fontSize="5.5" fontWeight="900" fontFamily="system-ui, -apple-system, sans-serif" letterSpacing="0.2">
-      yarn<tspan fill="#ae7aff">TV</tspan>
+      yarn<tspan fill="#facc15">TV</tspan>
     </text>
 
     {/* TV Base Stand feet */}
@@ -27,13 +27,13 @@ export const YarnTVLogo = ({ className = "w-9 h-9" }) => (
 
     <defs>
       <linearGradient id="yarntv_border" x1="3" y1="9" x2="41" y2="36" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#ae7aff" />
-        <stop offset="0.5" stopColor="#a855f7" />
-        <stop offset="1" stopColor="#ec4899" />
+        <stop stopColor="#facc15" />
+        <stop offset="0.5" stopColor="#eab308" />
+        <stop offset="1" stopColor="#d97706" />
       </linearGradient>
       <linearGradient id="yarntv_antenna" x1="16" y1="4" x2="28" y2="10" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#ae7aff" />
-        <stop offset="1" stopColor="#38bdf8" />
+        <stop stopColor="#facc15" />
+        <stop offset="1" stopColor="#fbbf24" />
       </linearGradient>
     </defs>
   </svg>

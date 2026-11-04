@@ -236,7 +236,7 @@ function ChannelTweets() {
                                         padding: '6px 14px',
                                         borderRadius: '20px',
                                         border: tweet.isLiked ? '1px solid var(--accent-purple)' : '1px solid var(--border-color)',
-                                        backgroundColor: tweet.isLiked ? 'rgba(174, 122, 255, 0.12)' : 'var(--bg-surface)',
+                                        backgroundColor: tweet.isLiked ? 'rgba(250, 204, 21, 0.1)' : 'var(--bg-surface)',
                                         color: tweet.isLiked ? 'var(--accent-purple)' : 'var(--text-secondary)',
                                         fontSize: '13px',
                                         fontWeight: '600',

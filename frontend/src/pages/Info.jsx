@@ -32,9 +32,9 @@ function Info() {
                 fontWeight: '700',
                 padding: '3px 8px',
                 borderRadius: '6px',
-                backgroundColor: 'rgba(174, 122, 255, 0.15)',
+                backgroundColor: 'rgba(250, 204, 21, 0.1)',
                 color: 'var(--accent-purple)',
-                border: '1px solid rgba(174, 122, 255, 0.3)'
+                border: '1px solid rgba(250, 204, 21, 0.25)'
               }}>v1.0.0</span>
             </div>
             <p style={{ fontSize: '15px', color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
@@ -59,7 +59,7 @@ function Info() {
               width: '42px',
               height: '42px',
               borderRadius: '10px',
-              backgroundColor: 'rgba(174, 122, 255, 0.15)',
+              backgroundColor: 'rgba(250, 204, 21, 0.1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

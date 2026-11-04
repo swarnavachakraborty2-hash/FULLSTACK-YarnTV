@@ -35,7 +35,7 @@ function Liked() {
                     <div style={{ 
                         width: '340px', 
                         flexShrink: 0, 
-                        background: 'linear-gradient(180deg, rgba(174, 122, 255, 0.16) 0%, var(--bg-card) 70%)',
+                        background: 'linear-gradient(180deg, rgba(250, 204, 21, 0.1) 0%, var(--bg-card) 70%)',
                         border: '1px solid var(--border-color)',
                         borderRadius: '20px',
                         padding: '24px',
@@ -95,7 +95,7 @@ function Liked() {
                                     justifyContent: 'center',
                                     gap: '8px',
                                     transition: 'all 0.2s ease',
-                                    boxShadow: '0 4px 15px rgba(174, 122, 255, 0.3)'
+                                    boxShadow: '0 4px 15px rgba(250, 204, 21, 0.25)'
                                 }}
                             >
                                 <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '20px', height: '20px' }}>

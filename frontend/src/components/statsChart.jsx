@@ -40,10 +40,10 @@ function StatsChart({ data }) {
         <Line 
           type="monotone" 
           dataKey="views" 
-          stroke="#ae7aff" 
+          stroke="#facc15" 
           strokeWidth={2.5} 
-          dot={{ fill: '#ae7aff', r: 4 }} 
-          activeDot={{ r: 6, stroke: '#ae7aff', strokeWidth: 2 }}
+          dot={{ fill: '#facc15', r: 4 }} 
+          activeDot={{ r: 6, stroke: '#facc15', strokeWidth: 2 }}
           name="Views" 
         />
         <Line 
