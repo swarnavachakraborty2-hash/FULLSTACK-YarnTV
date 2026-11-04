@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import api, { apiCall } from "../api/axios"
 import { formatViews, formatDuration, formatTimeAgo } from '../utils/formatters'
 import GuestLoginCard from '../components/GuestLoginCard'
+import VideoCard from '../components/VideoCard'
 
 function WatchVideo() {
   const [Id, setUserId] = useState()
@@ -29,6 +30,14 @@ function WatchVideo() {
   const [playlistName, setPlaylistName] = useState("")
   const [playlistDesc, setPlaylistDesc] = useState("")
   const [showLoginCard, setShowLoginCard] = useState(false)
+
+  // Comments visibility state:
+  // 'collapsed': hidden teaser with "Show comments" button
+  // 'partial': up to 10 comments with "Show more" button
+  // 'all': all comments with "Show less" button
+  const [commentStage, setCommentStage] = useState(() => (
+    typeof window !== 'undefined' && window.innerWidth > 768 ? 'partial' : 'collapsed'
+  ))
 
   const { id } = useParams()
   const navigate = useNavigate()
@@ -156,6 +165,9 @@ function WatchVideo() {
       .then((res) => {
         setComments(res.data.data)
         setComment("")
+        if (commentStage === 'collapsed') {
+          setCommentStage('partial')
+        }
       })
       .catch((err) => {
         console.log(err.response?.data)
@@ -245,9 +257,10 @@ function WatchVideo() {
     setShowForm(true)
   }
 
-  const handleProfileNavigation = () => {
+  const handleProfileNavigation = (targetUsername) => {
+    const userToNav = targetUsername || username
     if (Id) {
-      navigate(`/profile/${username}`)
+      navigate(`/profile/${userToNav}`)
     } else {
       setShowLoginCard(true)
     }
@@ -313,7 +326,6 @@ function WatchVideo() {
                 className={`watch-vote-btn${liked ? ' watch-vote-btn--active' : ''}`}
                 onClick={onLike}
               >
-                {/* thumb-up SVG */}
                 <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
                   <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
                 </svg>
@@ -325,7 +337,6 @@ function WatchVideo() {
                 className={`watch-vote-btn${disliked ? ' watch-vote-btn--active' : ''}`}
                 onClick={onDislike}
               >
-                {/* thumb-down SVG */}
                 <svg viewBox="0 0 24 24" className="watch-vote-icon" fill="currentColor">
                   <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z" />
                 </svg>
@@ -484,122 +495,230 @@ function WatchVideo() {
 
         {/* Comments Section */}
         <div className="watch-comments-section">
-          <h2 className="watch-comments-heading">{totalComments} Comments</h2>
-
-          {/* Add comment */}
-          <form className="watch-add-comment" onSubmit={onCommentSubmit}>
-            <input
-              type="text"
-              className="watch-comment-input"
-              placeholder="Add a comment..."
-              value={comment}
-              onClick={() => {
-                if (!Id) setShowLoginCard(true)
-              }}
-              onChange={(e) => setComment(e.target.value)}
-            />
+          <div className="watch-comments-header-row">
+            <h2 className="watch-comments-heading">
+              {totalComments || comments.length} Comments
+            </h2>
             <button
-              type="submit"
-              className="watch-comment-submit"
-              disabled={!comment.trim()}
+              type="button"
+              className="watch-comments-toggle-btn"
+              onClick={() => {
+                if (commentStage === 'collapsed') {
+                  setCommentStage('partial')
+                } else if (commentStage === 'partial') {
+                  if (comments.length > 10) {
+                    setCommentStage('all')
+                  } else {
+                    setCommentStage('collapsed')
+                  }
+                } else {
+                  setCommentStage('collapsed')
+                }
+              }}
             >
-              Post
+              {commentStage === 'collapsed'
+                ? 'Show comments'
+                : commentStage === 'partial' && comments.length > 10
+                ? 'Show more'
+                : 'Show less'}
             </button>
-          </form>
-
-          {/* Comment list */}
-          <div className="watch-comments-list">
-            {comments && comments.map((c) => (
-              <div key={c._id} className="watch-comment-card">
-                {/* Avatar */}
-                {c.owner?.avatar ? (
-                  <img
-                    src={c.owner.avatar}
-                    alt={c.owner.username}
-                    className="watch-comment-avatar"
-                    onClick={() => handleProfileNavigation(c.owner?.username)}
-                  />
-                ) : (
-                  <div
-                    className="watch-comment-avatar watch-comment-avatar--placeholder"
-                    onClick={() => handleProfileNavigation(c.owner?.username)}
-                  >
-                    {c.owner?.username?.charAt(0).toUpperCase()}
-                  </div>
-                )}
-
-                {/* Body */}
-                <div className="watch-comment-body">
-                  <div className="watch-comment-header">
-                    <span
-                      className="watch-comment-author"
-                      onClick={() => handleProfileNavigation(c.owner?.username)}
-                    >
-                      {c.owner?.username}
-                    </span>
-                    <span className="watch-comment-time">
-                      · {formatTimeAgo(c.createdAt)}
-                    </span>
-                  </div>
-
-                  <p className="watch-comment-text">{c.content || c.comment}</p>
-
-                  <div className="watch-comment-actions">
-                    {/* Like button */}
-                    <button
-                      type="button"
-                      className={`watch-comment-like-btn${c.isLiked ? ' watch-comment-like-btn--liked' : ''}`}
-                      onClick={() => onLikeComment(c._id)}
-                    >
-                      <svg viewBox="0 0 24 24" className="watch-comment-like-icon" fill="currentColor">
-                        <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
-                      </svg>
-                      <span>{c.likes ?? 0}</span>
-                    </button>
-
-                    {/* Delete */}
-                    {Id && c.owner?._id === Id && (
-                      <button
-                        type="button"
-                        className="watch-comment-delete-btn"
-                        onClick={() => onDeleteComment(c._id)}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
+
+          {/* Collapsed Comments Teaser Preview */}
+          {commentStage === 'collapsed' && (
+            <div
+              className="watch-comments-teaser"
+              onClick={() => setCommentStage('partial')}
+            >
+              {comments && comments.length > 0 ? (
+                <div className="watch-comments-teaser-content">
+                  {comments[0]?.owner?.avatar ? (
+                    <img
+                      src={comments[0].owner.avatar}
+                      alt={comments[0].owner.username}
+                      className="watch-comment-avatar-teaser"
+                    />
+                  ) : (
+                    <div className="watch-comment-avatar-teaser watch-comment-avatar--placeholder">
+                      {comments[0]?.owner?.username?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                  )}
+                  <p className="watch-comment-teaser-text">
+                    <span className="watch-comment-teaser-author">{comments[0]?.owner?.username}: </span>
+                    {comments[0]?.content || comments[0]?.comment}
+                  </p>
+                </div>
+              ) : (
+                <p className="watch-no-comments-teaser">No comments yet. Tap to add a comment.</p>
+              )}
+            </div>
+          )}
+
+          {/* Expanded Comments (partial: 10 comments, or all: full comments) */}
+          {commentStage !== 'collapsed' && (
+            <>
+              {/* Add comment */}
+              <form className="watch-add-comment" onSubmit={onCommentSubmit}>
+                <input
+                  type="text"
+                  className="watch-comment-input"
+                  placeholder="Add a comment..."
+                  value={comment}
+                  onClick={() => {
+                    if (!Id) setShowLoginCard(true)
+                  }}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="watch-comment-submit"
+                  disabled={!comment.trim()}
+                >
+                  Post
+                </button>
+              </form>
+
+              {/* Comment list */}
+              <div className="watch-comments-list">
+                {(commentStage === 'partial' ? comments.slice(0, 10) : comments).map((c) => (
+                  <div key={c._id} className="watch-comment-card">
+                    {/* Avatar */}
+                    {c.owner?.avatar ? (
+                      <img
+                        src={c.owner.avatar}
+                        alt={c.owner.username}
+                        className="watch-comment-avatar"
+                        onClick={() => handleProfileNavigation(c.owner?.username)}
+                      />
+                    ) : (
+                      <div
+                        className="watch-comment-avatar watch-comment-avatar--placeholder"
+                        onClick={() => handleProfileNavigation(c.owner?.username)}
+                      >
+                        {c.owner?.username?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+
+                    {/* Body */}
+                    <div className="watch-comment-body">
+                      <div className="watch-comment-header">
+                        <span
+                          className="watch-comment-author"
+                          onClick={() => handleProfileNavigation(c.owner?.username)}
+                        >
+                          {c.owner?.username}
+                        </span>
+                        <span className="watch-comment-time">
+                          · {formatTimeAgo(c.createdAt)}
+                        </span>
+                      </div>
+
+                      <p className="watch-comment-text">{c.content || c.comment}</p>
+
+                      <div className="watch-comment-actions">
+                        <button
+                          type="button"
+                          className={`watch-comment-like-btn${c.isLiked ? ' watch-comment-like-btn--liked' : ''}`}
+                          onClick={() => onLikeComment(c._id)}
+                        >
+                          <svg viewBox="0 0 24 24" className="watch-comment-like-icon" fill="currentColor">
+                            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                          </svg>
+                          <span>{c.likes ?? 0}</span>
+                        </button>
+
+                        {Id && c.owner?._id === Id && (
+                          <button
+                            type="button"
+                            className="watch-comment-delete-btn"
+                            onClick={() => onDeleteComment(c._id)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom toggle button */}
+              <div className="watch-comments-bottom-toggle">
+                {commentStage === 'partial' && comments.length > 10 ? (
+                  <button
+                    type="button"
+                    className="watch-comments-show-more-btn"
+                    onClick={() => setCommentStage('all')}
+                  >
+                    Show more
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="watch-comments-show-more-btn"
+                    onClick={() => setCommentStage('collapsed')}
+                  >
+                    Show less
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* ── Right: related videos ── */}
+      {/* ── Right: related / suggested videos ── */}
       <aside className="watch-sidebar">
-        {videos && videos.map((v) => (
-          <div
-            key={v._id}
-            className="watch-related-card"
-            onClick={() => navigate(`/watch/${v._id}`)}
-          >
-            <div className="watch-related-thumb-wrapper">
-              <img
-                src={v.thumbnail}
-                alt={v.title}
-                className="watch-related-thumb"
+        {/* Desktop related videos (same as before) */}
+        <div className="watch-sidebar-desktop">
+          {videos && videos.filter(v => v._id !== id).map((v) => (
+            <div
+              key={v._id}
+              className="watch-related-card"
+              onClick={() => {
+                navigate(`/watch/${v._id}`)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+            >
+              <div className="watch-related-thumb-wrapper">
+                <img
+                  src={v.thumbnail}
+                  alt={v.title}
+                  className="watch-related-thumb"
+                />
+                <span className="duration-badge">{formatDuration(v.duration)}</span>
+              </div>
+              <div className="watch-related-info">
+                <p className="watch-related-title">{v.title}</p>
+                <p className="watch-related-channel">{v.owner?.username}</p>
+                <p className="watch-related-meta">
+                  {formatViews(v.views)} Views · {formatTimeAgo(v.createdAt)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile suggestions: styled EXACTLY like the feed page videos */}
+        <div className="watch-sidebar-mobile">
+          <div className="videos-grid">
+            {videos && videos.filter(v => v._id !== id).map((v) => (
+              <VideoCard
+                key={v._id}
+                title={v.title}
+                thumbnail={v.thumbnail}
+                duration={v.duration}
+                views={v.views}
+                createdAt={v.createdAt}
+                channelName={v.owner?.username}
+                channelAvatar={v.owner?.avatar}
+                description={v.description}
+                id={v._id}
+                layout="grid"
               />
-              <span className="duration-badge">{formatDuration(v.duration)}</span>
-            </div>
-            <div className="watch-related-info">
-              <p className="watch-related-title">{v.title}</p>
-              <p className="watch-related-channel">{v.owner?.username}</p>
-              <p className="watch-related-meta">
-                {formatViews(v.views)} Views · {formatTimeAgo(v.createdAt)}
-              </p>
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
       </aside>
 
       {/* Guest Login / Register Card Modal */}
