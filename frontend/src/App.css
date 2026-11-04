@@ -957,7 +957,7 @@
     padding: 4px 8px !important;
   }
 
-  /* Horizontal Scrolling Video Rows on Mobile */
+  /* Horizontal Scrolling Video Rows on Mobile (e.g. Profile Page) */
   .channel-videos-row {
     display: flex !important;
     flex-direction: row !important;
@@ -977,8 +977,8 @@
     display: none;
   }
 
-  /* Smaller video cards in Profile and Channel pages */
-  .channel-video-card {
+  /* Smaller video cards in Profile horizontal scrolling shelves */
+  .channel-videos-row .channel-video-card {
     flex: 0 0 148px !important;
     width: 148px !important;
     min-width: 148px !important;
@@ -987,8 +987,28 @@
     transition: transform 0.15s ease;
   }
 
-  .channel-video-card:active {
+  .channel-videos-row .channel-video-card:active {
     transform: scale(0.97);
+  }
+
+  /* Normal Grid on Mobile for Channel SubPages (Videos & Playlists) */
+  .channel-videos-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px 12px !important;
+    width: 100% !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    padding: 0 !important;
+  }
+
+  .channel-videos-grid .channel-video-card {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: unset !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 8px !important;
   }
 
   .channel-video-thumb {
@@ -1026,6 +1046,16 @@
     padding: 1px 4px !important;
     bottom: 4px !important;
     right: 4px !important;
+  }
+
+  /* Search Results Mobile View: toggle desktop vs mobile layout */
+  .search-results-desktop {
+    display: none !important;
+  }
+
+  .search-results-mobile {
+    display: block !important;
+    width: 100%;
   }
 
   /* 6) Smaller, compact cards in video lists */
@@ -1361,7 +1391,19 @@
   background-color: var(--bg-card);
 }
 
-.channel-videos-row {
+
+/* Search Results Responsive Views */
+.search-results-desktop {
+  display: block;
+  width: 100%;
+}
+
+.search-results-mobile {
+  display: none;
+}
+
+.channel-videos-row,
+.channel-videos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;

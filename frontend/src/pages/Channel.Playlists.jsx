@@ -60,7 +60,7 @@ function ChannelPlaylists() {
             </div>
 
             {playlists.length > 0 ? (
-                <div className="channel-videos-row">
+                <div className="channel-videos-grid">
                     {playlists.map((playlist) => (
                         <div
                             key={playlist._id}

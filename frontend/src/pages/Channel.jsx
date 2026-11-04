@@ -47,7 +47,7 @@ function Channel() {
             </div>
 
             {videos.length > 0 ? (
-                <div className="channel-videos-row">
+                <div className="channel-videos-grid">
                     {videos.map((video) => (
                         <div
                             key={video._id}
