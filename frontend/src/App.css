@@ -4468,10 +4468,14 @@
 .admin-header-avatar {
   width: 56px;
   height: 56px;
+  min-width: 56px;
+  min-height: 56px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center;
   border: 2px solid var(--accent-purple);
-  
+  flex-shrink: 0;
+  display: block;
 }
 
 .admin-header-title {

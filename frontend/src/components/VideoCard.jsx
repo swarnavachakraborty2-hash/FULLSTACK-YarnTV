@@ -21,7 +21,12 @@ function VideoCard({
   const formattedTimeAgo = formatTimeAgo(createdAt)
   // Default: Grid Card (Image 2)
   return (
-    <article className="video-card-grid" onClick={()=>navigate(`/watch/${id}`)}>
+    <article className="video-card-grid" onClick={() => {
+      const container = document.querySelector('.feed-content')
+      if (container) container.scrollTo({ top: 0, behavior: 'instant' })
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      navigate(`/watch/${id}`)
+    }}>
       {/* Thumbnail */}
       <div className="thumbnail-wrapper-grid">
         <img src={thumbnail} alt={title} className="thumbnail-img" />

@@ -42,6 +42,16 @@ function WatchVideo() {
   const { id } = useParams()
   const navigate = useNavigate()
 
+  // Scroll to top whenever the video id changes (navigating from feed or related videos)
+  useEffect(() => {
+    // Try the feed-content scroll container first, fallback to window
+    const scrollContainer = document.querySelector('.feed-content')
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: 0, behavior: 'instant' })
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [id])
+
   useEffect(() => {
     apiCall(() => api.get("user/curr-user")
       .then((res) => {
