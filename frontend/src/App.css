@@ -3214,6 +3214,10 @@
   scrollbar-color: var(--border-color) transparent;
 }
 
+/* Desktop: show desktop list, hide mobile grid */
+.watch-sidebar-desktop { display: block; }
+.watch-sidebar-mobile  { display: none; }
+
 .watch-related-card {
   display: flex;
   gap: 10px;
