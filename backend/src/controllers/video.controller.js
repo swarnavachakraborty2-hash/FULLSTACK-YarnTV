@@ -169,6 +169,11 @@ const getFeedVideos = asyncHandler(async function (req, res) {
             }
         },
         {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "owner",
