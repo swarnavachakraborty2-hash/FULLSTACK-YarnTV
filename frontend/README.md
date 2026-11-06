@@ -1,16 +1,39 @@
-# React + Vite
+# 💻 YarnTV — Frontend Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend client for YarnTV, built with **React 19**, **Vite**, **Video.js**, **Recharts**, and **Axios**.
 
-Currently, two official plugins are available:
+> 📖 **Full Project Documentation**: For end-to-end architecture blueprints, backend API specifications, and roadmap, see the [Root README](../README.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ⚡ Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Install Dependencies
+```bash
+npm install
+```
 
-## Expanding the ESLint configuration
+### 2. Environment Configuration (`.env`)
+Create a `.env` file in the `frontend` root:
+```env
+VITE_API_URL=http://localhost:5000/api/v1
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 3. Start Development Server
+```bash
+npm run dev
+# Vite server running on http://localhost:5173
+```
+
+### 4. Build for Production
+```bash
+npm run build
+```
+
+---
+
+## 🎨 Feature Highlights
+- **Adaptive Video Player**: Multi-resolution streaming support via Video.js and custom resolution switcher.
+- **Creator Studio Analytics**: Subscriber curves and engagement metrics plotted with Recharts.
+- **Automatic Session Renewal**: Axios interceptor with automatic token renewal via `refresh-token` on 401 response status.
+- **Community Feed**: Interactive creator tweets, nested comment threads, and playlist curation.
