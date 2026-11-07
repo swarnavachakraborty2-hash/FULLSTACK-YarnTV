@@ -1,4 +1,4 @@
-# 🎬 YarnTV — Full-Stack Video Sharing & Creator Platform
+#  YarnTV — Full-Stack Video Sharing & Creator Platform
 
 <div align="center">
 
@@ -26,37 +26,37 @@
 
 ---
 
-## 📌 Executive Summary
+##  Executive Summary
 
 **YarnTV** is a scalable, end-to-end video streaming and creator ecosystem designed to mimic enterprise platforms like YouTube. Engineered with a decoupled client-server architecture, it pairs an **Express 5** REST backend featuring complex **MongoDB aggregation pipelines** and **Cloudinary** media storage with a reactive **React 19** frontend featuring **Video.js** multi-resolution playback, real-time analytics with **Recharts**, community tweets, and secure dual-token JWT authentication.
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
-### 🎥 Media Processing & Streaming
+###  Media Processing & Streaming
 - **Multi-Asset Uploads**: Concurrent file processing via `Multer` with cloud offloading to `Cloudinary` for video files, high-res thumbnails, avatars, and channel banners.
 - **Adaptive Multi-Resolution Playback**: High-performance video player powered by `@videojs/react` with dynamic resolution switching (`videojs-resolution-switcher`).
 - **View Counter & Watch History**: Tracking of unique views and automated user watch history pipelines.
 
-### 👤 Authentication & Channel Management
+###  Authentication & Channel Management
 - **Enterprise Dual-Token JWT**: Access tokens (short-lived) and Refresh tokens (long-lived) securely stored in HTTP-Only cookies with silent background token refresh interceptors.
 - **Channel Customization**: Editable usernames, emails, channel bio, avatar image, and cover banners.
 - **Subscriber Engine**: Follow/subscribe mechanism with real-time subscriber counts and subscriber channel feeds.
 
-### 💬 Social & Community Engagement
+###  Social & Community Engagement
 - **Interactive Engagements**: Like and dislike toggles for videos, comments, and community tweets.
 - **Nested Discussions**: Commenting system with full CRUD support on videos and community posts.
 - **Creator Tweets (Community Wall)**: Text-based microblogging feed for creators to announce updates, polls, and milestones.
 - **Playlists**: Custom playlist creation, public/private toggling, and video curation.
 
-### 📊 Creator Studio & Admin Dashboard
+###  Creator Studio & Admin Dashboard
 - **Analytics at a Glance**: Visual analytics charts powered by `Recharts` showcasing video view velocity and subscriber growth curves.
 - **Content Governance**: One-click publish/unpublish toggling, metadata updates, and cascading asset deletion.
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```mermaid
 flowchart TD
@@ -107,7 +107,7 @@ flowchart TD
 
 ---
 
-## 🗄️ Database Schemas
+##  Database Schemas
 
 The database leverages relational references and complex aggregation stages to provide lightning-fast lookups:
 
@@ -193,11 +193,11 @@ erDiagram
 
 ---
 
-## 🔌 API Reference
+##  API Reference
 
 ### Base URL: `/api/v1`
 
-#### 👤 User & Authentication (`/user`)
+####  User & Authentication (`/user`)
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/register` | Public | Register new user with avatar & cover image |
@@ -212,7 +212,7 @@ erDiagram
 | `GET` | `/profile/:username` | Authenticated | Fetch public channel profile with subscription stats |
 | `DELETE` | `/deleteAccount` | Authenticated | Permanently delete account and associated credentials |
 
-#### 🎥 Videos (`/video`)
+####  Videos (`/video`)
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/get-feed-videos` | Public | Paginated home video feed |
@@ -227,7 +227,7 @@ erDiagram
 | `GET` | `/get-admin-videos` | Authenticated | List videos for creator studio management |
 | `GET` | `/get-admin-stats` | Authenticated | Fetch channel metrics (views, subscribers, total likes) |
 
-#### 📝 Community & Tweets (`/tweet`)
+####  Community & Tweets (`/tweet`)
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/create-tweet` | Authenticated | Publish a community post |
@@ -235,14 +235,14 @@ erDiagram
 | `GET` | `/get-user-tweets/:user_id` | Authenticated | Creator-specific community posts |
 | `DELETE` | `/delete-tweet/:tweet_id` | Authenticated | Remove community post |
 
-#### 👍 Likes & Interactions (`/like`)
+####  Likes & Interactions (`/like`)
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/video/:video_id` | Authenticated | Toggle like on a video |
 | `GET` | `/tweet/:tweet_id` | Authenticated | Toggle like on a tweet |
 | `GET` | `/comment/:comment_id` | Authenticated | Toggle like on a comment |
 
-#### 📂 Playlists (`/playlist`)
+####  Playlists (`/playlist`)
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/create-new-playlist/:video_id` | Authenticated | Create a playlist and add initial video |
@@ -254,7 +254,7 @@ erDiagram
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - **Node.js**: v18.0.0 or higher
@@ -323,29 +323,29 @@ npm run dev
 
 ---
 
-## 🔮 Upcoming Roadmap
+##  Upcoming Roadmap
 
 We are actively engineering future enhancements to expand StreamPulse into an all-in-one educational and creator live ecosystem:
 
-### 🔴 Phase 1: Real-Time Live Streaming Engine
+###  Phase 1: Real-Time Live Streaming Engine
 - **WebRTC & RTMP Ingestion**: Low-latency live broadcast streaming directly from the browser or OBS Studio.
 - **HLS / DASH Adaptive Transcoding**: Live segment chunking with dynamic bitrates for smooth mobile and desktop playback.
 - **Live Stream Live Chat**: WebSocket-powered (`Socket.IO`) real-time live chat with moderation filters, slow mode, and super chats.
 - **VOD Archival**: Automated conversion of completed live streams into on-demand videos saved directly into creator libraries.
 
-### 📄 Phase 2: Document & Digital Resource Uploads
+###  Phase 2: Document & Digital Resource Uploads
 - **Educational Asset Attachments**: Upload and bind lecture notes, source code archives, slides, and cheat sheets (PDF, DOCX, ZIP) directly to video tutorials.
 - **In-Browser Document Viewer**: Built-in PDF reader allowing viewers to follow along with course documentation side-by-side with the video player.
 - **Resource Download Governance**: Role-based access control (public vs. subscriber-only document downloads) with virustotal scanning integrations.
 
-### ⚡ Phase 3: Platform Hardening & Scalability
+###  Phase 3: Platform Hardening & Scalability
 - **Redis Caching Layer**: Cache frequent queries (trending videos, top creator profiles) to decrease database load.
 - **Microservice Video Transcoding**: Offload background video processing via AWS S3 + AWS Elemental MediaConvert / FFmpeg worker queues.
 - **Elasticsearch Integration**: Distributed multi-facet search engine for instantaneous video, creator, and document discovery.
 
 ---
 
-## 🔒 Security & Best Practices
+##  Security & Best Practices
 
 - **Zero-Storage Passwords**: Passwords hashed using `Bcrypt` with salt rounds prior to persistence.
 - **XSS & CSRF Mitigation**: Access and refresh tokens dispatched over secure, `HttpOnly`, `SameSite=Strict` cookies.
@@ -354,7 +354,7 @@ We are actively engineering future enhancements to expand StreamPulse into an al
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions make the open-source community an incredible place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -366,13 +366,13 @@ Contributions make the open-source community an incredible place to learn, inspi
 
 ---
 
-## 📜 License
+##  License
 
 Distributed under the ISC License. See `LICENSE` for more information.
 
 ---
 
-## 👨‍💻 Author
+##  Author
 
 **Swarnava Chakraborty**
 - GitHub: [@swarnavachakraborty2-hash](https://github.com/swarnavachakraborty2-hash)
